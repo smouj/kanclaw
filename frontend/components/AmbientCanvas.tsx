@@ -196,7 +196,7 @@ export function AmbientCanvas({ className = '' }: { className?: string }) {
   if (!enabled) {
     return (
       <div 
-        className={`absolute inset-0 ${isLight ? 'bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200' : 'bg-gradient-to-br from-[#050508] via-[#0a0a12] to-[#030306]'} ${className}`}
+        className={`absolute inset-0 ${isLight ? 'bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300' : 'bg-gradient-to-br from-[#010101] via-[#020202] to-[#000000]'} ${className}`}
         data-testid="ambient-fallback-layer" 
       />
     );
@@ -212,10 +212,10 @@ export function AmbientCanvas({ className = '' }: { className?: string }) {
         dpr={[1, 1.25]}
         gl={{ antialias: true, alpha: true }}
       >
-        <color attach="background" args={[isLight ? '#fafafa' : '#030305']} />
-        <fog attach="fog" args={[isLight ? '#fafafa' : '#030305', 3.5, 12]} />
+        <color attach="background" args={[isLight ? '#e8e8e8' : '#010101']} />
+        <fog attach="fog" args={[isLight ? '#e8e8e8' : '#010101', 5, 15]} />
         
-        <ambientLight intensity={0.15} />
+        <ambientLight intensity={0.08} />
         
         <DigitalTerrain />
         <FloatingParticles />
