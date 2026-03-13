@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { createProjectFolders } from '@/utils/fs';
+import { generateUniqueProjectSlug } from '@/lib/slug';
 import { ensureProjectThreads } from '@/lib/project-os';
 
 const projectSchema = z.object({
@@ -22,15 +23,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const payload = projectSchema.parse(await request.json());
-    const slug = payload.name
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
-
-    if (!slug) {
-      return NextResponse.json({ error: 'Nombre de proyecto inválido.' }, { status: 400 });
-    }
+    const slug = await generateUniqueProjectSlug(payload.name);
 
     const project = await prisma.project.create({
       data: {

@@ -3,13 +3,13 @@
 El proyecto principal vive en:
 
 ```bash
-/app/frontend
+/workspace/kanclaw/frontend
 ```
 
 Consulta la guía completa aquí:
 
 ```bash
-/app/frontend/README.md
+/workspace/kanclaw/frontend/README.md
 ```
 
 Resumen rápido:
@@ -19,3 +19,4 @@ Resumen rápido:
 - chat persistente con agentes
 - Memory Hub, snapshots, connectors e import layer
 - integración real con OpenClaw y GitHub
+- CI frontend con npm (lint + prisma + seed + build)

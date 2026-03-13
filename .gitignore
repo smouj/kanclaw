@@ -1,20 +1,16 @@
--e 
 # Environment files
 *.env
 *.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
+
+# Logs
+*.log
+
+# Node
+node_modules/
+
+# Build artifacts
+.next/
+out/
+
+# OS files
+.DS_Store
