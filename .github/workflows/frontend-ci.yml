@@ -10,9 +10,14 @@ on:
       - 'frontend/**'
       - '.github/workflows/frontend-ci.yml'
 
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
+  quality:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: frontend
@@ -24,7 +29,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
@@ -48,3 +53,34 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Start app (background)
+        run: |
+          nohup npm run start -- --hostname 127.0.0.1 --port 3020 > /tmp/kanclaw.log 2>&1 &
+          echo $! > /tmp/kanclaw.pid
+
+      - name: Wait for health
+        run: |
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:3020/api/health >/dev/null; then
+              echo "KanClaw is up"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "KanClaw did not become ready in time"
+          cat /tmp/kanclaw.log || true
+          exit 1
+
+      - name: Smoke API
+        run: npm run smoke:api
+
+      - name: Dependency audit policy
+        run: npm run audit:policy
+
+      - name: Upload server log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kanclaw-server-log
+          path: /tmp/kanclaw.log
