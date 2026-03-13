@@ -44,15 +44,16 @@ interface HomePageClientProps {
   githubStatus: { connected: boolean; username: string | null };
   recentRuns: { id: string; title: string; status: string; project: { name: string } }[];
   recentLogs: { id: string; action: string; project: { name: string }; actor: string }[];
+  openclawConfig: { httpBase: string; wsBase: string; hasToken: boolean };
 }
 
-export function HomePageClient({ projects, health, githubStatus, recentRuns, recentLogs }: HomePageClientProps) {
+export function HomePageClient({ projects, health, githubStatus, recentRuns, recentLogs, openclawConfig }: HomePageClientProps) {
   const [showOpenClawConfig, setShowOpenClawConfig] = useState(false);
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-background text-text-primary">
-      <AmbientCanvas className="opacity-80" />
-      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1720px] flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
+    <main className="relative h-screen overflow-hidden bg-background text-text-primary">
+      <AmbientCanvas className="opacity-65" />
+      <div className="relative z-10 mx-auto flex h-full w-full max-w-[1720px] flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex justify-between items-center">
           <ThemeToggle />
@@ -80,7 +81,8 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
           </div>
         )}
 
-        <section className="kanclaw-panel grid gap-8 overflow-hidden p-6 lg:grid-cols-[1.25fr_0.75fr] lg:p-10">
+        <div className="grid min-h-0 flex-1 grid-rows-[auto_minmax(0,1fr)] gap-4">
+        <section className="kanclaw-panel grid gap-6 overflow-hidden p-5 lg:grid-cols-[1.2fr_0.8fr] lg:p-6">
           <div className="relative rounded-[2.4rem] border theme-surface-soft p-6">
             <div className="mb-10 flex items-center gap-4">
               {/* Official Logo - Cat with mechanical arm (theme-aware) */}
@@ -131,8 +133,8 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
           <ProjectCreateForm />
         </section>
 
-        <section className="grid gap-4 lg:grid-cols-[1.35fr_0.65fr]">
-          <div className="kanclaw-panel p-6 lg:p-8">
+        <section className="grid min-h-0 gap-4 lg:grid-cols-[1.35fr_0.65fr]">
+          <div className="kanclaw-panel flex min-h-0 flex-col p-5 lg:p-6">
             <div className="mb-6 flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-zinc-500">Workspaces</p>
@@ -141,6 +143,7 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
               <div className="rounded-full border border-white/10 px-3 py-2 text-xs text-zinc-500"><CommandIcon className="mr-2 inline h-3.5 w-3.5" />Cmd/Ctrl + K</div>
             </div>
 
+            <div className="min-h-0 flex-1 overflow-y-auto pr-1">
             {projects.length === 0 ? (
               <div className="flex min-h-64 flex-col justify-center rounded-[1.8rem] border border-dashed border-white/10 theme-surface-soft p-6">
                 <p className="text-xl font-medium">No projects yet</p>
@@ -164,16 +167,19 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
                 ))}
               </div>
             )}
+            </div>
           </div>
 
-          <div className="kanclaw-panel flex flex-col gap-4 p-6">
+          <div className="kanclaw-panel flex min-h-0 flex-col gap-3 p-5">
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-zinc-500">Signals</p>
               <h2 className="text-2xl font-semibold">OpenClaw, GitHub & Activity</h2>
             </div>
             <div className="rounded-[1.6rem] border border-white/8 bg-white/[0.03] p-4">
-              <p className={`text-sm font-medium ${health.connected ? 'text-emerald-300' : 'text-amber-300'}`}>{health.connected ? 'Gateway available' : 'Gateway disconnected'}</p>
-              <p className="mt-2 text-sm text-zinc-500">{health.connected ? 'OpenClaw responds and can power the workspace.' : 'UI maintains honest state when gateway is down.'}</p>
+              <p className={`text-sm font-medium ${health.connected ? 'text-emerald-300' : 'text-amber-300'}`}>{health.connected ? 'Gateway disponible' : `Gateway desconectado (${health.status})`}</p>
+              <p className="mt-2 text-xs text-zinc-500 break-all">HTTP: {openclawConfig.httpBase || '(no configurado)'}</p>
+              <p className="mt-1 text-xs text-zinc-500 break-all">WS: {openclawConfig.wsBase || '(no configurado)'}</p>
+              {!openclawConfig.hasToken ? <p className="mt-1 text-xs text-amber-300">Sin bearer token (si tu gateway lo exige, configúralo).</p> : null}
             </div>
             <div className="rounded-[1.6rem] border border-white/8 bg-white/[0.03] p-4">
               <div className="flex items-center gap-2 text-sm text-zinc-200"><Cable className="h-4 w-4" /> GitHub {githubStatus.connected ? `· ${githubStatus.username}` : '· not configured'}</div>
@@ -181,7 +187,7 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
             </div>
             <div className="rounded-[1.6rem] border border-white/8 bg-white/[0.03] p-4">
               <div className="flex items-center gap-2 text-sm text-zinc-200"><MemoryStick className="h-4 w-4" /> Recent runs</div>
-              <div className="mt-3 space-y-3">
+              <div className="mt-3 space-y-2 max-h-44 overflow-y-auto pr-1">
                 {recentRuns.map((run) => (
                   <article key={run.id} className="rounded-[1.2rem] border theme-surface-soft p-3">
                     <p className="text-sm theme-text-strong">{run.title}</p>
@@ -192,7 +198,7 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
             </div>
             <div className="rounded-[1.6rem] border border-white/8 bg-white/[0.03] p-4">
               <div className="flex items-center gap-2 text-sm text-zinc-200"><Workflow className="h-4 w-4" /> Recent activity</div>
-              <div className="mt-3 space-y-3">
+              <div className="mt-3 space-y-2 max-h-44 overflow-y-auto pr-1">
                 {recentLogs.map((log) => (
                   <article key={log.id} className="rounded-[1.2rem] border theme-surface-soft p-3">
                     <p className="text-sm theme-text-strong">{log.action}</p>
@@ -203,6 +209,7 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
             </div>
           </div>
         </section>
+        </div>
       </div>
     </main>
   );

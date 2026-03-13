@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { getGitHubStatus } from '@/lib/github';
-import { getOpenClawHealth } from '@/lib/openclaw';
+import { getOpenClawConfig, getOpenClawHealth } from '@/lib/openclaw';
 import { HomePageClient } from '@/components/HomePageClient';
 
 async function getProjects() {
@@ -11,12 +11,13 @@ async function getProjects() {
 }
 
 export default async function HomePage() {
-  const [projects, health, githubStatus, recentRuns, recentLogs] = await Promise.all([
+  const [projects, health, githubStatus, recentRuns, recentLogs, openclawConfig] = await Promise.all([
     getProjects(),
     getOpenClawHealth(),
     getGitHubStatus(),
     prisma.run.findMany({ orderBy: { createdAt: 'desc' }, take: 6, include: { project: true } }),
     prisma.activityLog.findMany({ orderBy: { timestamp: 'desc' }, take: 8, include: { project: true } }),
+    Promise.resolve(getOpenClawConfig()),
   ]);
 
   return (
@@ -26,6 +27,7 @@ export default async function HomePage() {
       githubStatus={githubStatus}
       recentRuns={recentRuns}
       recentLogs={recentLogs}
+      openclawConfig={openclawConfig}
     />
   );
 }

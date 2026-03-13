@@ -20,23 +20,31 @@ export function OpenClawConfig({ onSave }: OpenClawConfigProps) {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem('openclaw-config');
-    if (stored) {
+    (async () => {
       try {
-        const config = JSON.parse(stored);
+        const response = await fetch('/api/openclaw/config');
+        const config = await response.json();
         setHttpUrl(config.httpUrl || '');
         setWsUrl(config.wsUrl || '');
         setBearerToken(config.bearerToken || '');
       } catch (e) {
-        console.error('Failed to parse stored config');
+        console.error('Failed to load OpenClaw config');
       }
-    }
+    })();
   }, []);
 
   async function handleSave() {
     setLoading(true);
     const config = { httpUrl, wsUrl, bearerToken };
-    localStorage.setItem('openclaw-config', JSON.stringify(config));
+    const response = await fetch('/api/openclaw/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(config),
+    });
+    if (!response.ok) {
+      setLoading(false);
+      return;
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
     if (onSave) onSave();
@@ -46,7 +54,7 @@ export function OpenClawConfig({ onSave }: OpenClawConfigProps) {
   async function handleTest() {
     setTesting(true);
     try {
-      const response = await fetch('/api/health');
+      const response = await fetch('/api/health', { cache: 'no-store' });
       setStatus(response.ok ? 'connected' : 'disconnected');
     } catch {
       setStatus('disconnected');
@@ -62,7 +70,7 @@ export function OpenClawConfig({ onSave }: OpenClawConfigProps) {
       </div>
       
       <p className="text-sm text-text-muted">
-        Configure your OpenClaw gateway to enable AI agent features.
+        Configure OpenClaw at server level for KanClaw (stored in ~/.kanclaw/config/openclaw.json).
       </p>
 
       {/* Status */}
@@ -98,7 +106,7 @@ export function OpenClawConfig({ onSave }: OpenClawConfigProps) {
         <Input 
           value={httpUrl}
           onChange={(e) => setHttpUrl(e.target.value)}
-          placeholder="http://localhost:3001"
+          placeholder="http://127.0.0.1:18789"
           className="bg-surface border-border"
         />
       </div>
@@ -109,7 +117,7 @@ export function OpenClawConfig({ onSave }: OpenClawConfigProps) {
         <Input 
           value={wsUrl}
           onChange={(e) => setWsUrl(e.target.value)}
-          placeholder="ws://localhost:3001/events"
+          placeholder="ws://127.0.0.1:18789/events"
           className="bg-surface border-border"
         />
       </div>
@@ -142,7 +150,7 @@ export function OpenClawConfig({ onSave }: OpenClawConfigProps) {
         className="w-full"
       >
         {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-        {saved ? 'Saved!' : 'Save Configuration'}
+        {saved ? 'Guardado. Recarga dashboard para ver estado.' : 'Guardar configuración'}
       </Button>
     </div>
   );
