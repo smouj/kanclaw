@@ -39,7 +39,7 @@ project-memory.md
 
 ## Configuración local
 
-1. Instala dependencias (usa Yarn o npm):
+1. Instala dependencias (recomendado en este repo: npm por lockfile versionado):
 
    ```bash
    yarn install
@@ -190,3 +190,15 @@ El chat del proyecto ahora incluye:
 - `yarn db:generate`
 - `yarn db:push`
 - `yarn seed`
+
+
+## CI / calidad
+
+El repositorio incluye workflow de CI para frontend en `.github/workflows/frontend-ci.yml` con:
+
+- `npm ci`
+- `npm run db:generate`
+- `npm run db:push`
+- `npm run seed`
+- `npm run lint`
+- `npm run build`

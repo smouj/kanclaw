@@ -19,3 +19,4 @@ Resumen rápido:
 - chat persistente con agentes
 - Memory Hub, snapshots, connectors e import layer
 - integración real con OpenClaw y GitHub
+- CI frontend con npm (lint + prisma + seed + build)
