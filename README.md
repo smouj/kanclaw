@@ -2,10 +2,6 @@
 
 # KanClaw
 
-<p align="center">
-  <img src="./screenshots/01-dashboard.png" alt="KanClaw Dashboard" width="100%" style="border-radius: 4px; border: 1px solid #222;" />
-</p>
-
 **Premium Local-First Living Workspace OS for AI Agent Teams**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)

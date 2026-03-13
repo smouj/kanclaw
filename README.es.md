@@ -1,7 +1,5 @@
 <div align="center">
 
-![KanClaw](./screenshots/01-dashboard.png)
-
 # KanClaw
 
 **Sistema Operativo de Workspace Local-First Premium para Equipos de Agentes IA**
