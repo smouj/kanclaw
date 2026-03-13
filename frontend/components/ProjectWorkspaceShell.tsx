@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
-import { Bot, BrainCircuit, Cable, Command as CommandIcon, FolderTree, LayoutGrid, MessageSquareText, RefreshCcw, Sparkles } from 'lucide-react';
+import { ArrowLeft, Bot, BrainCircuit, Cable, Command as CommandIcon, FolderTree, LayoutGrid, MessageSquareText, RefreshCcw, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import type { Agent, Project, Task } from '@prisma/client';
@@ -15,6 +15,7 @@ import { ProjectMemoryHub } from '@/components/ProjectMemoryHub';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 type ViewKey = 'overview' | 'chat' | 'board' | 'memory' | 'files' | 'connectors';
 
@@ -207,11 +208,21 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
 
         <main className="kanclaw-panel flex min-h-[calc(100vh-2rem)] flex-col overflow-hidden" data-testid="project-os-main-panel">
           <header className="flex flex-wrap items-center justify-between gap-4 border-b border-white/6 px-5 py-5">
-            <div>
-              <p className="text-xs uppercase tracking-[0.32em] text-zinc-500">{activeView}</p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight">{activeView === 'chat' ? 'Shared Agent Conversation Layer' : activeView === 'memory' ? 'Persistent Project Memory Hub' : activeView === 'connectors' ? 'Connector & Import Layer' : 'Project Workspace'}</h2>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => router.push('/')}
+                className="flex items-center justify-center w-9 h-9 rounded border border-border bg-surface hover:bg-surface2 transition-colors"
+                title="Volver a proyectos"
+              >
+                <ArrowLeft className="w-4 h-4 text-text-secondary" />
+              </button>
+              <div>
+                <p className="text-xs uppercase tracking-[0.32em] text-zinc-500">{activeView}</p>
+                <h2 className="mt-2 text-2xl font-semibold tracking-tight">{activeView === 'chat' ? 'Shared Agent Conversation Layer' : activeView === 'memory' ? 'Persistent Project Memory Hub' : activeView === 'connectors' ? 'Connector & Import Layer' : 'Project Workspace'}</h2>
+              </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
+              <ThemeToggle />
               <Button type="button" variant="outline" onClick={() => router.refresh()} data-testid="workspace-refresh-button"><RefreshCcw className="mr-2 h-4 w-4" />Refrescar</Button>
               <Button type="button" onClick={() => void createSnapshot()} disabled={busy} data-testid="workspace-create-snapshot-button"><Sparkles className="mr-2 h-4 w-4" />Snapshot</Button>
             </div>

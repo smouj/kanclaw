@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
+  darkMode: 'class',
   content: [
     './app/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
@@ -10,42 +11,52 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Base colors - Premium monochrome
-        background: '#050505',
-        surface: '#0a0a0a',
-        surface2: '#111111',
-        surface3: '#181818',
+        // Dynamic CSS variables - works with both themes
+        background: 'var(--kc-bg)',
+        surface: 'var(--kc-surface)',
+        surface2: 'var(--kc-surface2)',
         
-        // Borders - Subtle
-        border: '#222222',
-        'border-light': '#333333',
+        // Borders
+        border: 'var(--kc-border)',
+        'border-light': 'var(--kc-border)',
         'border-focus': '#555555',
         
-        // Text
-        'text-primary': '#ffffff',
-        'text-secondary': '#b0b0b0',
-        'text-muted': '#666666',
+        // Text - High contrast
+        'text-primary': 'var(--kc-text-primary)',
+        'text-secondary': 'var(--kc-text-secondary)',
+        'text-muted': 'var(--kc-text-muted)',
         
         // RGB Accents
         accent: {
-          red: '#ff3333',
-          green: '#33ff33',
-          blue: '#3333ff',
-          // RGB variants
+          red: 'var(--kc-accent-red)',
+          green: 'var(--kc-accent-green)',
+          blue: 'var(--kc-accent-blue)',
           'red-dark': '#cc0000',
-          'green-dark': '#00cc00',
+          'green-dark': '#00aa00',
           'blue-dark': '#0000cc',
-          // Glow variants
           'red-glow': 'rgba(255, 51, 51, 0.5)',
           'green-glow': 'rgba(51, 255, 51, 0.5)',
           'blue-glow': 'rgba(51, 51, 255, 0.5)',
         },
         
         // Legacy support
-        success: '#33ff33',
+        success: 'var(--kc-accent-green)',
         warning: '#ffaa00',
-        danger: '#ff3333',
-        info: '#3333ff',
+        danger: 'var(--kc-accent-red)',
+        info: 'var(--kc-accent-blue)',
+        
+        // Zinc fallbacks for dark mode
+        50: '#fafafa',
+        100: '#f4f4f5',
+        200: '#e4e4e7',
+        300: '#d4d4d8',
+        400: '#a1a1aa',
+        500: '#71717a',
+        600: '#52525b',
+        700: '#3f3f46',
+        800: '#27272a',
+        900: '#18181b',
+        950: '#09090b',
       },
       borderRadius: {
         // Sharp/minimal corners - almost 0

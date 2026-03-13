@@ -6,6 +6,7 @@ import { getGitHubStatus } from '@/lib/github';
 import { getOpenClawHealth } from '@/lib/openclaw';
 import { AmbientCanvas } from '@/components/AmbientCanvas';
 import { ProjectCreateForm } from '@/components/ProjectCreateForm';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 async function getProjects() {
   return prisma.project.findMany({
@@ -27,6 +28,11 @@ export default async function HomePage() {
     <main className="relative min-h-screen overflow-hidden bg-[#020202] text-white">
       <AmbientCanvas className="opacity-80" />
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1720px] flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
+        {/* Header with Theme Toggle */}
+        <div className="flex justify-end">
+          <ThemeToggle />
+        </div>
+        
         <section className="kanclaw-panel grid gap-8 overflow-hidden p-6 lg:grid-cols-[1.25fr_0.75fr] lg:p-10">
           <div className="relative rounded-[2.4rem] border border-white/6 bg-black/45 p-6">
             <div className="mb-10 flex items-center gap-3">
