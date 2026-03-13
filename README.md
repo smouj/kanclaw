@@ -1,6 +1,6 @@
 <div align="center">
   
-![KanClaw](./screenshots/01-dashboard.png)
+<img width="1024" height="1024" alt="logo-bg-black-icon-white-kanclaw" src="https://github.com/user-attachments/assets/0dabbdf6-5713-4be6-9821-4c14c86e702e" />
 
 # KanClaw
 
@@ -21,6 +21,8 @@
 ---
 
 ## What is KanClaw?
+
+![KanClaw](./screenshots/01-dashboard.png)
 
 KanClaw is a **premium local-first workspace operating system** for AI agent teams. It provides a persistent, cinematic environment where humans and AI agents collaborate on projects with structured memory, task management, real-time chat, and deep GitHub integration.
 
