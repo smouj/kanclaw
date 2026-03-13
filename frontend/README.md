@@ -76,8 +76,8 @@ project-memory.md
 
 ```env
 DATABASE_URL="file:./dev.db"
-OPENCLAW_HTTP="http://localhost:3001"
-OPENCLAW_WS="ws://localhost:3001/events"
+OPENCLAW_HTTP="http://127.0.0.1:18789"
+OPENCLAW_WS="ws://127.0.0.1:18789/events"
 OPENCLAW_BEARER_TOKEN=""
 ```
 
@@ -196,7 +196,7 @@ El chat del proyecto ahora incluye:
 
 ## CI / calidad
 
-Workflow activo: `.github/workflows/kanclaw-ci.yml`
+Workflow activo: `.github/workflows/frontend-ci.yml`
 
 Incluye:
 - `npm ci`

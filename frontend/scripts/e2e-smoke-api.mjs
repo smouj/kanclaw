@@ -89,6 +89,11 @@ async function run() {
   assert(typeof agentName === 'string' && agentName.length > 0, 'Agent name missing');
   log('project', `slug=${projectSlug} agent=${agentName}`);
 
+  const tasksList = await requestJson(`/api/tasks?projectSlug=${encodeURIComponent(projectSlug)}&limit=20`);
+  assert(tasksList.response.ok, `/api/tasks GET failed with ${tasksList.response.status}`);
+  assert(Array.isArray(tasksList.body), '/api/tasks GET did not return an array');
+  log('tasks', `count=${tasksList.body.length}`);
+
   const thread = await pickThread(projectSlug, agentName);
   log('thread', `id=${thread.id}`);
 

@@ -79,9 +79,32 @@ function parseJsonOutput(stdout: string) {
   }
 }
 
+function resolveSafeSpawnCwd() {
+  const candidates = [
+    process.env.KANCLAW_APP_ROOT,
+    '/home/smouj/apps/kanclaw/frontend',
+    process.cwd(),
+  ].filter((value): value is string => Boolean(value && value.trim()));
+
+  for (const candidate of candidates) {
+    try {
+      if (fs.existsSync(candidate)) {
+        return candidate;
+      }
+    } catch {
+      // continue checking candidates
+    }
+  }
+
+  return os.homedir();
+}
+
 async function runOpenClawJson(args: string[], timeoutMs = 15000): Promise<unknown> {
   return new Promise((resolve, reject) => {
-    const child = spawn('openclaw', args, { stdio: ['ignore', 'pipe', 'pipe'] });
+    const child = spawn('openclaw', args, {
+      stdio: ['ignore', 'pipe', 'pipe'],
+      cwd: resolveSafeSpawnCwd(),
+    });
 
     let stdout = '';
     let stderr = '';

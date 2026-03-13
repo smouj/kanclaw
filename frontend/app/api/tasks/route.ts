@@ -19,6 +19,42 @@ const updateTaskSchema = z.object({
   description: z.string().optional(),
 });
 
+const listTasksQuerySchema = z.object({
+  projectSlug: z.string().min(1),
+  status: z.enum(['TODO', 'RUNNING', 'DONE']).optional(),
+  limit: z.coerce.number().int().min(1).max(200).optional().default(100),
+});
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const parsed = listTasksQuerySchema.safeParse({
+    projectSlug: searchParams.get('projectSlug') || '',
+    status: searchParams.get('status') || undefined,
+    limit: searchParams.get('limit') || undefined,
+  });
+
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
+
+  const { projectSlug, status, limit } = parsed.data;
+  const project = await prisma.project.findUnique({ where: { slug: projectSlug } });
+  if (!project) {
+    return NextResponse.json({ error: 'Proyecto no encontrado.' }, { status: 404 });
+  }
+
+  const tasks = await prisma.task.findMany({
+    where: {
+      projectId: project.id,
+      ...(status ? { status } : {}),
+    },
+    orderBy: { updatedAt: 'desc' },
+    take: limit,
+  });
+
+  return NextResponse.json(tasks);
+}
+
 export async function POST(request: Request) {
   try {
     const payload = createTaskSchema.parse(await request.json());
