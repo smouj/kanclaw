@@ -18,6 +18,9 @@
   <a href="https://github.com/smouj/kanclaw/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/smouj/kanclaw?style=for-the-badge" alt="License" />
   </a>
+  <a href="https://discord.gg/kanclaw">
+    <img src="https://img.shields.io/badge/Discord-KanClaw-5865F2?style=for-the-badge" alt="Discord" />
+  </a>
 </p>
 
 ---
@@ -40,19 +43,76 @@ Unlike cloud-based solutions, KanClaw stores all data locally in `~/.kanclaw/`, 
 
 ## Key Features
 
-- 🖥️ **Premium Workspace Shell** — Cinematic dark interface with ambient R3F layers, command palette (Cmd+K), and contextual panels
-- 🤖 **Agent Collaboration** — Persistent chat with team room and per-agent channels, real runs with OpenClaw integration
-- 🧠 **Memory Hub** — Structured accumulation of Knowledge, Decisions, Agent Souls, and Artifacts
-- 📸 **Snapshots** — Point-in-time exports of project state for auditing and recovery
-- 🔗 **GitHub Connector** — Secure PAT storage, repo listing, preview, and import as new projects
-- 📁 **Local-First** — All data lives in `~/.kanclaw/workspace/projects/<slug>/` with no cloud dependency
-- 🖥️ **Desktop Ready** — Tauri 2 wrapper for native desktop experience
+### 🖥️ Premium Workspace Shell
+- Cinematic dark interface with ambient R3F layers
+- Command palette (Cmd+K) for quick navigation
+- Contextual panels (sidebar, main content, right rail)
+- Persistent navigation across views
+
+### 🤖 Agent Collaboration
+- **Team Room** — Project-wide chat for human-agent collaboration
+- **Per-Agent Channels** — Direct conversations with individual agents
+- **Real Runs** — Live execution tracking with OpenClaw integration
+- **Offline Grace** — Honest state when OpenClaw is unavailable
+
+### 🧠 Memory Hub
+Structured accumulation of project knowledge:
+- **Overview** — Bento grid with project metrics
+- **Knowledge** — Structured information base
+- **Decisions** — Architectural choices and rationale
+- **Artifacts** — Generated outputs and exports
+- **Agent Souls** — Agent personas (SOUL.md)
+- **Runs** — Execution history and provenance
+
+### 📸 Snapshots
+- Point-in-time exports of project state
+- JSON artifacts for auditing and recovery
+- Covers tasks, runs, decisions, knowledge, and artifacts
+
+### 🔗 GitHub Connector
+- Secure PAT storage (encrypted locally)
+- Repository listing and search
+- Preview before import
+- Import as new project or link to existing
+
+### 📁 Local-First Architecture
+All data lives in `~/.kanclaw/`:
+```
+~/.kanclaw/workspace/projects/<slug>/
+├── agents/          # Agent definitions + memory
+├── tasks/           # Kanban board
+├── knowledge/       # Knowledge base
+├── decisions/       # Architectural decisions
+├── artifacts/       # Generated outputs
+│   └── snapshots/  # Point-in-time exports
+└── project-memory.md
+```
+
+### 🖥️ Desktop Ready
+- Tauri 2 wrapper for native experience
+- Next.js standalone server as sidecar
+- Local-first preserved in desktop mode
+
+## Screenshots
+
+| View | Description |
+|------|-------------|
+| Dashboard | Workspace overview with ambient R3F background |
+| Project Workspace | Full shell with sidebar + panels |
+| Kanban Board | Drag-and-drop task management |
+| Agent Chat | Team Room + per-agent channels |
+| Memory Hub | Bento grid with knowledge/decisions/artifacts |
+| GitHub Connector | PAT input, repo listing, import flow |
+| Command Palette | Cmd+K quick actions |
+
+*See [`screenshots/`](screenshots/) for required visual assets.*
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS |
+| Frontend | Next.js 14 (App Router), TypeScript |
+| Styling | Tailwind CSS + shadcn/ui |
 | State | Zustand |
 | Drag & Drop | @dnd-kit |
 | 3D Ambient | React Three Fiber (R3F) |
@@ -111,64 +171,27 @@ OPENCLAW_BEARER_TOKEN=""
 ```
 kanclaw/
 ├── frontend/                 # Next.js 14 application
-│   ├── src/
-│   │   ├── app/            # App Router pages
-│   │   ├── components/      # React components
-│   │   ├── lib/            # Utilities and stores
-│   │   └── styles/         # Global styles
-│   ├── prisma/             # Database schema
-│   └── public/             # Static assets
+│   ├── app/                # App Router pages
+│   │   ├── page.tsx       # Dashboard
+│   │   └── project/
+│   │       └── [slug]/
+│   │           └── page.tsx  # Project workspace
+│   ├── components/          # React components
+│   │   ├── shell/         # Workspace shell
+│   │   ├── kanban/        # Task board
+│   │   ├── chat/          # Agent chat
+│   │   ├── memory/        # Memory Hub
+│   │   ├── connectors/    # GitHub connector
+│   │   └── ui/            # Shared components
+│   ├── prisma/            # Database schema
+│   └── public/            # Static assets
 ├── backend/                 # Python server (legacy)
 ├── .github/                # CI/CD workflows
-└── design_guidelines.json  # Design system specification
+├── design_guidelines.json  # Design system spec
+└── screenshots/            # Visual documentation
 ```
 
-## Local-First Architecture
-
-All project data is stored outside the repository:
-
-```bash
-~/.kanclaw/workspace/projects/<project-slug>/
-├── agents/
-│   └── <agent-name>/
-│       ├── SOUL.md        # Agent persona
-│       ├── TOOLS.md       # Agent capabilities
-│       └── memory.md      # Agent accumulated memory
-├── tasks/                  # Kanban board tasks
-├── knowledge/             # Project knowledge base
-├── decisions/             # Architectural decisions
-├── artifacts/             # Generated artifacts
-│   └── snapshots/         # Point-in-time exports
-└── project-memory.md      # Project overview
-```
-
-## GitHub Connector
-
-1. Open a project in KanClaw
-2. Navigate to **Connectors**
-3. Paste your **GitHub Personal Access Token** (stored encrypted locally)
-4. Browse and select repositories
-5. Import as new project or link to existing
-
-The connector stores your PAT encrypted in `~/.kanclaw/config/`.
-
-## Desktop Application
-
-KanClaw includes a Tauri 2 wrapper for native desktop experience:
-
-```bash
-cd frontend
-
-# Development mode
-yarn desktop:dev
-
-# Build for production
-yarn desktop:build
-```
-
-The desktop build packages the Next.js standalone server as a Tauri sidecar.
-
-## Commands Reference
+## Available Scripts
 
 | Command | Description |
 |---------|-------------|
@@ -184,35 +207,67 @@ The desktop build packages the Next.js standalone server as a Tauri sidecar.
 
 ## CI/CD
 
-The repository includes GitHub Actions workflows in `.github/workflows/frontend-ci.yml`:
+The repository includes GitHub Actions workflows:
 
-- Dependency installation
-- Prisma generation and database push
-- Database seeding
-- ESLint validation
-- Production build
+- **Frontend CI** — `.github/workflows/frontend-ci.yml`
+  - Dependency installation
+  - Prisma generate + db push
+  - Database seeding
+  - ESLint validation
+  - Production build
 
 ## Design Philosophy
 
 KanClaw follows a "Anti-AI Slop" philosophy:
 
+### Core Principles
 - ✅ **Cinematic, Quiet, Precision** aesthetic
 - ✅ **High contrast** text on deep backgrounds
 - ✅ **Luxurious spacing** (2-3x normal)
 - ✅ **Meaningful motion** with reduced-motion support
+- ✅ **Glass morphism** with backdrop blur
 
-Anti-patterns we avoid:
+### Typography
+- **Headings:** Manrope
+- **Body:** IBM Plex Sans
+- **Mono:** JetBrains Mono
+
+### Color Palette
+- Canvas: `#020202`
+- Surface: `#0A0A0A`, `#121212`, `#1A1A1A`
+- Border: `#1F1F1F`, `#2A2A2A`
+- Text: `#EDEDED`, `#A1A1AA`, `#52525B`
+
+### Anti-Patterns (Never Use)
 - ❌ Generic purple/teal AI gradients
 - ❌ Center-everything layouts
 - ❌ Space Grotesk font
 - ❌ Particle storms
 - ❌ Rainbow dashboards
+- ❌ Generic centered AI assistant emojis
 
 See [`design_guidelines.json`](design_guidelines.json) for the complete specification.
 
+## Architecture
+
+For detailed system architecture, see [`ARCHITECTURE.md`](ARCHITECTURE.md):
+
+- System layers (Presentation → State → Business → Data)
+- Database schema (Prisma entities)
+- Filesystem structure
+- Component architecture
+- Integration patterns (OpenClaw, GitHub)
+- Security model
+- Performance considerations
+
 ## Contributing
 
-Contributions are welcome. Please read our contributing guidelines before submitting PRs.
+Contributions are welcome. Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Follow the design guidelines in `design_guidelines.json`
+4. Run lint and build before submitting PRs
 
 ## License
 
@@ -221,3 +276,5 @@ MIT License — see [`LICENSE`](LICENSE) for details.
 ---
 
 Built with 🔥 by [Smouj](https://github.com/smouj)
+
+*KanClaw — Your Local-First AI Agent Workspace*

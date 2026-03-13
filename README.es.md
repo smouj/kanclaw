@@ -18,6 +18,9 @@
   <a href="https://github.com/smouj/kanclaw/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/smouj/kanclaw?style=for-the-badge" alt="Licencia" />
   </a>
+  <a href="https://discord.gg/kanclaw">
+    <img src="https://img.shields.io/badge/Discord-KanClaw-5865F2?style=for-the-badge" alt="Discord" />
+  </a>
 </p>
 
 ---
@@ -40,19 +43,76 @@ A diferencia de soluciones basadas en la nube, KanClaw almacena todos los datos 
 
 ## Características Principales
 
-- 🖥️ **Workspace Shell Premium** — Interfaz oscura cinematográfica con capas R3F ambientales, paleta de comandos (Cmd+K) y paneles contextuales
-- 🤖 **Colaboración con Agentes** — Chat persistente con sala de equipo y canales por agente, runs reales con integración OpenClaw
-- 🧠 **Memory Hub** — Acumulación estructurada de Knowledge, Decisions, Agent Souls y Artifacts
-- 📸 **Snapshots** — Exportaciones de estado del proyecto en un momento dado para auditoría y recuperación
-- 🔗 **Conector GitHub** — Almacenamiento seguro de PAT, listado de repos, previsualización e importación como proyectos nuevos
-- 📁 **Local-First** — Todos los datos viven en `~/.kanclaw/workspace/projects/<slug>/` sin dependencia de la nube
-- 🖥️ **Listo para Desktop** — Wrapper Tauri 2 para experiencia de escritorio nativa
+### 🖥️ Workspace Shell Premium
+- Interfaz oscura cinematográfica con capas R3F ambientales
+- Paleta de comandos (Cmd+K) para navegación rápida
+- Paneles contextuales (sidebar, contenido principal, rail derecho)
+- Navegación persistente entre vistas
+
+### 🤖 Colaboración con Agentes
+- **Sala de Equipo** — Chat global para colaboración humano-agente
+- **Canales por Agente** — Conversaciones directas con agentes individuales
+- **Runs Reales** — Seguimiento de ejecución en vivo con integración OpenClaw
+- **Estado Offline** — Respuesta honesta cuando OpenClaw no está disponible
+
+### 🧠 Memory Hub
+Acumulación estructurada del conocimiento del proyecto:
+- **Overview** — Grid bento con métricas del proyecto
+- **Knowledge** — Base de información estructurada
+- **Decisions** — Decisiones arquitectónicas y su rationale
+- **Artifacts** — Salidas generadas y exportaciones
+- **Agent Souls** — Personalidades de agentes (SOUL.md)
+- **Runs** — Historial de ejecuciones y provenance
+
+### 📸 Snapshots
+- Exportaciones de estado del proyecto en un momento dado
+- Artefactos JSON para auditoría y recuperación
+- Incluye tareas, runs, decisiones, knowledge y artifacts
+
+### 🔗 Conector GitHub
+- Almacenamiento seguro de PAT (cifrado local)
+- Listado y búsqueda de repositorios
+- Previsualización antes de importar
+- Importar como proyecto nuevo o enlazar a existente
+
+### 📁 Arquitectura Local-First
+Todos los datos viven en `~/.kanclaw/`:
+```
+~/.kanclaw/workspace/projects/<slug>/
+├── agents/          # Definiciones de agentes + memoria
+├── tasks/           # Tablero Kanban
+├── knowledge/       # Base de conocimiento
+├── decisions/       # Decisiones arquitectónicas
+├── artifacts/       # Salidas generadas
+│   └── snapshots/  # Exportaciones punto-en-tiempo
+└── project-memory.md
+```
+
+### 🖥️ Listo para Desktop
+- Wrapper Tauri 2 para experiencia nativa
+- Servidor standalone de Next.js como sidecar
+- Local-first conservado en modo desktop
+
+## Capturas de Pantalla
+
+| Vista | Descripción |
+|------|-------------|
+| Dashboard | Vista general del workspace con fondo R3F ambiental |
+| Project Workspace | Shell completo con sidebar y paneles |
+| Kanban Board | Gestión de tareas con drag-and-drop |
+| Agent Chat | Sala de equipo + canales por agente |
+| Memory Hub | Grid bento con knowledge/decisions/artifacts |
+| GitHub Connector | Input de PAT, listado de repos, flujo de importación |
+| Command Palette | Acciones rápidas con Cmd+K |
+
+*Ver [`screenshots/`](screenshots/) para los assets visuales requeridos.*
 
 ## Stack Tecnológico
 
 | Capa | Tecnología |
 |------|------------|
-| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS |
+| Frontend | Next.js 14 (App Router), TypeScript |
+| Estilos | Tailwind CSS + shadcn/ui |
 | Estado | Zustand |
 | Drag & Drop | @dnd-kit |
 | 3D Ambiental | React Three Fiber (R3F) |
@@ -111,64 +171,27 @@ OPENCLAW_BEARER_TOKEN=""
 ```
 kanclaw/
 ├── frontend/                 # Aplicación Next.js
-│   ├── src/
-│   │   ├── app/            # Páginas App Router
-│   │   ├── components/      # Componentes React
-│   │   ├── lib/            # Utilidades y stores
-│   │   └── styles/         # Estilos globales
+│   ├── app/                # Páginas App Router
+│   │   ├── page.tsx       # Dashboard
+│   │   └── project/
+│   │       └── [slug]/
+│   │           └── page.tsx  # Workspace de proyecto
+│   ├── components/          # Componentes React
+│   │   ├── shell/         # Workspace shell
+│   │   ├── kanban/        # Tablero de tareas
+│   │   ├── chat/          # Chat de agentes
+│   │   ├── memory/        # Memory Hub
+│   │   ├── connectors/     # Conector GitHub
+│   │   └── ui/            # Componentes compartidos
 │   ├── prisma/             # Esquema de base de datos
 │   └── public/             # Assets estáticos
 ├── backend/                 # Servidor Python (heredado)
 ├── .github/                # Workflows CI/CD
-└── design_guidelines.json  # Especificación del sistema de diseño
+├── design_guidelines.json  # Spec del sistema de diseño
+└── screenshots/            # Documentación visual
 ```
 
-## Arquitectura Local-First
-
-Todos los datos del proyecto se almacenan fuera del repositorio:
-
-```bash
-~/.kanclaw/workspace/projects/<project-slug>/
-├── agents/
-│   └── <agent-name>/
-│       ├── SOUL.md        # Personalidad del agente
-│       ├── TOOLS.md       # Capacidades del agente
-│       └── memory.md      # Memoria acumulada del agente
-├── tasks/                  # Tablero Kanban
-├── knowledge/             # Base de conocimiento del proyecto
-├── decisions/             # Decisiones arquitectónicas
-├── artifacts/             # Artefactos generados
-│   └── snapshots/         # Exportaciones punto-en-tiempo
-└── project-memory.md      # Resumen del proyecto
-```
-
-## Conector GitHub
-
-1. Abre un proyecto en KanClaw
-2. Navega a **Connectors**
-3. Pega tu **Personal Access Token de GitHub** (almacenado cifrado localmente)
-4. Explora y selecciona repositorios
-5. Importa como nuevo proyecto o vincula al existente
-
-El conector almacena tu PAT cifrado en `~/.kanclaw/config/`.
-
-## Aplicación de Escritorio
-
-KanClaw incluye un wrapper Tauri 2 para experiencia de escritorio nativa:
-
-```bash
-cd frontend
-
-# Modo desarrollo
-yarn desktop:dev
-
-# Build para producción
-yarn desktop:build
-```
-
-El build de escritorio empaqueta el servidor standalone de Next.js como un sidecar de Tauri.
-
-## Referencia de Comandos
+## Comandos Disponibles
 
 | Comando | Descripción |
 |---------|-------------|
@@ -184,40 +207,74 @@ El build de escritorio empaqueta el servidor standalone de Next.js como un sidec
 
 ## CI/CD
 
-El repositorio incluye workflows de GitHub Actions en `.github/workflows/frontend-ci.yml`:
+El repositorio incluye workflows de GitHub Actions:
 
-- Instalación de dependencias
-- Generación Prisma y push a base de datos
-- Siembra de base de datos
-- Validación ESLint
-- Build de producción
+- **Frontend CI** — `.github/workflows/frontend-ci.yml`
+  - Instalación de dependencias
+  - Generación Prisma + push a base de datos
+  - Siembra de base de datos
+  - Validación ESLint
+  - Build de producción
 
 ## Filosofía de Diseño
 
 KanClaw sigue una filosofía "Anti-AI Slop":
 
+### Principios Fundamentales
 - ✅ Estética **Cinematográfica, Tranquila, Precisa**
 - ✅ **Alto contraste** de texto sobre fondos profundos
 - ✅ **Espaciado lujoso** (2-3x lo normal)
 - ✅ **Movimiento significativo** con soporte para reduced-motion
+- ✅ **Glass morphism** con backdrop blur
 
-Anti-patrones que evitamos:
+### Tipografía
+- **Encabezados:** Manrope
+- **Cuerpo:** IBM Plex Sans
+- **Mono:** JetBrains Mono
+
+### Paleta de Colores
+- Canvas: `#020202`
+- Surface: `#0A0A0A`, `#121212`, `#1A1A1A`
+- Border: `#1F1F1F`, `#2A2A2A`
+- Texto: `#EDEDED`, `#A1A1AA`, `#52525B`
+
+### Anti-Patrones (Nunca Usar)
 - ❌ Gradientes genéricos morados/celestes de IA
 - ❌ Layouts centrados en todo
 - ❌ Fuente Space Grotesk
 - ❌ Tormentas de partículas
 - ❌ Dashboards arcoíris
+- ❌ Emojis genéricos de asistente IA
 
 Consulta [`design_guidelines.json`](design_guidelines.json) para la especificación completa.
 
+## Arquitectura
+
+Para arquitectura detallada del sistema, ver [`ARCHITECTURE.md`](ARCHITECTURE.md):
+
+- Capas del sistema (Presentación → Estado → Negocio → Datos)
+- Esquema de base de datos (entidades Prisma)
+- Estructura del sistema de archivos
+- Arquitectura de componentes
+- Patrones de integración (OpenClaw, GitHub)
+- Modelo de seguridad
+- Consideraciones de rendimiento
+
 ## Contribuir
 
-Las contribuciones son bienvenidas. Por favor, lee nuestras guías de contribución antes de enviar PRs.
+Las contribuciones son bienvenidas. Por favor:
+
+1. Fork del repositorio
+2. Crear una rama de feature
+3. Seguir las guías de diseño en `design_guidelines.json`
+4. Ejecutar lint y build antes de enviar PRs
 
 ## Licencia
 
-Licencia MIT — consulta [`LICENSE`](LICENSE) para más detalles.
+Licencia MIT — ver [`LICENSE`](LICENSE) para más detalles.
 
 ---
 
 Construido con 🔥 por [Smouj](https://github.com/smouj)
+
+*KanClaw — Tu Workspace Local-First para Agentes IA*
