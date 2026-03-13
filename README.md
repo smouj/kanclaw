@@ -177,8 +177,37 @@ kanclaw/
 | `npm run db:push` | Push Prisma schema |
 | `npm run seed` | Seed demo project data |
 | `npm run lint` | Run lint checks |
-| `npm run desktop:dev` | Run Tauri development mode |
-| `npm run desktop:build` | Build Tauri app |
+| `npm run desktop:dev` | Run KanClaw as desktop app (Tauri dev mode) |
+| `npm run desktop:prepare-sidecar` | Prepare Next.js standalone sidecar for packaging |
+| `npm run desktop:build` | Build desktop installer/bundle |
+
+---
+
+## 🖥 Desktop Installation (Tauri)
+
+KanClaw can be installed as a native desktop app via **Tauri 2**.
+
+### Requirements
+
+- Node.js 20+
+- Rust toolchain (`rustup`, `cargo`)
+- OS dependencies required by Tauri
+
+### Build installer
+
+```bash
+cd frontend
+npm install
+npm run build
+npm run desktop:prepare-sidecar
+npm run desktop:build
+```
+
+Generated installers/bundles are available under:
+
+`frontend/src-tauri/target/release/bundle/`
+
+> For local desktop testing without packaging, use `npm run desktop:dev`.
 
 ---
 

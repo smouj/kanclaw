@@ -121,8 +121,35 @@ kanclaw/
 - `npm run db:push` — sincronizar esquema Prisma
 - `npm run seed` — cargar datos demo
 - `npm run lint` — lint
-- `npm run desktop:dev` — Tauri dev
-- `npm run desktop:build` — build Tauri
+- `npm run desktop:dev` — ejecutar KanClaw en modo escritorio (Tauri)
+- `npm run desktop:prepare-sidecar` — preparar sidecar de Next.js para empaquetado
+- `npm run desktop:build` — generar instalador/app de escritorio
+
+---
+
+## Instalación en escritorio (Desktop)
+
+KanClaw se puede instalar como aplicación de escritorio usando **Tauri 2**.
+
+### Requisitos
+
+- Node.js 20+
+- Rust toolchain (`rustup`, `cargo`)
+- Dependencias del sistema para Tauri (según tu SO)
+
+### Flujo recomendado
+
+```bash
+cd frontend
+npm install
+npm run build
+npm run desktop:prepare-sidecar
+npm run desktop:build
+```
+
+Al finalizar, Tauri genera los instaladores/binarios en `frontend/src-tauri/target/release/bundle/`.
+
+> Si quieres solo probarlo en modo app de escritorio sin empaquetar: `npm run desktop:dev`.
 
 ---
 

@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "identifier": "com.kanclaw.desktop",
   "build": {
-    "beforeDevCommand": "yarn dev",
-    "beforeBuildCommand": "yarn build && yarn desktop:prepare-sidecar",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build && npm run desktop:prepare-sidecar",
     "devUrl": "http://localhost:3000",
     "frontendDist": "../public"
   },
