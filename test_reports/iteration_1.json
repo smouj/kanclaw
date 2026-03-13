@@ -1,0 +1,62 @@
+{
+  "summary": "Executed backend pytest regression (5 critical API tests) and frontend Playwright E2E for dashboard, project workspace, tasks, file explorer and OpenClaw offline handling. Core flows pass except Kanban drag-and-drop UI status transition.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "KanbanBoard",
+        "issue": "Dragging task card to RUNNING does not move card; status remains unchanged in UI.",
+        "selector": "[data-testid^='task-drag-handle-'] -> [data-testid='kanban-column-running']",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "Kanban drag status update",
+        "issue": "Drop interaction triggers PUT /api/tasks with invalid status payload (observed 400 in browser console), so optimistic update rolls back.",
+        "affected_selectors": [
+          "[data-testid^='task-drag-handle-']",
+          "[data-testid='kanban-column-todo']",
+          "[data-testid='kanban-column-running']",
+          "[data-testid='kanban-column-done']"
+        ]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_kanclaw_mvp_api.py",
+    "/app/backend/tests/conftest.py",
+    "/app/test_reports/pytest/pytest_results.xml",
+    "/root/.emergent/automation_output/20260313_000153/console_20260313_000153.log",
+    "/root/.emergent/automation_output/20260313_000229/console_20260313_000229.log",
+    "/root/.emergent/automation_output/20260313_000327/console_20260313_000327.log"
+  ],
+  "action_items": [
+    "Fix DnD drop target handling in KanbanBoard so status sent to /api/tasks is always one of TODO/RUNNING/DONE.",
+    "Remove hardcoded/default OpenClaw URLs and backend proxy base URL; read strictly from environment variables.",
+    "Investigate hydration mismatch warnings from dnd-kit aria-describedby IDs in TaskCard/Kanban rendering."
+  ],
+  "critical_code_review_comments": [
+    "frontend/lib/openclaw.ts and frontend/app/api/events/route.ts use hardcoded fallback endpoints (localhost:3001), violating env-only configuration rule.",
+    "backend/server.py hardcodes FRONTEND_BASE_URL='http://127.0.0.1:3000' instead of environment-based config.",
+    "KanbanBoard.handleDragEnd can derive nextStatus from over.id, which may be a task id and not a valid enum, leading to 400 on /api/tasks."
+  ],
+  "updated_files": [
+    "/app/backend/tests/conftest.py",
+    "/app/backend/tests/test_kanclaw_mvp_api.py",
+    "/app/test_reports/iteration_1.json"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "85%"
+  },
+  "seed_data_creation": "Created test projects with TEST_/UI TEST prefixes, tasks, and file knowledge/ui-e2e.md during E2E validation.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Use workspace slug ui-test-1773360116 for quick repro. API-level task status update and file persistence both work; drag-and-drop specifically fails. Offline OpenClaw state and clear 503 error message are validated.",
+  "rca of the issue": "Repro: create task in TODO, drag to RUNNING. Observed no move and console shows 400 from /api/tasks. Likely root cause is nextStatus fallback to over.id in KanbanBoard; when pointer lands over nested draggable/task element, over.id is task id (not enum), causing schema rejection. Mitigation: resolve destination from droppable container metadata only and guard against invalid enum before API call."
+}
