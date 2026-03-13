@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
+import { ensureProjectPath } from '@/utils/fs';
 
 function readFileConfig() {
   try {
@@ -214,6 +215,28 @@ function buildSessionKey(projectSlug: string, agentName: string, gatewayAgentId:
   return `agent:${safeGatewayAgent}:kanclaw:${project}:${agent}`;
 }
 
+async function resolveProjectWorkspaceDir(projectSlug: string) {
+  try {
+    const { base } = await ensureProjectPath(projectSlug);
+    return path.join(base, 'workspace');
+  } catch {
+    const safeSlug = normalizeKeySegment(projectSlug) || 'project';
+    return path.join(os.homedir(), '.kanclaw', 'workspace', 'projects', safeSlug, 'workspace');
+  }
+}
+
+function buildKanClawWorkspaceSystemPrompt(payload: { projectSlug: string; agentName: string; workspaceDir: string }) {
+  return [
+    'KANCLAW_WORKSPACE_POLICY',
+    `project_slug=${payload.projectSlug}`,
+    `target_agent=${payload.agentName}`,
+    `workspace_dir=${payload.workspaceDir}`,
+    'For file and shell tools, use this workspace directory by default (read/write/edit/exec workdir).',
+    'Do not default to /home/smouj/.openclaw/workspace unless the user explicitly requests that path.',
+    'If you need repository operations, start from workspace_dir and only move outside if the user requests it explicitly.',
+  ].join('\n');
+}
+
 function extractMessageText(content: unknown): string {
   if (typeof content === 'string') return content;
 
@@ -263,21 +286,55 @@ async function waitForAssistantReply(sessionKey: string, sentAtMs: number, timeo
   return null;
 }
 
+async function waitForRunCompletion(runId: string, timeoutMs = 45_000) {
+  if (!runId) return;
+  try {
+    await callGatewayRpc('agent.wait', { runId, timeoutMs }, timeoutMs + 3000);
+  } catch {
+    // ignore wait failures and fall back to transcript polling
+  }
+}
+
 async function sendViaGatewayRpc(payload: { projectSlug: string; agentName: string; prompt: string }) {
   const gatewayAgentId = await resolveGatewayAgentId(payload.agentName);
   const sessionKey = buildSessionKey(payload.projectSlug, payload.agentName, gatewayAgentId);
   const idempotencyKey = randomUUID();
   const sentAtMs = Date.now();
+  const workspaceDir = await resolveProjectWorkspaceDir(payload.projectSlug);
+  const extraSystemPrompt = buildKanClawWorkspaceSystemPrompt({
+    projectSlug: payload.projectSlug,
+    agentName: payload.agentName,
+    workspaceDir,
+  });
 
-  await callGatewayRpc(
-    'chat.send',
-    {
-      sessionKey,
-      message: payload.prompt,
-      idempotencyKey,
-    },
-    20000,
-  );
+  try {
+    const agentResult = (await callGatewayRpc(
+      'agent',
+      {
+        message: payload.prompt,
+        agentId: gatewayAgentId,
+        sessionKey,
+        deliver: false,
+        idempotencyKey,
+        extraSystemPrompt,
+      },
+      25000,
+    )) as { runId?: string };
+
+    const runId = typeof agentResult?.runId === 'string' && agentResult.runId ? agentResult.runId : idempotencyKey;
+    await waitForRunCompletion(runId, 45_000);
+  } catch {
+    const fallbackMessage = `${extraSystemPrompt}\n\nUSER_TASK:\n${payload.prompt}`;
+    await callGatewayRpc(
+      'chat.send',
+      {
+        sessionKey,
+        message: fallbackMessage,
+        idempotencyKey,
+      },
+      20000,
+    );
+  }
 
   const reply = await waitForAssistantReply(sessionKey, sentAtMs, 45_000);
 
@@ -287,6 +344,7 @@ async function sendViaGatewayRpc(payload: { projectSlug: string; agentName: stri
     status: reply ? 'completed' : 'started',
     agentId: gatewayAgentId,
     sessionKey,
+    workspaceDir,
     message: reply || 'Mensaje enviado a OpenClaw. La respuesta aún se está procesando.',
   };
 }
