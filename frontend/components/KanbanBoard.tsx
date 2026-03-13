@@ -1,9 +1,7 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import type { DragEvent, ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { DndContext, DragEndEvent, PointerSensor, closestCorners, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import type { Agent, Task } from '@prisma/client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -22,22 +20,36 @@ function KanbanColumn({
   status,
   children,
   count,
+  isOver,
+  onDrop,
+  onDragOver,
+  onDragEnter,
+  onMouseEnter,
+  onMouseUp,
 }: {
   status: (typeof columns)[number];
   children: ReactNode;
   count: number;
+  isOver: boolean;
+  onDrop: (event: DragEvent<HTMLElement>) => void;
+  onDragOver: (event: DragEvent<HTMLDivElement>) => void;
+  onDragEnter: (event: DragEvent<HTMLDivElement>) => void;
+  onMouseEnter: () => void;
+  onMouseUp: () => void;
 }) {
-  const { setNodeRef, isOver } = useDroppable({ id: status, data: { status } });
-
   return (
-    <section className="panel-muted flex min-h-[440px] flex-col p-4 transition">
+    <section className="panel-muted flex min-h-[440px] flex-col p-4 transition" onDragOver={onDragOver} onDrop={onDrop} onMouseEnter={onMouseEnter} onMouseUp={onMouseUp}>
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-sm font-medium tracking-[0.22em] text-zinc-300">{status}</h3>
         <span className="text-xs text-zinc-500">{count}</span>
       </div>
       <div
-        ref={setNodeRef}
         id={status}
+        onDragEnter={onDragEnter}
+        onDragOver={onDragOver}
+        onDrop={onDrop}
+        onMouseEnter={onMouseEnter}
+        onMouseUp={onMouseUp}
         className={`flex h-full flex-col gap-3 rounded-[1.75rem] transition ${isOver ? 'bg-white/[0.04]' : ''}`}
         data-testid={`kanban-column-${status.toLowerCase()}`}
       >
@@ -51,10 +63,21 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
   const [mounted, setMounted] = useState(false);
   const [tasks, setTasks] = useState(initialTasks);
   const [newTitle, setNewTitle] = useState('');
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
+  const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
+  const [hoveredColumn, setHoveredColumn] = useState<(typeof columns)[number] | null>(null);
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    function clearDrag() {
+      setDraggedTaskId(null);
+      setHoveredColumn(null);
+    }
+
+    window.addEventListener('mouseup', clearDrag);
+    return () => window.removeEventListener('mouseup', clearDrag);
   }, []);
 
   const tasksByStatus = useMemo(
@@ -76,31 +99,6 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
       return acc;
     }, {});
   }, [tasks]);
-
-  async function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (!over) return;
-    const activeTaskId = String(active.id);
-    const destinationFromOver =
-      typeof over.data.current?.status === 'string'
-        ? over.data.current.status
-        : typeof over.data.current?.sortable?.containerId === 'string'
-          ? over.data.current.sortable.containerId
-          : typeof over.id === 'string' && columns.includes(over.id as (typeof columns)[number])
-            ? over.id
-            : null;
-
-    if (!destinationFromOver || !columns.includes(destinationFromOver as (typeof columns)[number])) {
-      return;
-    }
-
-    const nextStatus = destinationFromOver;
-
-    const currentTask = tasks.find((task) => task.id === activeTaskId);
-    if (!currentTask || currentTask.status === nextStatus) return;
-
-    await moveTask(activeTaskId, nextStatus, currentTask);
-  }
 
   async function moveTask(taskId: string, nextStatus: (typeof columns)[number], currentTask?: Task) {
     const taskToMove = currentTask || tasks.find((task) => task.id === taskId);
@@ -144,6 +142,24 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
     setNewTitle('');
   }
 
+  async function handleColumnDrop(event: DragEvent<HTMLElement>, status: (typeof columns)[number]) {
+    event.preventDefault();
+    if (!draggedTaskId) {
+      setHoveredColumn(null);
+      return;
+    }
+
+    const currentTask = tasks.find((task) => task.id === draggedTaskId);
+    setDraggedTaskId(null);
+    setHoveredColumn(null);
+
+    if (!currentTask || currentTask.status === status) {
+      return;
+    }
+
+    await moveTask(draggedTaskId, status, currentTask);
+  }
+
   if (!mounted) {
     return (
       <div className="flex h-full flex-col gap-4">
@@ -173,34 +189,60 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
         </div>
       </div>
 
-      <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
-        <div className="grid h-full gap-4 xl:grid-cols-3">
-          {columns.map((status) => (
-            <KanbanColumn key={status} status={status} count={tasksByStatus[status].length}>
-              <SortableContext items={tasksByStatus[status].map((task) => task.id)} strategy={verticalListSortingStrategy}>
-                <div className="flex h-full flex-col gap-3" data-status={status}>
-                  {tasksByStatus[status].length === 0 ? (
-                    <div className="flex h-full min-h-40 items-center justify-center rounded-3xl border border-dashed border-white/10 bg-black/10 px-6 text-center text-sm text-zinc-500" data-testid={`empty-tasks-${status.toLowerCase()}`}>
-                      No hay tareas en {status}.
-                    </div>
-                  ) : (
-                    tasksByStatus[status].map((task) => (
-                      <TaskCard
-                        key={task.id}
-                        projectSlug={projectSlug}
-                        task={task}
-                        agents={agents}
-                        subtasks={subtasksByParent[task.id] || []}
-                        onSubtaskCreated={(subtask) => setTasks((current) => [subtask, ...current])}
-                      />
-                    ))
-                  )}
-                </div>
-              </SortableContext>
+      <div className="grid h-full gap-4 xl:grid-cols-3">
+        {columns.map((status) => (
+            <KanbanColumn
+              key={status}
+              status={status}
+              count={tasksByStatus[status].length}
+              isOver={hoveredColumn === status}
+              onDragEnter={(event) => {
+                event.preventDefault();
+                setHoveredColumn(status);
+              }}
+              onDragOver={(event) => {
+                event.preventDefault();
+                setHoveredColumn(status);
+              }}
+              onDrop={(event) => void handleColumnDrop(event, status)}
+              onMouseEnter={() => {
+                if (draggedTaskId) {
+                  setHoveredColumn(status);
+                }
+              }}
+              onMouseUp={() => {
+                if (draggedTaskId) {
+                  void handleColumnDrop({ preventDefault() {} } as DragEvent<HTMLElement>, status);
+                }
+              }}
+            >
+              <div className="flex h-full flex-col gap-3" data-status={status}>
+                {tasksByStatus[status].length === 0 ? (
+                  <div className="flex h-full min-h-40 items-center justify-center rounded-3xl border border-dashed border-white/10 bg-black/10 px-6 text-center text-sm text-zinc-500" data-testid={`empty-tasks-${status.toLowerCase()}`}>
+                    No hay tareas en {status}.
+                  </div>
+                ) : (
+                  tasksByStatus[status].map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      projectSlug={projectSlug}
+                      task={task}
+                      agents={agents}
+                      subtasks={subtasksByParent[task.id] || []}
+                      onSubtaskCreated={(subtask) => setTasks((current) => [subtask, ...current])}
+                      onDragStart={setDraggedTaskId}
+                      onPointerDragStart={setDraggedTaskId}
+                      onDragEnd={() => {
+                        setDraggedTaskId(null);
+                        setHoveredColumn(null);
+                      }}
+                    />
+                  ))
+                )}
+              </div>
             </KanbanColumn>
           ))}
         </div>
-      </DndContext>
     </div>
   );
 }
