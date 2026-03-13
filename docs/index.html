@@ -140,32 +140,22 @@
       min-width: 0;
     }
 
-    .brand-mark {
-      width: 36px;
-      height: 36px;
+    .brand-logo {
+      width: 38px;
+      height: 38px;
       border: 1px solid rgba(255,255,255,0.18);
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), transparent 50%),
-        rgba(255,255,255,0.02);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 0 26px rgba(255,255,255,0.05);
-      position: relative;
+      background: rgba(255,255,255,0.02);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 0 24px rgba(255,255,255,0.06);
+      padding: 4px;
+      display: grid;
+      place-items: center;
       overflow: hidden;
     }
 
-    .brand-mark::before,
-    .brand-mark::after {
-      content: "";
-      position: absolute;
-      border: 1px solid rgba(255,255,255,0.16);
-    }
-
-    .brand-mark::before {
-      inset: 8px 6px 8px 6px;
-    }
-
-    .brand-mark::after {
-      inset: 14px 10px 14px 10px;
-      box-shadow: 0 0 14px rgba(55,255,139,0.15);
+    .brand-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
 
     .brand-copy {
@@ -220,6 +210,28 @@
       display: flex;
       align-items: center;
       gap: 12px;
+    }
+
+    .lang-links {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-soft);
+      font-size: 12px;
+    }
+
+    .lang-links a {
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.02);
+      transition: all var(--motion-fast);
+    }
+
+    .lang-links a:hover,
+    .lang-links a:focus-visible {
+      color: var(--text);
+      border-color: rgba(255,255,255,0.25);
+      outline: none;
     }
 
     .button,
@@ -1069,7 +1081,13 @@
     <header class="nav-shell">
       <div class="container nav">
         <a class="brand focus-ring" href="#top" aria-label="KanClaw home">
-          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-logo" aria-hidden="true">
+            <picture>
+              <source media="(prefers-color-scheme: dark)" srcset="../frontend/public/kanclaw-logo-dark.png" />
+              <source media="(prefers-color-scheme: light)" srcset="../frontend/public/kanclaw-logo-light.png" />
+              <img src="../frontend/public/kanclaw-logo-dark.png" alt="KanClaw official logo" />
+            </picture>
+          </span>
           <span class="brand-copy">
             <span class="brand-kicker">Living Workspace OS</span>
             <span class="brand-title">KanClaw</span>
@@ -1085,6 +1103,10 @@
         </nav>
 
         <div class="nav-actions">
+          <div class="lang-links" aria-label="Available languages">
+            <a class="focus-ring" href="https://github.com/smouj/kanclaw/blob/main/README.md" target="_blank" rel="noreferrer">EN</a>
+            <a class="focus-ring" href="https://github.com/smouj/kanclaw/blob/main/README.es.md" target="_blank" rel="noreferrer">ES</a>
+          </div>
           <a class="ghost-button nav-utility focus-ring" href="https://github.com/smouj/kanclaw" target="_blank" rel="noreferrer">Repo</a>
           <a class="button primary focus-ring" href="https://github.com/smouj/kanclaw" target="_blank" rel="noreferrer">View on GitHub</a>
         </div>
@@ -1110,6 +1132,7 @@
               <span class="chip"><strong>OpenClaw</strong> ready for real runs</span>
               <span class="chip"><strong>GitHub</strong> import and context linking</span>
               <span class="chip"><strong>Desktop-ready</strong> Tauri shell</span>
+              <span class="chip"><strong>Languages</strong> English + Español available</span>
             </div>
 
             <div class="hero-actions">
@@ -1419,6 +1442,16 @@
               <h3 class="doc-title">Contribution path</h3>
               <p class="doc-desc">Fork, branch, implement cleanly, respect the design system and land changes without breaking the shell logic.</p>
               <a class="doc-link focus-ring" href="https://github.com/smouj/kanclaw/pulls" target="_blank" rel="noreferrer">Open repository →</a>
+            </article>
+
+            <article class="doc-card reveal">
+              <div class="doc-top">
+                <span class="mini-label">05 / Languages</span>
+                <span class="tiny-pill">International</span>
+              </div>
+              <h3 class="doc-title">Read docs in your language</h3>
+              <p class="doc-desc">Current docs are available in English and Español so onboarding is clearer for different audiences.</p>
+              <a class="doc-link focus-ring" href="https://github.com/smouj/kanclaw/blob/main/README.es.md" target="_blank" rel="noreferrer">Open Spanish README →</a>
             </article>
           </div>
         </div>
