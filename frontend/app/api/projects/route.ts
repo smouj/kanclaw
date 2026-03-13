@@ -20,6 +20,28 @@ export async function GET() {
   return NextResponse.json(projects);
 }
 
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const slug = searchParams.get('slug');
+
+    if (!slug) {
+      return NextResponse.json({ error: 'Slug required' }, { status: 400 });
+    }
+
+    const project = await prisma.project.findUnique({ where: { slug } });
+    if (!project) {
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+    }
+
+    await prisma.project.delete({ where: { id: project.id } });
+
+    return NextResponse.json({ ok: true, slug });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const payload = projectSchema.parse(await request.json());
