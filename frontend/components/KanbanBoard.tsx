@@ -218,7 +218,7 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
             >
               <div className="flex h-full flex-col gap-3" data-status={status}>
                 {tasksByStatus[status].length === 0 ? (
-                  <div className="flex h-full min-h-40 items-center justify-center rounded-3xl border border-dashed border-white/10 bg-black/10 px-6 text-center text-sm text-zinc-500" data-testid={`empty-tasks-${status.toLowerCase()}`}>
+                  <div className="flex h-full min-h-40 items-center justify-center rounded-3xl border border-dashed border-white/10 theme-surface-soft px-6 text-center text-sm text-zinc-500" data-testid={`empty-tasks-${status.toLowerCase()}`}>
                     No hay tareas en {status}.
                   </div>
                 ) : (

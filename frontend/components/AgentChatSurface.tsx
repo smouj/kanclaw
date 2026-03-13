@@ -164,7 +164,7 @@ export function AgentChatSurface({ projectSlug, agents, initialThreads, openClaw
               <h3 className="mt-2 text-xl font-semibold theme-text-strong">{selectedThread?.title || 'Selecciona un hilo'}</h3>
             </div>
             <div className="flex items-center gap-2">
-              <span className={`rounded-full border px-3 py-1 text-xs ${openClawConnected ? 'border-white/15 text-white' : 'border-white/10 text-zinc-500'}`} data-testid="chat-openclaw-state">
+              <span className={`rounded-full border px-3 py-1 text-xs ${openClawConnected ? 'border-white/15 theme-text-strong' : 'border-white/10 text-zinc-500'}`} data-testid="chat-openclaw-state">
                 {openClawConnected ? 'OpenClaw online' : 'OpenClaw offline'}
               </span>
               <select value={targetAgentName} onChange={(event) => setTargetAgentName(event.target.value)} className="rounded-full border border-white/10 bg-surface px-4 py-2 text-sm text-text-primary" data-testid="chat-target-agent-select">
@@ -179,7 +179,7 @@ export function AgentChatSurface({ projectSlug, agents, initialThreads, openClaw
         <div className="scrollbar-thin min-h-0 space-y-4 overflow-y-auto px-5 py-5" data-testid="chat-messages-panel">
           {!selectedThread?.messages.length ? <p className="text-sm text-zinc-500">Todavía no hay conversación en este canal.</p> : null}
           {selectedThread?.messages.map((message) => (
-            <article key={message.id} onClick={() => setSelectedMessageId(message.id)} className={`max-w-[82%] cursor-pointer rounded-[1.5rem] border px-4 py-3 ${message.role === 'human' ? 'ml-auto border-white/12 bg-white text-black' : message.role === 'agent' ? 'border-white/10 bg-white/[0.04] text-white' : 'border-white/8 bg-black/40 text-zinc-300'} ${selectedMessage?.id === message.id ? 'ring-1 ring-white/30' : ''}`} data-testid={`chat-message-${message.id}`}>
+            <article key={message.id} onClick={() => setSelectedMessageId(message.id)} className={`max-w-[82%] cursor-pointer rounded-[1.5rem] border px-4 py-3 ${message.role === 'human' ? 'ml-auto border-white/12 bg-white text-black' : message.role === 'agent' ? 'border-white/10 bg-white/[0.04] theme-text-strong' : 'border-white/8 theme-surface-soft text-zinc-300'} ${selectedMessage?.id === message.id ? 'ring-1 ring-white/30' : ''}`} data-testid={`chat-message-${message.id}`}>
               <div className="flex items-center justify-between gap-3 text-[10px] uppercase tracking-[0.24em]">
                 <span>{message.actor}</span>
                 <span>{new Date(message.createdAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>

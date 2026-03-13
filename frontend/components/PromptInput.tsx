@@ -53,7 +53,7 @@ export function PromptInput({ projectSlug, agents, openClawConnected }: PromptIn
       ) : null}
 
       {agents.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-white/10 bg-black/10 p-4 text-sm text-zinc-500" data-testid="empty-agents-prompt-state">
+        <div className="rounded-3xl border border-dashed border-white/10 theme-surface-soft p-4 text-sm text-zinc-500" data-testid="empty-agents-prompt-state">
           Este proyecto no tiene agentes disponibles.
         </div>
       ) : (

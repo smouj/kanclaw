@@ -107,7 +107,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
       <div className="grid min-h-0 grid-rows-[280px_1fr] lg:grid-rows-[320px_1fr]">
         <div className="scrollbar-thin overflow-y-auto border-b border-white/5 p-3">
           {tree.length === 0 ? (
-            <div className="flex h-full items-center justify-center rounded-3xl border border-dashed border-white/10 bg-black/10 px-6 text-center text-sm text-zinc-500" data-testid="empty-files-state">
+            <div className="flex h-full items-center justify-center rounded-3xl border border-dashed border-white/10 theme-surface-soft px-6 text-center text-sm text-zinc-500" data-testid="empty-files-state">
               No hay archivos todavía.
             </div>
           ) : (

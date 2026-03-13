@@ -84,7 +84,7 @@ export function ActivityStream({ projectSlug, initialLogs, openClawConnected }: 
       </div>
 
       {logs.length === 0 ? (
-        <div className="flex h-full min-h-48 items-center justify-center rounded-3xl border border-dashed border-white/10 bg-black/10 px-6 text-center text-sm text-zinc-500" data-testid="empty-activity-state">
+        <div className="flex h-full min-h-48 items-center justify-center rounded-3xl border border-dashed border-white/10 theme-surface-soft px-6 text-center text-sm text-zinc-500" data-testid="empty-activity-state">
           Todavía no hay actividad para este proyecto.
         </div>
       ) : (

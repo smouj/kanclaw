@@ -104,7 +104,7 @@ export function TaskCard({ projectSlug, task, agents, subtasks, onSubtaskCreated
           <label className="block text-[11px] uppercase tracking-[0.2em] text-zinc-500">
             Agente asignado
             <select
-              className="mt-2 w-full rounded-xl border border-white/10 bg-black/50 px-3 py-2 text-sm text-zinc-100"
+              className="mt-2 w-full rounded-xl border border-white/10 theme-surface-soft px-3 py-2 text-sm text-zinc-100"
               value={task.assigneeAgentId ?? ''}
               onChange={(event) => void handleAssigneeChange(event.target.value)}
             >
@@ -119,7 +119,7 @@ export function TaskCard({ projectSlug, task, agents, subtasks, onSubtaskCreated
 
           {subtasks.length === 0 ? <p className="text-xs text-zinc-500">No hay subtareas todavía.</p> : null}
           {subtasks.map((subtask) => (
-            <div key={subtask.id} className="rounded-2xl border border-white/6 bg-black/20 p-3" data-testid={`subtask-item-${subtask.id}`}>
+            <div key={subtask.id} className="rounded-2xl border border-white/6 theme-surface-soft p-3" data-testid={`subtask-item-${subtask.id}`}>
               <p className="text-sm text-zinc-100">{subtask.title}</p>
               <p className="mt-1 text-xs text-zinc-500">{subtask.status}</p>
             </div>

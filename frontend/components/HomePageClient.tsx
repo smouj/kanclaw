@@ -67,7 +67,7 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
 
         {/* OpenClaw Config Modal */}
         {showOpenClawConfig && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center theme-surface-soft backdrop-blur-sm">
             <div className="w-full max-w-md">
               <OpenClawConfig onSave={() => setShowOpenClawConfig(false)} />
               <button
