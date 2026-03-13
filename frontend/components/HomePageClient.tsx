@@ -83,13 +83,24 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
         <section className="kanclaw-panel grid gap-8 overflow-hidden p-6 lg:grid-cols-[1.25fr_0.75fr] lg:p-10">
           <div className="relative rounded-[2.4rem] border border-white/6 bg-black/45 p-6">
             <div className="mb-10 flex items-center gap-4">
-              {/* Official Logo - KanClaw Brand */}
-              <div className="relative h-14 w-14 overflow-hidden rounded-xl border border-white/15 bg-gradient-to-br from-zinc-900 to-black shadow-lg flex items-center justify-center">
-                <svg viewBox="0 0 64 64" className="w-10 h-10">
-                  <rect x="8" y="12" width="48" height="40" rx="4" stroke="white" strokeWidth="2.5" fill="none" />
-                  <path d="M20 24h24M20 32h18M20 40h12" stroke="#33ff33" strokeWidth="2.5" strokeLinecap="round" />
-                  <circle cx="48" cy="16" r="6" fill="#33ff33" />
-                </svg>
+              {/* Official Logo - Cat with mechanical arm (theme-aware) */}
+              <div className="relative h-16 w-16 overflow-hidden rounded-xl border border-white/15 bg-white/[0.02] shadow-lg">
+                <Image
+                  src="/kanclaw-logo-light.png"
+                  alt="KanClaw official logo"
+                  fill
+                  sizes="64px"
+                  className="object-contain p-1 dark:hidden"
+                  priority
+                />
+                <Image
+                  src="/kanclaw-logo-dark.png"
+                  alt="KanClaw official logo"
+                  fill
+                  sizes="64px"
+                  className="hidden object-contain p-1 dark:block"
+                  priority
+                />
               </div>
               <div>
                 <p className="text-xs uppercase tracking-[0.32em] text-zinc-500">Living Workspace OS</p>

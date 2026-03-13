@@ -17,8 +17,21 @@ export function ProjectSidebar({ project, health }: ProjectSidebarProps) {
 
       <div className="panel-muted space-y-5 p-4">
         <div className="flex items-center gap-3">
-          <div className="relative h-14 w-14 overflow-hidden rounded-2xl border border-white/10 bg-black">
-            <Image src="/kanclaw-logo-dark.png" alt="KanClaw logo" fill className="object-cover" sizes="56px" />
+          <div className="relative h-14 w-14 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02]">
+            <Image
+              src="/kanclaw-logo-light.png"
+              alt="KanClaw official logo"
+              fill
+              sizes="56px"
+              className="object-contain p-1 dark:hidden"
+            />
+            <Image
+              src="/kanclaw-logo-dark.png"
+              alt="KanClaw official logo"
+              fill
+              sizes="56px"
+              className="hidden object-contain p-1 dark:block"
+            />
           </div>
           <div>
             <p className="text-xs uppercase tracking-[0.28em] text-muted">Workspace</p>
