@@ -227,6 +227,7 @@ systemctl --user restart kanclaw.service
 systemctl --user status kanclaw.service --no-pager -n 50
 journalctl --user -u kanclaw.service -n 100 --no-pager
 curl -sf http://127.0.0.1:3020/api/health
+curl -sf "http://127.0.0.1:3020/api/metrics?windowHours=24"
 ```
 
 ### Validación de chat OpenClaw
@@ -235,5 +236,15 @@ curl -sf http://127.0.0.1:3020/api/health
 curl -sS -X POST http://127.0.0.1:3020/api/chat \
   -H 'content-type: application/json' \
   --data '{"projectSlug":"flickclaw","threadId":"<thread-id>","targetAgentName":"ClipAgent","content":"ping"}'
+```
+
+### Métricas operativas rápidas
+
+```bash
+# Global (últimas 24h)
+curl -sS "http://127.0.0.1:3020/api/metrics?windowHours=24"
+
+# Por proyecto
+curl -sS "http://127.0.0.1:3020/api/metrics?projectSlug=flickclaw&windowHours=24"
 ```
 
