@@ -1,33 +1,28 @@
 # KanClaw Screenshots
 
-Visual documentation of the KanClaw application.
+Curated visual assets used by the root README files.
 
-## Available Screenshots
+## Current assets
 
-| # | Filename | Description | Status |
-|---|----------|-------------|--------|
-| 1 | `01-dashboard.png` | Main dashboard with project list and create form | ✅ |
-| 2 | `02-workspace.png` | Project workspace with sidebar navigation | ✅ |
+| File | Purpose | Resolution |
+|---|---|---|
+| `01-dashboard.png` | Main dashboard view | 1920x1080 |
+| `02-workspace.png` | Project workspace view | 1920x1080 |
 
-## Capture New Screenshots
+## Regeneration workflow
 
-To capture fresh screenshots:
+From `frontend/`:
 
 ```bash
-cd frontend
-npm run dev
-
-# In another terminal:
-node screenshot-basic.js
+node screenshot-fresh.js
 ```
 
-## Image Guidelines
+This script captures fresh screenshots from `http://localhost:3020` and writes directly to `../screenshots`.
 
-- Resolution: 1920x1080
-- Format: PNG
-- Theme: Dark cinematic (Anti-AI Slop)
-- Include: Full viewport with UI elements visible
+## Quality checklist
 
----
-
-*Last updated: 2026-03-13*
+- 1920×1080 minimum
+- No broken UI states
+- Fully loaded page before capture
+- Consistent dark cinematic theme
+- README references must match real filenames

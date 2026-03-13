@@ -1,8 +1,13 @@
 <div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./frontend/public/kanclaw-logo-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="./frontend/public/kanclaw-logo-light.png">
+    <img src="./frontend/public/kanclaw-logo-light.png" alt="KanClaw logo" width="320" />
+  </picture>
 
 # KanClaw
 
-**Premium Local-First Living Workspace OS for AI Agent Teams**
+**Premium Local-First Workspace OS for AI Agent Teams**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat&logo=next.js)](https://nextjs.org/)
@@ -10,260 +15,121 @@
 [![Tauri](https://img.shields.io/badge/Tauri-2.0-black?style=flat&logo=tauri)](https://tauri.app/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/smouj/kanclaw/pulls)
 
----
-
-[Español](./README.es.md) · [简体中文](./README.zh.md) · [Architecture](./ARCHITECTURE.md)
-
+[Español](./README.es.md) · [Architecture](./ARCHITECTURE.md)
 </div>
 
 ---
 
-## What is KanClaw?
+## Overview
 
-KanClaw is a **premium local-first workspace operating system** for AI agent teams. It provides a persistent, cinematic environment where humans and AI agents collaborate on projects with structured memory, task management, real-time chat, and deep GitHub integration.
+KanClaw is a local-first operating workspace where humans and AI agents collaborate with persistent context, structured memory, task orchestration, and deep GitHub integration.
 
-### Why KanClaw?
+### Why KanClaw
 
-| Problem | KanClaw Solution |
-|---------|------------------|
-| Scattered context across prompts | Structured Memory Hub with Knowledge, Decisions, Artifacts |
-| No persistence between sessions | Local-first storage with SQLite + filesystem |
-| Blind delegation to AI agents | Runs with real-time tracking and provenance |
-| Disconnected tooling | GitHub connector with PAT-based auth, local encryption |
-| Generic AI interfaces | Premium cinematic design with "Anti-AI Slop" philosophy |
+- **Persistent context** with Memory Hub (Knowledge, Decisions, Artifacts, Runs)
+- **Local-first storage** using SQLite + filesystem
+- **Real run tracking** for agent execution and provenance
+- **Secure GitHub connector** with local PAT handling
+- **Premium UI system** guided by the "Anti-AI Slop" design philosophy
 
 ---
 
 ## Quick Start
 
-### One-Command Installation
+### 1) Clone and install
 
 ```bash
-# Clone and install with a single command
-curl -sL https://raw.githubusercontent.com/smouj/kanclaw/main/scripts/install.sh | bash
-```
-
-### Manual Installation
-
-```bash
-# 1. Clone the repository
 git clone https://github.com/smouj/kanclaw.git
 cd kanclaw/frontend
-
-# 2. Install dependencies
 npm install
+```
 
-# 3. Setup environment
+### 2) Configure environment
+
+```bash
 cp .env.example .env
+```
 
-# 4. Initialize database
+### 3) Initialize database
+
+```bash
 npm run db:generate
 npm run db:push
-
-# 5. (Optional) Seed demo data
+# Optional demo data
 npm run seed
+```
 
-# 6. Start development server
+### 4) Start development
+
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## Features
-
-### 🖥️ Premium Workspace Shell
-- Cinematic dark interface with ambient R3F layers
-- Command palette (Cmd+K) for quick navigation
-- Contextual panels (sidebar, main content, right rail)
-
-### 🤖 Agent Collaboration
-- **Team Room** — Project-wide chat
-- **Per-Agent Channels** — Direct conversations
-- **Real Runs** — Live execution tracking with OpenClaw
-
-### 🧠 Memory Hub
-- **Overview** — Bento grid with metrics
-- **Knowledge** — Structured information base
-- **Decisions** — Architectural choices
-- **Artifacts** — Generated outputs
-- **Runs** — Execution history
-
-### 📸 Snapshots
-- Point-in-time exports
-- JSON artifacts for auditing
-
-### 🔗 GitHub Connector
-- Secure PAT storage (encrypted locally)
-- Repository listing and preview
-- Import as new project or link to existing
-
-### 📁 Local-First
-All data lives in `~/.kanclaw/workspace/projects/<slug>/`
-
-### 🖥️ Desktop Ready
-Tauri 2 wrapper for native desktop experience
-
----
-
-## Screenshots
-
-| Dashboard | Project Workspace | Kanban Board | Agent Chat |
-|-----------|-----------------|--------------|------------|
-| ![Dashboard](./screenshots/01-dashboard.png) | ![Workspace](./screenshots/02-project-workspace.png) | ![Kanban](./screenshots/03-kanban.png) | ![Chat](./screenshots/04-chat.png) |
+Open: `http://localhost:3000`
 
 ---
 
 ## Screenshots
 
 | Dashboard | Project Workspace |
-|-----------|-----------------|
-| ![Dashboard](./screenshots/01-dashboard.png) | ![Workspace](./screenshots/02-workspace.png) |
+|---|---|
+| ![KanClaw Dashboard](./screenshots/01-dashboard.png) | ![KanClaw Workspace](./screenshots/02-workspace.png) |
+
+> Screenshots are maintained in `./screenshots` and validated to avoid broken references.
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | Next.js 14 (App Router), TypeScript |
-| Styling | Tailwind CSS + shadcn/ui |
-| State | Zustand |
-| Drag & Drop | @dnd-kit |
-| 3D Ambient | React Three Fiber (R3F) |
-| Database | Prisma + SQLite |
-| Desktop | Tauri 2 |
-| AI Integration | OpenClaw (WebSocket) |
-| GitHub | REST API with local PAT storage |
+- **Frontend:** Next.js 14, React 18, TypeScript
+- **State/UI:** Zustand, Tailwind CSS, shadcn/ui, dnd-kit
+- **3D Ambient Layer:** React Three Fiber + drei + three
+- **Data:** Prisma + SQLite
+- **Desktop:** Tauri 2
+- **Integrations:** OpenClaw (HTTP/WS), GitHub REST
 
 ---
 
 ## Project Structure
 
-```
+```text
 kanclaw/
-├── frontend/                 # Next.js 14 application
-│   ├── app/                # App Router pages
-│   ├── components/          # React components
-│   ├── prisma/            # Database schema
-│   └── public/             # Static assets
-├── backend/                 # Python server (legacy)
-├── .github/                # CI/CD workflows
-├── design_guidelines.json  # Design system spec
-└── screenshots/            # Visual documentation
+├── frontend/            # Next.js app
+├── backend/             # Legacy Python backend
+├── screenshots/         # README visual assets
+├── docs/                # Project docs site/static docs
+└── ARCHITECTURE.md      # High-level architecture
 ```
 
 ---
 
-## Available Scripts
+## Available Scripts (frontend)
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Production build |
-| `npm run start` | Start production server |
-| `npm run db:generate` | Generate Prisma client |
-| `npm run db:push` | Push schema to database |
-| `npm run seed` | Load demo project data |
-| `npm run lint` | Run ESLint |
-| `yarn desktop:dev` | Run Tauri dev mode |
-| `yarn desktop:build` | Build Tauri app |
+- `npm run dev` — development server
+- `npm run build` — production build
+- `npm run start` — production server
+- `npm run db:generate` — Prisma client generation
+- `npm run db:push` — sync Prisma schema
+- `npm run seed` — seed demo data
+- `npm run lint` — lint checks
+- `npm run desktop:dev` — Tauri dev
+- `npm run desktop:build` — Tauri build
 
 ---
 
-## Environment Variables
+## Design Direction
 
-```env
-DATABASE_URL="file:./dev.db"
-OPENCLAW_HTTP="http://localhost:3001"
-OPENCLAW_WS="ws://localhost:3001/events"
-OPENCLAW_BEARER_TOKEN=""
-```
+KanClaw follows a strict **Anti-AI Slop** system:
 
----
+- Cinematic and quiet visual language
+- High contrast and readable hierarchy
+- Purposeful spacing and restrained motion
+- No generic AI gradients, no noisy effects
 
-## CLI Installer (Coming Soon)
-
-We're developing a one-command installer for KanClaw:
-
-```bash
-# Future installation
-npx kanclaw create my-workspace
-kanclaw start
-kanclaw connect github
-kanclaw agent add planner
-```
-
-Would you like to help build the CLI? [Contributions welcome!](#contributing)
-
----
-
-## Design Philosophy
-
-KanClaw follows a "Anti-AI Slop" philosophy:
-
-- ✅ Cinematic, Quiet, Precision aesthetic
-- ✅ High contrast text on deep backgrounds
-- ✅ Luxurious spacing (2-3x normal)
-- ✅ Meaningful motion with reduced-motion support
-- ✅ Glass morphism with backdrop blur
-
-### Anti-Patterns (Never Use)
-- ❌ Generic purple/teal AI gradients
-- ❌ Center-everything layouts
-- ❌ Space Grotesk font
-- ❌ Particle storms
-- ❌ Rainbow dashboards
-
-See [`design_guidelines.json`](design_guidelines.json) for the complete specification.
-
----
-
-## Architecture
-
-For detailed system architecture, see [`ARCHITECTURE.md`](ARCHITECTURE.md):
-
-- System layers (Presentation → State → Business → Data)
-- Database schema (Prisma entities)
-- Filesystem structure
-- Component architecture
-- Integration patterns (OpenClaw, GitHub)
-- Security model
-- Performance considerations
+See `design_guidelines.json` for design rules.
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Follow the design guidelines in `design_guidelines.json`
-4. Run lint and build before submitting PRs
-
-```bash
-# Development workflow
-git checkout -b feat/your-feature
-npm run dev
-# Make your changes
-git commit -m "feat: your feature"
-git push origin feat/your-feature
-```
-
----
-
-## License
-
-MIT License — see [`LICENSE`](LICENSE) for details.
-
----
-
-<div align="center">
-
-**Built with 🔥 by [Smouj](https://github.com/smouj)**
-
-*KanClaw — Your Local-First AI Agent Workspace*
-
-</div>
+PRs are welcome. For major changes, open an issue first to align on scope, UX direction, and architecture.
