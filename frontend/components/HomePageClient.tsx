@@ -3,11 +3,30 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { Cable, Command as CommandIcon, FolderKanban, MemoryStick, PlugZap, Workflow, Settings } from 'lucide-react';
+import { Cable, ChevronDown, ChevronRight, Command as CommandIcon, FolderKanban, MemoryStick, PlugZap, Workflow, Settings } from 'lucide-react';
 import { AmbientCanvas } from '@/components/AmbientCanvas';
 import { ProjectCreateForm } from '@/components/ProjectCreateForm';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { OpenClawConfig } from '@/components/OpenClawConfig';
+
+// Collapsible Panel for Dashboard
+function CollapsiblePanel({ title, defaultOpen = true, children, icon: Icon }: { title: string; defaultOpen?: boolean; children: React.ReactNode; icon?: React.ElementType }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  return (
+    <div className="border border-border bg-surface rounded">
+      <button onClick={() => setIsOpen(!isOpen)} className="w-full flex items-center justify-between p-3 hover:bg-surface2 transition-colors">
+        <div className="flex items-center gap-2">
+          {Icon && <Icon className="w-4 h-4 text-text-muted" />}
+          <span className="text-sm font-medium">{title}</span>
+        </div>
+        {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+      </button>
+      <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className="p-3 pt-0">{children}</div>
+      </div>
+    </div>
+  );
+}
 
 interface Project {
   id: string;
