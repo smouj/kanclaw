@@ -3,6 +3,9 @@ node_modules
 *.log
 .env
 .env.local
+.desktop-sidecar
+src-tauri/target
+src-tauri/binaries
 prisma/dev.db
 prisma/dev.db-journal
 prisma/prisma/dev.db

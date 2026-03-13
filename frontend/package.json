@@ -7,6 +7,9 @@
     "build": "next build",
     "start": "next dev",
     "serve": "next start",
+    "desktop:prepare-sidecar": "node scripts/desktop/prepare-sidecar.mjs",
+    "desktop:dev": "tauri dev",
+    "desktop:build": "tauri build",
     "lint": "next lint",
     "prisma": "prisma",
     "db:push": "prisma db push",
@@ -37,6 +40,7 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.10.1",
     "@types/node": "^22.13.9",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
@@ -44,6 +48,7 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.25",
+    "pkg": "^5.8.1",
     "postcss": "^8.5.3",
     "prisma": "^5.22.0",
     "tsx": "^4.19.3",

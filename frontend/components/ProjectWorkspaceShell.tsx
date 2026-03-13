@@ -34,7 +34,7 @@ interface ProjectWorkspaceShellProps {
     agentSurfaces: Array<{ id: string; name: string; role: string; status: string; soul: string; tools: string; memory: string }>;
     snapshots: Array<{ id: string; title: string; summary: string; createdAt: string | Date }>;
     imports: Array<{ id: string; provider: string; label: string; status: string; summary?: string | null }>;
-    threads: Array<{ id: string; title: string; scope: string; agentId: string | null; agent?: { name: string } | null; messages: Array<{ id: string; role: string; actor: string; content: string; targetAgentName: string | null; createdAt: string | Date }> }>;
+    threads: Array<{ id: string; title: string; scope: string; agentId: string | null; agent?: { name: string } | null; messages: Array<{ id: string; role: string; actor: string; content: string; targetAgentName: string | null; createdAt: string | Date; metadata?: unknown }> }>;
   };
 }
 
