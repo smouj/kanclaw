@@ -1,12 +1,23 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ChevronDown, ChevronRight, FileCode2, Folder, Save } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  FileCode2,
+  Folder,
+  Plus,
+  Save,
+  Search,
+  FileText,
+  FileJson,
+  FileType,
+  X,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useProjectStore } from '@/store/useProjectStore';
 
 interface TreeNode {
   name: string;
@@ -16,120 +27,316 @@ interface TreeNode {
   children?: TreeNode[];
 }
 
-function TreeBranch({ node, onSelect }: { node: TreeNode; onSelect: (node: TreeNode) => void }) {
-  const [open, setOpen] = useState(true);
+function TreeBranch({
+  node,
+  onSelect,
+  selectedPath,
+  depth = 0,
+}: {
+  node: TreeNode;
+  onSelect: (node: TreeNode) => void;
+  selectedPath: string;
+  depth?: number;
+}) {
+  const [open, setOpen] = useState(depth < 2);
+  const isSelected = selectedPath === node.path;
 
   if (node.kind === 'file') {
     return (
-      <button type="button" className="flex w-full items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm text-zinc-300 transition hover:bg-white/5" onClick={() => onSelect(node)} data-testid={`file-tree-item-${node.path.replace(/[^a-zA-Z0-9]+/g, '-')}`}>
-        <FileCode2 className="h-4 w-4 text-zinc-500" />
+      <button
+        type="button"
+        className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm transition ${
+          isSelected
+            ? 'bg-accent-green/20 text-accent-green'
+            : 'text-zinc-300 hover:bg-white/5'
+        }`}
+        style={{ paddingLeft: `${depth * 12 + 12}px` }}
+        onClick={() => onSelect(node)}
+      >
+        {getFileIcon(node.name)}
         <span className="truncate">{node.name}</span>
       </button>
     );
   }
 
   return (
-    <div className="space-y-1">
-      <button type="button" className="flex w-full items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm text-zinc-100 transition hover:bg-white/5" onClick={() => setOpen((value) => !value)} data-testid={`directory-tree-item-${node.path.replace(/[^a-zA-Z0-9]+/g, '-')}`}>
-        {open ? <ChevronDown className="h-4 w-4 text-zinc-500" /> : <ChevronRight className="h-4 w-4 text-zinc-500" />}
-        <Folder className="h-4 w-4 text-zinc-500" />
+    <div className="space-y-0.5">
+      <button
+        type="button"
+        className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm transition ${
+          isSelected ? 'bg-white/10 text-zinc-100' : 'text-zinc-200 hover:bg-white/5'
+        }`}
+        style={{ paddingLeft: `${depth * 12 + 8}px` }}
+        onClick={() => setOpen((v) => !v)}
+      >
+        {open ? (
+          <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 text-zinc-500" />
+        ) : (
+          <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-zinc-500" />
+        )}
+        <Folder className="h-4 w-4 flex-shrink-0 text-yellow-500" />
         <span className="truncate">{node.name}</span>
       </button>
-      {open && node.children?.length ? <div className="ml-4 space-y-1 border-l border-white/5 pl-2">{node.children.map((child) => <TreeBranch key={child.path} node={child} onSelect={onSelect} />)}</div> : null}
+      {open && node.children?.length ? (
+        <div className="ml-1">
+          {node.children.map((child) => (
+            <TreeBranch
+              key={child.path}
+              node={child}
+              onSelect={onSelect}
+              selectedPath={selectedPath}
+              depth={depth + 1}
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }
 
+function getFileIcon(filename: string) {
+  const ext = filename.split('.').pop()?.toLowerCase();
+  if (ext === 'md') return <FileText className="h-4 w-4 flex-shrink-0 text-blue-400" />;
+  if (ext === 'json') return <FileJson className="h-4 w-4 flex-shrink-0 text-yellow-400" />;
+  if (['ts', 'tsx', 'js', 'jsx'].includes(ext || ''))
+    return <FileType className="h-4 w-4 flex-shrink-0 text-blue-500" />;
+  return <FileCode2 className="h-4 w-4 flex-shrink-0 text-zinc-500" />;
+}
+
 export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string; initialTree: TreeNode[] }) {
-  const { selectedFilePath, setSelectedFilePath } = useProjectStore();
   const [tree, setTree] = useState(initialTree);
+  const [selectedPath, setSelectedPath] = useState('');
   const [content, setContent] = useState('');
-  const [newPath, setNewPath] = useState('knowledge/notes.md');
-  const [metadata, setMetadata] = useState<{ absolutePath: string; relativePath: string; size: number; updatedAt: string } | null>(null);
+  const [newFileName, setNewFileName] = useState('');
+  const [showNewFile, setShowNewFile] = useState(false);
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const filteredTree = search
+    ? filterTree(tree, search.toLowerCase())
+    : tree;
 
   useEffect(() => {
     setTree(initialTree);
   }, [initialTree]);
 
+  function filterTree(nodes: TreeNode[], query: string): TreeNode[] {
+    const result: TreeNode[] = [];
+    for (const node of nodes) {
+      if (node.name.toLowerCase().includes(query)) {
+        result.push(node);
+      } else if (node.kind === 'directory' && node.children) {
+        const filteredChildren = filterTree(node.children, query);
+        if (filteredChildren.length > 0) {
+          result.push({ ...node, children: filteredChildren });
+        }
+      }
+    }
+    return result;
+  }
+
+  async function handleSelect(node: TreeNode) {
+    await loadFile(node.path);
+  }
+
   async function loadFile(path: string) {
+    if (hasChanges) {
+      const confirm = window.confirm('Tienes cambios sin guardar. ¿Quieres descartar?');
+      if (!confirm) return;
+    }
+
     setLoading(true);
-    setSelectedFilePath(path);
+    setSelectedPath(path);
+    setHasChanges(false);
+
     const response = await fetch(`/api/files?projectSlug=${projectSlug}&path=${encodeURIComponent(path)}`);
     setLoading(false);
+
     if (!response.ok) {
       toast.error('No se pudo abrir el archivo.');
       return;
     }
+
     const data = await response.json();
-    setContent(data.content);
-    setMetadata(data.metadata || null);
+    setContent(data.content || '');
   }
 
-  async function saveFile(path: string) {
+  async function saveFile() {
+    if (!selectedPath) return;
+
+    setSaving(true);
     const response = await fetch('/api/files', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ projectSlug, path, content }),
+      body: JSON.stringify({ projectSlug, path: selectedPath, content }),
     });
+    setSaving(false);
+
     if (!response.ok) {
       toast.error('No se pudo guardar el archivo.');
       return;
     }
+
+    setHasChanges(false);
     toast.success('Archivo guardado.');
   }
 
   async function createFile() {
-    if (!newPath.trim()) return;
-    await fetch('/api/files', {
-      method: 'PUT',
+    if (!newFileName.trim()) {
+      toast.error('Introduce un nombre de archivo.');
+      return;
+    }
+
+    const response = await fetch('/api/files', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ projectSlug, path: newPath, content: '' }),
+      body: JSON.stringify({ projectSlug, path: newFileName, content: '' }),
     });
-    const response = await fetch(`/api/files?projectSlug=${projectSlug}`);
-    const data = await response.json();
-    setTree(data.tree);
-    setSelectedFilePath(newPath);
-    setContent('');
+
+    if (!response.ok) {
+      toast.error('No se pudo crear el archivo.');
+      return;
+    }
+
+    toast.success('Archivo creado.');
+    setShowNewFile(false);
+    setNewFileName('');
+    window.location.reload();
   }
 
-  return (
-    <div className="grid h-full grid-rows-[auto_1fr]">
-      <div className="border-b border-white/5 p-4">
-        <p className="text-xs uppercase tracking-[0.3em] text-muted">Workspace files</p>
-        <h2 className="mt-2 text-2xl font-semibold">Explorador</h2>
-        <div className="mt-4 flex items-center gap-2">
-          <Input value={newPath} onChange={(event) => setNewPath(event.target.value)} data-testid="file-create-path-input" />
-          <Button type="button" variant="outline" onClick={createFile} data-testid="file-create-button">Crear</Button>
-        </div>
-      </div>
+  function handleContentChange(newContent: string) {
+    setContent(newContent);
+    setHasChanges(true);
+  }
 
-      <div className="grid min-h-0 grid-rows-[280px_1fr] lg:grid-rows-[320px_1fr]">
-        <div className="scrollbar-thin overflow-y-auto border-b border-white/5 p-3">
-          {tree.length === 0 ? (
-            <div className="flex h-full items-center justify-center rounded-3xl border border-dashed border-white/10 theme-surface-soft px-6 text-center text-sm text-zinc-500" data-testid="empty-files-state">
-              No hay archivos todavía.
+  const fileName = selectedPath.split('/').pop() || '';
+  const fileExt = fileName.split('.').pop()?.toLowerCase() || '';
+
+  return (
+    <div className="flex h-full w-full overflow-hidden">
+      {/* Sidebar - File Tree */}
+      <div className="flex w-64 flex-shrink-0 flex-col border-r border-border bg-surface">
+        {/* Search */}
+        <div className="flex items-center gap-2 border-b border-border p-3">
+          <Search className="h-4 w-4 text-zinc-500" />
+          <input
+            type="text"
+            placeholder="Buscar archivos..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-1 bg-transparent text-sm text-zinc-200 placeholder-zinc-500 outline-none"
+          />
+        </div>
+
+        {/* New file button */}
+        <div className="border-b border-border p-2">
+          <Button
+            size="sm"
+            variant="ghost"
+            className="w-full justify-start gap-2 text-zinc-400 hover:text-zinc-200"
+            onClick={() => setShowNewFile(true)}
+          >
+            <Plus className="h-4 w-4" />
+            <span className="text-sm">Nuevo archivo</span>
+          </Button>
+
+          {showNewFile && (
+            <div className="mt-2 space-y-2 rounded-lg border border-border bg-surface2 p-2">
+              <Input
+                placeholder="ruta/archivo.md"
+                value={newFileName}
+                onChange={(e) => setNewFileName(e.target.value)}
+                className="text-sm"
+              />
+              <div className="flex gap-2">
+                <Button size="sm" className="flex-1" onClick={createFile}>
+                  Crear
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setShowNewFile(false)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-          ) : (
-            tree.map((node) => <TreeBranch key={node.path} node={node} onSelect={(value) => loadFile(value.path)} />)
           )}
         </div>
 
-        <div className="flex min-h-0 flex-col p-4">
-          <div className="mb-3 flex items-center justify-between gap-3 text-sm text-zinc-400">
-            <span data-testid="selected-file-path">{selectedFilePath || 'Selecciona un archivo para editar'}</span>
-            {selectedFilePath ? <Button type="button" onClick={() => saveFile(selectedFilePath)} className="gap-2" data-testid="file-save-button"><Save className="h-4 w-4" />Guardar</Button> : null}
+        {/* Tree */}
+        <div className="flex-1 overflow-y-auto p-2">
+          {filteredTree.map((node) => (
+            <TreeBranch
+              key={node.path}
+              node={node}
+              onSelect={handleSelect}
+              selectedPath={selectedPath}
+            />
+          ))}
+          {filteredTree.length === 0 && (
+            <p className="p-3 text-sm text-zinc-500">
+              {search ? 'No se encontraron archivos.' : 'No hay archivos aún.'}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Main editor area */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Toolbar */}
+        <div className="flex items-center justify-between border-b border-border bg-surface px-4 py-2">
+          <div className="flex items-center gap-3">
+            {selectedPath ? (
+              <>
+                {getFileIcon(fileName)}
+                <span className="text-sm font-medium text-zinc-200">{fileName}</span>
+                {hasChanges && (
+                  <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-xs text-amber-400">
+                    Sin guardar
+                  </span>
+                )}
+              </>
+            ) : (
+              <span className="text-sm text-zinc-500">Selecciona un archivo</span>
+            )}
           </div>
-          {selectedFilePath ? (
-            <div className="mb-3 rounded-[1.3rem] border border-white/7 bg-white/[0.03] px-4 py-3 text-xs text-zinc-500" data-testid="file-metadata-panel">
-              <div className="flex flex-wrap gap-4">
-                <span>{selectedFilePath.split('/').join(' / ')}</span>
-                {metadata ? <span>{metadata.size} bytes</span> : null}
-                {metadata ? <span>Actualizado {new Date(metadata.updatedAt).toLocaleString('es-ES')}</span> : null}
-              </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-zinc-500">{fileExt.toUpperCase()}</span>
+            <Button
+              size="sm"
+              disabled={!selectedPath || !hasChanges}
+              onClick={saveFile}
+              className="gap-2"
+            >
+              <Save className="h-4 w-4" />
+              {saving ? 'Guardando...' : 'Guardar'}
+            </Button>
+          </div>
+        </div>
+
+        {/* Editor */}
+        <div className="flex-1 overflow-hidden bg-surface2">
+          {loading ? (
+            <div className="flex h-full items-center justify-center">
+              <p className="text-zinc-500">Cargando archivo...</p>
             </div>
-          ) : null}
-          <Textarea value={content} onChange={(event) => setContent(event.target.value)} rows={18} className="h-full min-h-[320px] flex-1 font-mono text-xs" disabled={!selectedFilePath || loading} data-testid="file-editor-textarea" />
+          ) : selectedPath ? (
+            <textarea
+              value={content}
+              onChange={(e) => handleContentChange(e.target.value)}
+              className="h-full w-full resize-none bg-transparent p-4 font-mono text-sm text-zinc-200 outline-none"
+              spellCheck={false}
+              placeholder="Escribe o pega contenido..."
+            />
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center text-zinc-500">
+              <FileCode2 className="mb-4 h-12 w-12 opacity-50" />
+              <p className="text-lg font-medium">Selecciona un archivo para editar</p>
+              <p className="mt-2 text-sm">
+                O crea uno nuevo con el botón &quot;Nuevo archivo&quot;
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
