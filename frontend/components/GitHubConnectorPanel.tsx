@@ -61,15 +61,21 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
 
   async function loadPreview(repo: RepositoryItem) {
     setSelectedRepo(repo);
+    setPreview(null);
     setLoading(true);
-    const response = await fetch(`/api/connectors/github?owner=${repo.owner}&repo=${repo.name}`);
-    const data = await response.json();
-    setLoading(false);
-    if (!response.ok) {
-      toast.error(data.error || 'No se pudo inspeccionar el repositorio.');
-      return;
+    try {
+      const response = await fetch(`/api/connectors/github?owner=${repo.owner}&repo=${repo.name}`);
+      const data = await response.json();
+      setLoading(false);
+      if (!response.ok) {
+        toast.error(data.error || 'No se pudo inspeccionar el repositorio.');
+        return;
+      }
+      setPreview(data);
+    } catch (error) {
+      setLoading(false);
+      toast.error('Error al cargar el repositorio.');
     }
-    setPreview(data);
   }
 
   async function importRepository(mode: 'create' | 'attach') {
