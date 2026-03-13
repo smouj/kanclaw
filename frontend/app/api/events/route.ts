@@ -1,4 +1,5 @@
 import { WebSocket } from 'ws';
+import { normalizeOpenClawEvent, persistOpenClawEvent } from '@/lib/openclaw-events';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -28,10 +29,11 @@ export async function GET(request: Request) {
 
       socket.on('message', (raw) => {
         try {
-          const event = JSON.parse(String(raw));
+          const event = normalizeOpenClawEvent(JSON.parse(String(raw)) as Record<string, unknown>);
           if (projectSlug && event.projectSlug && event.projectSlug !== projectSlug) {
             return;
           }
+          void persistOpenClawEvent(event);
           controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
         } catch {
           controller.enqueue(

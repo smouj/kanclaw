@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import { buildSuperChatContext } from '@/lib/chat-context';
 import { executeDelegationActions, parseDelegationActions } from '@/lib/delegation';
 import { prisma } from '@/lib/prisma';
 import { ensureProjectThreads } from '@/lib/project-os';
@@ -10,6 +11,7 @@ const chatSchema = z.object({
   threadId: z.string().min(1),
   targetAgentName: z.string().optional().default(''),
   content: z.string().min(1),
+  contextItems: z.array(z.object({ id: z.string(), kind: z.string(), title: z.string(), path: z.string().optional(), runId: z.string().optional(), taskId: z.string().optional(), threadId: z.string().optional() })).optional().default([]),
 });
 
 function messageFromBody(body: unknown) {
@@ -18,6 +20,13 @@ function messageFromBody(body: unknown) {
     return body.message;
   }
   return JSON.stringify(body, null, 2);
+}
+
+function getExternalTaskId(body: unknown) {
+  if (!body || typeof body !== 'object') return null;
+  if ('taskId' in body && typeof body.taskId === 'string') return body.taskId;
+  if ('id' in body && typeof body.id === 'string') return body.id;
+  return null;
 }
 
 export async function GET(request: Request) {
@@ -91,8 +100,11 @@ export async function POST(request: Request) {
         actor: 'Human',
         targetAgentName,
         content: payload.content,
+        metadata: JSON.stringify({ contextItems: payload.contextItems }),
       },
     });
+
+    const automaticContext = await buildSuperChatContext(project.slug, payload.content, targetAgentName);
 
     await prisma.agent.update({ where: { id: targetAgent.id }, data: { status: 'thinking' } });
 
@@ -105,7 +117,7 @@ export async function POST(request: Request) {
         title: `Chat · ${targetAgentName}`,
         status: 'running',
         input: payload.content,
-        metadata: JSON.stringify({ threadId: thread.id, targetAgentName }),
+        metadata: JSON.stringify({ threadId: thread.id, targetAgentName, automaticContext, selectedContext: payload.contextItems }),
       },
     });
 
@@ -126,7 +138,7 @@ export async function POST(request: Request) {
           actor: 'System',
           targetAgentName,
           content: 'OpenClaw no está disponible. El mensaje quedó registrado, pero no se pudo despachar al agente.',
-          metadata: JSON.stringify({ reason: 'gateway_unreachable', runId: run.id }),
+          metadata: JSON.stringify({ reason: 'gateway_unreachable', runId: run.id, contextItems: automaticContext.slice(0, 6) }),
         },
       });
       return NextResponse.json({ error: 'OpenClaw no está disponible.' }, { status: 503 });
@@ -145,7 +157,7 @@ export async function POST(request: Request) {
           actor: 'System',
           targetAgentName,
           content: messageFromBody(body),
-          metadata: JSON.stringify({ responseStatus: response.status, runId: run.id }),
+          metadata: JSON.stringify({ responseStatus: response.status, runId: run.id, contextItems: automaticContext.slice(0, 6) }),
         },
       });
       return NextResponse.json({ error: 'OpenClaw rechazó el mensaje.', details: body }, { status: response.status });
@@ -153,7 +165,8 @@ export async function POST(request: Request) {
 
     const actions = parseDelegationActions(typeof body === 'string' ? body : body.actions || body.message || body);
     const executedActions = await executeDelegationActions(project.slug, project.id, actions, { sourceRunId: run.id, originThreadId: thread.id });
-    await prisma.run.update({ where: { id: run.id }, data: { status: 'completed', output: messageFromBody(body), metadata: JSON.stringify({ executedActions, targetAgentName }) } });
+    const externalTaskId = getExternalTaskId(body);
+    await prisma.run.update({ where: { id: run.id }, data: { status: 'completed', output: messageFromBody(body), metadata: JSON.stringify({ executedActions, targetAgentName, externalTaskId, automaticContext }) } });
     await prisma.agent.update({ where: { id: targetAgent.id }, data: { status: 'idle' } });
     await prisma.chatMessage.create({
       data: {
@@ -162,7 +175,7 @@ export async function POST(request: Request) {
         actor: targetAgentName,
         targetAgentName,
         content: messageFromBody(body),
-        metadata: JSON.stringify({ executedActions, runId: run.id }),
+        metadata: JSON.stringify({ executedActions, runId: run.id, contextItems: automaticContext.slice(0, 6), externalTaskId }),
       },
     });
 

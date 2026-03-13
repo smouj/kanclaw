@@ -27,6 +27,14 @@ const actionSchema = z.discriminatedUnion('action', [
 
 type ParsedAction = z.infer<typeof actionSchema>;
 
+export interface DelegationExecutionResult {
+  kind: 'task' | 'decision' | 'knowledge' | 'artifact';
+  label: string;
+  taskId?: string;
+  path?: string;
+  agentName?: string;
+}
+
 function extractJsonChunks(text: string) {
   const matches = [...text.matchAll(/```json\s*([\s\S]*?)```/g)].map((match) => match[1]);
   if (matches.length > 0) {
@@ -79,7 +87,7 @@ export async function executeDelegationActions(
   actions: ParsedAction[],
   context?: { sourceRunId?: string; originThreadId?: string },
 ) {
-  const executed: string[] = [];
+  const executed: DelegationExecutionResult[] = [];
 
   for (const action of actions) {
     if (action.action === 'create_subtask') {
@@ -91,7 +99,7 @@ export async function executeDelegationActions(
         continue;
       }
 
-      await prisma.task.create({
+      const createdTask = await prisma.task.create({
         data: {
           projectId,
           title: action.title,
@@ -103,22 +111,22 @@ export async function executeDelegationActions(
         },
       });
 
-      executed.push(`Subtask created for ${action.to}`);
+      executed.push({ kind: 'task', label: `Subtask created for ${action.to}`, taskId: createdTask.id, agentName: action.to });
     }
 
     if (action.action === 'append_decision') {
       await appendProjectFile(projectSlug, 'decisions/decision-log.md', `\n- ${action.summary}`);
-      executed.push('Decision appended');
+      executed.push({ kind: 'decision', label: 'Decision appended', path: 'decisions/decision-log.md' });
     }
 
     if (action.action === 'append_knowledge') {
       await appendProjectFile(projectSlug, action.file, `\n${action.content}\n`);
-      executed.push(`Knowledge updated: ${action.file}`);
+      executed.push({ kind: 'knowledge', label: `Knowledge updated: ${action.file}`, path: action.file });
     }
 
     if (action.action === 'create_artifact') {
       await writeProjectFile(projectSlug, action.path, JSON.stringify(action.content, null, 2));
-      executed.push(`Artifact created: ${action.path}`);
+      executed.push({ kind: 'artifact', label: `Artifact created: ${action.path}`, path: action.path });
     }
 
     await prisma.activityLog.create({

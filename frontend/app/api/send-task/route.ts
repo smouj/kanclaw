@@ -10,6 +10,13 @@ const schema = z.object({
   prompt: z.string().min(1),
 });
 
+function getExternalTaskId(body: unknown) {
+  if (!body || typeof body !== 'object') return null;
+  if ('taskId' in body && typeof body.taskId === 'string') return body.taskId;
+  if ('id' in body && typeof body.id === 'string') return body.id;
+  return null;
+}
+
 export async function POST(request: Request) {
   try {
     const payload = schema.parse(await request.json());
@@ -97,9 +104,10 @@ export async function POST(request: Request) {
 
     const actions = parseDelegationActions(typeof body === 'string' ? body : body.actions || body.message || body);
     const executedActions = await executeDelegationActions(project.slug, project.id, actions, { sourceRunId: run.id });
+    const externalTaskId = getExternalTaskId(body);
     await prisma.run.update({
       where: { id: run.id },
-      data: { status: 'completed', output: typeof body === 'string' ? body : JSON.stringify(body), metadata: JSON.stringify({ executedActions }) },
+      data: { status: 'completed', output: typeof body === 'string' ? body : JSON.stringify(body), metadata: JSON.stringify({ executedActions, externalTaskId }) },
     });
 
     await prisma.activityLog.create({

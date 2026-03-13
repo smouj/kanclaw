@@ -138,7 +138,44 @@ artifacts/snapshots/<snapshot-id>.json
 
 ## Desktop / Tauri
 
-KanClaw queda preparado para evolucionar a app de escritorio. La base local-first y el shell están diseñados para ese paso. Si usas la carpeta `src-tauri`, puedes adaptar el wrapper desktop para tu flujo local.
+KanClaw ahora incluye una base real para wrapper desktop con **Tauri 2 + sidecar SSR**.
+
+### Scripts
+
+```bash
+yarn desktop:dev
+yarn desktop:prepare-sidecar
+yarn desktop:build
+```
+
+### Qué hace
+
+- empaqueta el servidor standalone de Next como sidecar
+- abre KanClaw como app de escritorio
+- mantiene App Router + API routes
+- conserva el workspace local-first en `~/.kanclaw/`
+
+### Nota importante
+
+El empaquetado del sidecar usa `pkg`, que actualmente apunta a targets Node 18 por compatibilidad del empaquetador.
+
+## OpenClaw online
+
+Cuando OpenClaw emite eventos reales, KanClaw ahora:
+
+- normaliza eventos soportados
+- los persiste como actividad
+- actualiza runs y tareas cuando puede enlazarlos
+- refleja progreso/fallo/finalización en el chat del proyecto
+
+## Super-chat
+
+El chat del proyecto ahora incluye:
+
+- contexto automático del proyecto por mensaje
+- búsqueda híbrida local sobre memory, knowledge, decisions, artifacts, runs, tareas, imports y mensajes
+- selección explícita de contexto antes de enviar
+- inspector lateral con vínculos de provenance por mensaje
 
 ## Scripts
 

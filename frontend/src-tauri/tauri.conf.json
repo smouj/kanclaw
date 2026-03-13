@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "KanClaw",
+  "version": "0.1.0",
+  "identifier": "com.kanclaw.desktop",
+  "build": {
+    "beforeDevCommand": "yarn dev",
+    "beforeBuildCommand": "yarn build && yarn desktop:prepare-sidecar",
+    "devUrl": "http://localhost:3000",
+    "frontendDist": "../public"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "KanClaw",
+        "url": "http://127.0.0.1:3210",
+        "width": 1600,
+        "height": 980,
+        "minWidth": 1200,
+        "minHeight": 760,
+        "resizable": true,
+        "center": true
+      }
+    ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "externalBin": [
+      "binaries/kanclaw-next-server"
+    ],
+    "icon": [
+      "icons/icon.png"
+    ]
+  }
+}
