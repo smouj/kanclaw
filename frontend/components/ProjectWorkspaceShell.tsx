@@ -386,19 +386,84 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
           <div className="flex-1 overflow-hidden p-4">
             <div className="h-full overflow-y-auto rounded border border-border bg-surface/50">
               {activeView === 'overview' && (
-                <div className="p-4 space-y-4">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="p-6 space-y-6">
+                  {/* Main Stats Grid */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
-                      ['Threads', String(model.threads.length)],
-                      ['Delegations', String(model.delegations.length)],
-                      ['Snapshots', String(model.snapshots.length)],
-                      ['Imports', String(model.imports.length)],
-                    ].map(([label, value]) => (
-                      <div key={label} className="p-4 rounded border border-border bg-surface">
-                        <p className="text-xs text-text-muted uppercase">{label}</p>
-                        <p className="text-2xl font-bold mt-1">{value}</p>
+                      { label: 'Conversaciones', value: model.threads.length, icon: '💬', color: 'blue' },
+                      { label: 'Tareas', value: model.project.tasks.length, icon: '✅', color: 'emerald' },
+                      { label: 'Ejecuciones', value: model.runs.length, icon: '⚡', color: 'amber' },
+                      { label: 'Snapshots', value: model.snapshots.length, icon: '📸', color: 'purple' },
+                    ].map((stat) => (
+                      <div key={stat.label} className={`p-5 rounded-xl border bg-surface border-border`}>
+                        <div className="flex items-center justify-between">
+                          <span className="text-2xl">{stat.icon}</span>
+                          <span className={`text-xs uppercase tracking-wider text-${stat.color}-500`}>{stat.label}</span>
+                        </div>
+                        <p className="mt-3 text-3xl font-bold">{stat.value}</p>
                       </div>
                     ))}
+                  </div>
+
+                  {/* Agents Status */}
+                  <div className="rounded-xl border border-border bg-surface p-5">
+                    <h3 className="text-sm font-medium mb-4">Agentes del proyecto</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {project.agents.map((agent) => (
+                        <div key={agent.id} className="flex items-center justify-between p-3 rounded-lg bg-surface2 border border-border">
+                          <div className="flex items-center gap-3">
+                            <div className="h-3 w-3 rounded-full bg-emerald-500" />
+                            <span className="text-sm font-medium">{agent.name}</span>
+                          </div>
+                          <span className="text-xs text-zinc-500">{agent.role || 'Sin rol'}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Quick Info Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="rounded-xl border border-border bg-surface p-5">
+                      <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Delegaciones</h3>
+                      <p className="text-2xl font-bold">{model.delegations.length}</p>
+                      {model.delegations.slice(0, 2).map((d) => (
+                        <p key={d.id} className="mt-2 text-xs text-zinc-500 truncate">{d.action}</p>
+                      ))}
+                    </div>
+                    <div className="rounded-xl border border-border bg-surface p-5">
+                      <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Importaciones</h3>
+                      <p className="text-2xl font-bold">{model.imports.length}</p>
+                      {model.imports.slice(0, 2).map((imp) => (
+                        <p key={imp.id} className="mt-2 text-xs text-zinc-500 truncate">{imp.provider}: {imp.label}</p>
+                      ))}
+                    </div>
+                    <div className="rounded-xl border border-border bg-surface p-5">
+                      <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Memoria</h3>
+                      <p className="text-2xl font-bold">{model.projectMemory.length > 0 ? 'Activa' : 'Vacía'}</p>
+                      <p className="mt-2 text-xs text-zinc-500">{model.knowledge.length} archivos de conocimiento</p>
+                    </div>
+                  </div>
+
+                  {/* Recent Activity */}
+                  <div className="rounded-xl border border-border bg-surface p-5">
+                    <h3 className="text-sm font-medium mb-4">Actividad reciente</h3>
+                    <div className="space-y-2">
+                      {model.logs.length === 0 ? (
+                        <p className="text-sm text-zinc-500">Sin actividad registrada</p>
+                      ) : (
+                        model.logs.slice(0, 8).map((log) => (
+                          <div key={log.id} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
+                            <div className="flex items-center gap-3">
+                              <span className="text-xs text-zinc-500">{log.actor}</span>
+                              <span className="text-sm">{log.action}</span>
+                            </div>
+                            <span className="text-xs text-zinc-600">
+                              {new Date(log.timestamp).toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
