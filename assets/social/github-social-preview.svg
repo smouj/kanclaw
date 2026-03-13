@@ -1,60 +1,93 @@
 <svg width="1280" height="640" viewBox="0 0 1280 640" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="640" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#07090F"/>
-      <stop offset="1" stop-color="#0B1020"/>
+      <stop stop-color="#030406"/>
+      <stop offset="1" stop-color="#060B14"/>
     </linearGradient>
-    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1060 120) rotate(140) scale(460 260)">
-      <stop stop-color="#79FFE1" stop-opacity="0.28"/>
-      <stop offset="1" stop-color="#79FFE1" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(170 80) rotate(38) scale(560 320)">
-      <stop stop-color="#8CB4FF" stop-opacity="0.22"/>
+    <radialGradient id="g1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(190 90) rotate(28) scale(620 300)">
+      <stop stop-color="#8CB4FF" stop-opacity="0.28"/>
       <stop offset="1" stop-color="#8CB4FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1030 120) rotate(150) scale(500 260)">
+      <stop stop-color="#79FFE1" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#79FFE1" stop-opacity="0"/>
     </radialGradient>
     <linearGradient id="line" x1="0" y1="0" x2="1280" y2="0" gradientUnits="userSpaceOnUse">
       <stop stop-color="#FFFFFF" stop-opacity="0"/>
       <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.14"/>
       <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
     </linearGradient>
+    <linearGradient id="terrain" x1="640" y1="290" x2="640" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0E1526" stop-opacity="0"/>
+      <stop offset="1" stop-color="#0E1526" stop-opacity="0.85"/>
+    </linearGradient>
   </defs>
 
   <rect width="1280" height="640" fill="url(#bg)"/>
-  <rect width="1280" height="640" fill="url(#glowA)"/>
-  <rect width="1280" height="640" fill="url(#glowB)"/>
+  <rect width="1280" height="640" fill="url(#g1)"/>
+  <rect width="1280" height="640" fill="url(#g2)"/>
 
+  <!-- subtle scan/grid lines -->
   <g opacity="0.18">
-    <path d="M0 92H1280" stroke="url(#line)"/>
-    <path d="M0 184H1280" stroke="url(#line)"/>
-    <path d="M0 276H1280" stroke="url(#line)"/>
-    <path d="M0 368H1280" stroke="url(#line)"/>
-    <path d="M0 460H1280" stroke="url(#line)"/>
-    <path d="M0 552H1280" stroke="url(#line)"/>
+    <path d="M0 84H1280" stroke="url(#line)"/>
+    <path d="M0 156H1280" stroke="url(#line)"/>
+    <path d="M0 228H1280" stroke="url(#line)"/>
+    <path d="M0 300H1280" stroke="url(#line)"/>
+    <path d="M0 372H1280" stroke="url(#line)"/>
+    <path d="M0 444H1280" stroke="url(#line)"/>
+    <path d="M0 516H1280" stroke="url(#line)"/>
+    <path d="M0 588H1280" stroke="url(#line)"/>
   </g>
 
-  <rect x="72" y="76" width="1136" height="488" rx="24" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.12)"/>
+  <!-- animated-app-like terrain perspective -->
+  <g opacity="0.5">
+    <path d="M0 640 L1280 640 L1280 300 Q960 290 640 300 Q320 310 0 300 Z" fill="url(#terrain)"/>
+    <g stroke="#9CB5FF" stroke-opacity="0.16">
+      <path d="M120 640 L420 300"/>
+      <path d="M220 640 L500 300"/>
+      <path d="M320 640 L570 300"/>
+      <path d="M420 640 L640 300"/>
+      <path d="M520 640 L710 300"/>
+      <path d="M620 640 L780 300"/>
+      <path d="M720 640 L850 300"/>
+      <path d="M820 640 L920 300"/>
+      <path d="M920 640 L990 300"/>
+      <path d="M1020 640 L1060 300"/>
+      <path d="M1120 640 L1130 300"/>
+    </g>
+    <g stroke="#79FFE1" stroke-opacity="0.16">
+      <path d="M0 610 Q640 545 1280 610"/>
+      <path d="M0 570 Q640 505 1280 570"/>
+      <path d="M0 530 Q640 465 1280 530"/>
+      <path d="M0 490 Q640 425 1280 490"/>
+      <path d="M0 450 Q640 385 1280 450"/>
+      <path d="M0 410 Q640 345 1280 410"/>
+      <path d="M0 370 Q640 305 1280 370"/>
+    </g>
+  </g>
+
+  <rect x="68" y="64" width="1144" height="512" rx="26" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.1)"/>
+
+  <!-- logo + brand -->
+  <rect x="112" y="110" width="74" height="74" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)"/>
+  <image href="https://raw.githubusercontent.com/smouj/kanclaw/main/frontend/public/kanclaw-logo-dark.png" x="121" y="119" width="56" height="56"/>
+
+  <text x="206" y="145" fill="#A3AEC2" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="17" letter-spacing="3">LIVING WORKSPACE OS</text>
+  <text x="206" y="200" fill="#F3F6FF" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="68" font-weight="700">KanClaw</text>
+
+  <text x="112" y="290" fill="#DEE5F7" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="34" font-weight="600">Premium local-first workspace for AI agent teams</text>
+  <text x="112" y="334" fill="#98A6BF" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="23">Persistent memory · Real run tracking · GitHub + OpenClaw integration</text>
 
   <g>
-    <rect x="116" y="120" width="72" height="72" rx="14" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)"/>
-    <image href="https://raw.githubusercontent.com/smouj/kanclaw/main/frontend/public/kanclaw-logo-dark.png" x="125" y="129" width="54" height="54"/>
+    <rect x="112" y="388" width="238" height="52" rx="26" fill="rgba(121,255,225,0.16)" stroke="rgba(121,255,225,0.45)"/>
+    <text x="154" y="421" fill="#E7FFF8" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">AI Agents</text>
+
+    <rect x="368" y="388" width="238" height="52" rx="26" fill="rgba(140,180,255,0.16)" stroke="rgba(140,180,255,0.45)"/>
+    <text x="422" y="421" fill="#ECF1FF" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">Local-First</text>
+
+    <rect x="624" y="388" width="238" height="52" rx="26" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.24)"/>
+    <text x="690" y="421" fill="#F4F7FC" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">Desktop Ready</text>
   </g>
 
-  <text x="210" y="152" fill="#A8B3C7" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" letter-spacing="3">LOCAL-FIRST WORKSPACE OS</text>
-  <text x="210" y="202" fill="#F3F6FF" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="64" font-weight="700">KanClaw</text>
-
-  <text x="116" y="292" fill="#D7DEEF" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="33" font-weight="600">Premium workspace for AI agent teams</text>
-  <text x="116" y="336" fill="#99A6BD" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="24">Persistent memory · Real run tracking · GitHub + OpenClaw integration</text>
-
-  <g>
-    <rect x="116" y="392" width="250" height="52" rx="26" fill="rgba(121,255,225,0.16)" stroke="rgba(121,255,225,0.45)"/>
-    <text x="149" y="425" fill="#E9FFF8" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">AI Agents</text>
-
-    <rect x="384" y="392" width="250" height="52" rx="26" fill="rgba(140,180,255,0.16)" stroke="rgba(140,180,255,0.45)"/>
-    <text x="430" y="425" fill="#ECF2FF" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">Local-First</text>
-
-    <rect x="652" y="392" width="250" height="52" rx="26" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.25)"/>
-    <text x="713" y="425" fill="#F5F7FC" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">Desktop Ready</text>
-  </g>
-
-  <text x="116" y="510" fill="#6F7C95" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20">github.com/smouj/kanclaw</text>
+  <text x="112" y="518" fill="#6E7B94" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20">github.com/smouj/kanclaw</text>
 </svg>
