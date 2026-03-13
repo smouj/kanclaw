@@ -119,9 +119,9 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-xs uppercase tracking-[0.28em] text-zinc-500">GitHub connector</p>
-            <h3 className="mt-2 text-xl font-semibold text-white">Conectar e importar</h3>
+            <h3 className="mt-2 text-xl font-semibold theme-text-strong">Conectar e importar</h3>
           </div>
-          <span className={`rounded-full border px-3 py-1 text-xs ${status.connected ? 'border-white/15 text-white' : 'border-white/10 text-zinc-500'}`} data-testid="github-connector-status">
+          <span className={`rounded-full border px-3 py-1 text-xs ${status.connected ? 'border-white/15 theme-text-strong' : 'border-white/10 text-zinc-500'}`} data-testid="github-connector-status">
             {status.connected ? `PAT · ${status.username}` : 'No configurado'}
           </span>
         </div>
@@ -148,21 +148,21 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
         <p className="text-xs uppercase tracking-[0.28em] text-zinc-500">Repository browser</p>
         <div className="mt-4 grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
           <div className="max-h-[520px] space-y-3 overflow-y-auto pr-1">
-            {repositories.length === 0 ? <p className="rounded-[1.4rem] border border-dashed border-white/10 bg-black/30 p-4 text-sm text-zinc-500">Carga tus repositorios accesibles para empezar.</p> : null}
+            {repositories.length === 0 ? <p className="rounded-[1.4rem] border border-dashed border-white/10 theme-surface-soft p-4 text-sm text-zinc-500">Carga tus repositorios accesibles para empezar.</p> : null}
             {repositories.map((repo) => (
-              <button key={repo.id} type="button" onClick={() => loadPreview(repo)} className={`w-full rounded-[1.4rem] border p-4 text-left transition ${selectedRepo?.id === repo.id ? 'border-white/18 bg-white/[0.05]' : 'border-white/8 bg-black/30 hover:border-white/15'}`} data-testid={`github-repo-item-${repo.fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
-                <p className="text-sm font-medium text-white">{repo.fullName}</p>
+              <button key={repo.id} type="button" onClick={() => loadPreview(repo)} className={`w-full rounded-[1.4rem] border p-4 text-left transition ${selectedRepo?.id === repo.id ? 'border-white/18 bg-white/[0.05]' : 'border-white/8 theme-surface-soft hover:border-white/15'}`} data-testid={`github-repo-item-${repo.fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
+                <p className="text-sm font-medium theme-text-strong">{repo.fullName}</p>
                 <p className="mt-2 text-xs leading-5 text-zinc-500">{repo.description || 'Sin descripción'}</p>
               </button>
             ))}
           </div>
 
-          <div className="rounded-[1.5rem] border border-white/8 bg-black/30 p-4">
+          <div className="rounded-[1.5rem] border border-white/8 theme-surface-soft p-4">
             {!preview ? <p className="text-sm text-zinc-500">Selecciona un repositorio para inspeccionarlo e importarlo.</p> : null}
             {preview ? (
               <div className="space-y-4" data-testid="github-repo-preview-panel">
                 <div>
-                  <h4 className="text-lg font-semibold text-white">{String(preview.fullName)}</h4>
+                  <h4 className="text-lg font-semibold theme-text-strong">{String(preview.fullName)}</h4>
                   <p className="mt-2 text-sm text-zinc-400">{String(preview.description || '')}</p>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
@@ -190,7 +190,7 @@ function InfoCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-[1.2rem] border border-white/7 bg-white/[0.03] p-4">
       <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{label}</p>
-      <p className="mt-3 text-sm text-white">{value}</p>
+      <p className="mt-3 text-sm theme-text-strong">{value}</p>
     </div>
   );
 }

@@ -12,10 +12,10 @@ export function ThemeToggle() {
   useEffect(() => {
     setMounted(true);
     const stored = localStorage.getItem('kanclaw-theme') as Theme | null;
-    if (stored) {
-      setTheme(stored);
-      applyTheme(stored);
-    }
+    const preferred: Theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    const active = stored || preferred;
+    setTheme(active);
+    applyTheme(active);
   }, []);
 
   function applyTheme(t: Theme) {

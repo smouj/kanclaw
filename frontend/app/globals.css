@@ -313,3 +313,28 @@ select:focus {
   background: #111111;
   color: #ffffff;
 }
+
+/* Theme-aware helpers */
+.theme-show-light { display: none; }
+.theme-show-dark { display: block; }
+
+.theme-light .theme-show-light { display: block; }
+.theme-light .theme-show-dark { display: none; }
+
+.theme-surface-soft {
+  background: rgba(0,0,0,0.35);
+  border-color: rgba(255,255,255,0.1);
+}
+
+.theme-light .theme-surface-soft {
+  background: rgba(255,255,255,0.75);
+  border-color: rgba(0,0,0,0.12);
+}
+
+.theme-light .theme-text-strong {
+  color: #111111 !important;
+}
+
+.theme-light .theme-text-muted {
+  color: #4b5563 !important;
+}

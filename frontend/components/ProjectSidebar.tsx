@@ -23,14 +23,14 @@ export function ProjectSidebar({ project, health }: ProjectSidebarProps) {
               alt="KanClaw official logo"
               fill
               sizes="56px"
-              className="object-contain p-1 dark:hidden"
+              className="object-contain p-1 theme-show-light"
             />
             <Image
               src="/kanclaw-logo-dark.png"
               alt="KanClaw official logo"
               fill
               sizes="56px"
-              className="hidden object-contain p-1 dark:block"
+              className="object-contain p-1 theme-show-dark"
             />
           </div>
           <div>

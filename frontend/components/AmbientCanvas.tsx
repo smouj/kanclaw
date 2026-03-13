@@ -5,7 +5,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
 // Enhanced Digital Terrain with RGB grid - works for both themes
-function DigitalTerrain() {
+function DigitalTerrain({ isLight }: { isLight: boolean }) {
   const meshRef = useRef<THREE.Mesh>(null);
   
   const geometry = useMemo(() => {
@@ -105,6 +105,7 @@ function DigitalTerrain() {
   useFrame(({ clock }) => {
     if (material.uniforms) {
       material.uniforms.uTime.value = clock.getElapsedTime();
+      material.uniforms.uIsLight.value = isLight ? 1 : 0;
     }
     if (meshRef.current) {
       meshRef.current.rotation.x = -0.25;
@@ -217,7 +218,7 @@ export function AmbientCanvas({ className = '' }: { className?: string }) {
         
         <ambientLight intensity={0.08} />
         
-        <DigitalTerrain />
+        <DigitalTerrain isLight={isLight} />
         <FloatingParticles />
       </Canvas>
     </div>

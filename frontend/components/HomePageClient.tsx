@@ -50,7 +50,7 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
   const [showOpenClawConfig, setShowOpenClawConfig] = useState(false);
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#020202] text-white">
+    <main className="relative min-h-screen overflow-hidden bg-background text-text-primary">
       <AmbientCanvas className="opacity-80" />
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1720px] flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
         {/* Header */}
@@ -81,7 +81,7 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
         )}
 
         <section className="kanclaw-panel grid gap-8 overflow-hidden p-6 lg:grid-cols-[1.25fr_0.75fr] lg:p-10">
-          <div className="relative rounded-[2.4rem] border border-white/6 bg-black/45 p-6">
+          <div className="relative rounded-[2.4rem] border theme-surface-soft p-6">
             <div className="mb-10 flex items-center gap-4">
               {/* Official Logo - Cat with mechanical arm (theme-aware) */}
               <div className="relative h-16 w-16 overflow-hidden rounded-xl border border-white/15 bg-white/[0.02] shadow-lg">
@@ -90,7 +90,7 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
                   alt="KanClaw official logo"
                   fill
                   sizes="64px"
-                  className="object-contain p-1 dark:hidden"
+                  className="object-contain p-1 theme-show-light"
                   priority
                 />
                 <Image
@@ -98,7 +98,7 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
                   alt="KanClaw official logo"
                   fill
                   sizes="64px"
-                  className="hidden object-contain p-1 dark:block"
+                  className="object-contain p-1 theme-show-dark"
                   priority
                 />
               </div>
@@ -142,7 +142,7 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
             </div>
 
             {projects.length === 0 ? (
-              <div className="flex min-h-64 flex-col justify-center rounded-[1.8rem] border border-dashed border-white/10 bg-black/25 p-6">
+              <div className="flex min-h-64 flex-col justify-center rounded-[1.8rem] border border-dashed border-white/10 theme-surface-soft p-6">
                 <p className="text-xl font-medium">No projects yet</p>
                 <p className="mt-2 max-w-xl text-sm text-zinc-500">Create your first workspace to activate persistent agents, memory, and local-first shell.</p>
               </div>
@@ -183,8 +183,8 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
               <div className="flex items-center gap-2 text-sm text-zinc-200"><MemoryStick className="h-4 w-4" /> Recent runs</div>
               <div className="mt-3 space-y-3">
                 {recentRuns.map((run) => (
-                  <article key={run.id} className="rounded-[1.2rem] border border-white/7 bg-black/35 p-3">
-                    <p className="text-sm text-white">{run.title}</p>
+                  <article key={run.id} className="rounded-[1.2rem] border theme-surface-soft p-3">
+                    <p className="text-sm theme-text-strong">{run.title}</p>
                     <p className="mt-1 text-xs text-zinc-500">{run.project.name} · {run.status}</p>
                   </article>
                 ))}
@@ -194,8 +194,8 @@ export function HomePageClient({ projects, health, githubStatus, recentRuns, rec
               <div className="flex items-center gap-2 text-sm text-zinc-200"><Workflow className="h-4 w-4" /> Recent activity</div>
               <div className="mt-3 space-y-3">
                 {recentLogs.map((log) => (
-                  <article key={log.id} className="rounded-[1.2rem] border border-white/7 bg-black/35 p-3">
-                    <p className="text-sm text-white">{log.action}</p>
+                  <article key={log.id} className="rounded-[1.2rem] border theme-surface-soft p-3">
+                    <p className="text-sm theme-text-strong">{log.action}</p>
                     <p className="mt-1 text-xs text-zinc-500">{log.project.name} · {log.actor}</p>
                   </article>
                 ))}

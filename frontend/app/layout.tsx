@@ -13,7 +13,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="es" suppressHydrationWarning>
       <body>
         {children}
-        <Toaster theme="dark" richColors position="top-right" />
+        <Toaster theme="system" richColors position="top-right" />
       </body>
     </html>
   );
