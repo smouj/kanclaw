@@ -17,17 +17,27 @@ model Project {
   agents      Agent[]
   tasks       Task[]
   logs        ActivityLog[]
+  runs        Run[]
+  snapshots   Snapshot[]
+  chatThreads ChatThread[]
+  imports     ProjectImport[]
 }
 
 model Agent {
-  id        String  @id @default(uuid())
+  id            String       @id @default(uuid())
   projectId String
-  name      String
-  role      String
-  soulPath  String?
-  toolsPath String?
-  createdAt DateTime @default(now())
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name          String
+  role          String
+  soulPath      String?
+  toolsPath     String?
+  status        String       @default("idle")
+  memorySummary String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @default(now()) @updatedAt
+  project       Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignedTasks Task[]       @relation("AgentTasks")
+  chatThreads   ChatThread[]
+  runs          Run[]
 }
 
 model Task {
@@ -38,9 +48,14 @@ model Task {
   status          String
   assigneeAgentId String?
   parentTaskId    String?
+  sourceRunId     String?
+  originThreadId  String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assigneeAgent   Agent?   @relation("AgentTasks", fields: [assigneeAgentId], references: [id], onDelete: SetNull)
+  sourceRun       Run?     @relation("RunTasks", fields: [sourceRunId], references: [id], onDelete: SetNull)
+  originThread    ChatThread? @relation(fields: [originThreadId], references: [id], onDelete: SetNull)
 }
 
 model ActivityLog {
@@ -51,4 +66,81 @@ model ActivityLog {
   action    String
   details   String?
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Run {
+  id        String   @id @default(uuid())
+  projectId String
+  taskId    String?
+  agentId   String?
+  threadId  String?
+  origin    String
+  title     String
+  status    String
+  input     String?
+  output    String?
+  metadata  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  agent     Agent?   @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  thread    ChatThread? @relation(fields: [threadId], references: [id], onDelete: SetNull)
+  generatedTasks Task[] @relation("RunTasks")
+}
+
+model Snapshot {
+  id        String   @id @default(uuid())
+  projectId String
+  title     String
+  summary   String
+  payload   String?
+  createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model ChatThread {
+  id        String   @id @default(uuid())
+  projectId String
+  agentId   String?
+  title     String
+  scope     String
+  summary   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  agent     Agent?   @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  messages  ChatMessage[]
+  runs      Run[]
+  tasks     Task[]
+}
+
+model ChatMessage {
+  id              String   @id @default(uuid())
+  threadId        String
+  role            String
+  actor           String
+  targetAgentName String?
+  content         String
+  metadata        String?
+  createdAt       DateTime @default(now())
+  thread          ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+}
+
+model ProjectImport {
+  id            String   @id @default(uuid())
+  projectId     String
+  provider      String
+  kind          String
+  label         String
+  owner         String?
+  name          String
+  externalId    String?
+  sourceUrl     String?
+  defaultBranch String?
+  status        String
+  summary       String?
+  metadata      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }

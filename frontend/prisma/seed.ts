@@ -25,6 +25,12 @@ async function main() {
       agents: {
         create: agents,
       },
+      chatThreads: {
+        create: [
+          { title: 'Team Room', scope: 'TEAM', summary: 'Sala principal del proyecto' },
+          ...agents.map((agent) => ({ title: `${agent.name} Direct`, scope: 'AGENT', summary: `Canal directo con ${agent.name}` })),
+        ],
+      },
     },
   });
 
