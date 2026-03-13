@@ -1,93 +1,98 @@
 <svg width="1280" height="640" viewBox="0 0 1280 640" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="640" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#030406"/>
-      <stop offset="1" stop-color="#060B14"/>
+      <stop stop-color="#020202"/>
+      <stop offset="1" stop-color="#090909"/>
     </linearGradient>
-    <radialGradient id="g1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(190 90) rotate(28) scale(620 300)">
-      <stop stop-color="#8CB4FF" stop-opacity="0.28"/>
-      <stop offset="1" stop-color="#8CB4FF" stop-opacity="0"/>
+    <radialGradient id="silverA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(200 70) rotate(32) scale(620 320)">
+      <stop stop-color="#D4D7DE" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#D4D7DE" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="g2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1030 120) rotate(150) scale(500 260)">
-      <stop stop-color="#79FFE1" stop-opacity="0.24"/>
-      <stop offset="1" stop-color="#79FFE1" stop-opacity="0"/>
+    <radialGradient id="silverB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1080 100) rotate(148) scale(520 280)">
+      <stop stop-color="#B8BFCC" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#B8BFCC" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="line" x1="0" y1="0" x2="1280" y2="0" gradientUnits="userSpaceOnUse">
+    <linearGradient id="silverLine" x1="0" y1="0" x2="1280" y2="0" gradientUnits="userSpaceOnUse">
       <stop stop-color="#FFFFFF" stop-opacity="0"/>
-      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.14"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.12"/>
       <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
     </linearGradient>
-    <linearGradient id="terrain" x1="640" y1="290" x2="640" y2="640" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0E1526" stop-opacity="0"/>
-      <stop offset="1" stop-color="#0E1526" stop-opacity="0.85"/>
+    <linearGradient id="terrainFill" x1="640" y1="300" x2="640" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#101214" stop-opacity="0"/>
+      <stop offset="1" stop-color="#101214" stop-opacity="0.92"/>
     </linearGradient>
   </defs>
 
   <rect width="1280" height="640" fill="url(#bg)"/>
-  <rect width="1280" height="640" fill="url(#g1)"/>
-  <rect width="1280" height="640" fill="url(#g2)"/>
+  <rect width="1280" height="640" fill="url(#silverA)"/>
+  <rect width="1280" height="640" fill="url(#silverB)"/>
 
-  <!-- subtle scan/grid lines -->
-  <g opacity="0.18">
-    <path d="M0 84H1280" stroke="url(#line)"/>
-    <path d="M0 156H1280" stroke="url(#line)"/>
-    <path d="M0 228H1280" stroke="url(#line)"/>
-    <path d="M0 300H1280" stroke="url(#line)"/>
-    <path d="M0 372H1280" stroke="url(#line)"/>
-    <path d="M0 444H1280" stroke="url(#line)"/>
-    <path d="M0 516H1280" stroke="url(#line)"/>
-    <path d="M0 588H1280" stroke="url(#line)"/>
+  <!-- silver scanlines -->
+  <g opacity="0.16">
+    <path d="M0 84H1280" stroke="url(#silverLine)"/>
+    <path d="M0 156H1280" stroke="url(#silverLine)"/>
+    <path d="M0 228H1280" stroke="url(#silverLine)"/>
+    <path d="M0 300H1280" stroke="url(#silverLine)"/>
+    <path d="M0 372H1280" stroke="url(#silverLine)"/>
+    <path d="M0 444H1280" stroke="url(#silverLine)"/>
+    <path d="M0 516H1280" stroke="url(#silverLine)"/>
+    <path d="M0 588H1280" stroke="url(#silverLine)"/>
   </g>
 
-  <!-- animated-app-like terrain perspective -->
-  <g opacity="0.5">
-    <path d="M0 640 L1280 640 L1280 300 Q960 290 640 300 Q320 310 0 300 Z" fill="url(#terrain)"/>
-    <g stroke="#9CB5FF" stroke-opacity="0.16">
-      <path d="M120 640 L420 300"/>
-      <path d="M220 640 L500 300"/>
-      <path d="M320 640 L570 300"/>
-      <path d="M420 640 L640 300"/>
-      <path d="M520 640 L710 300"/>
-      <path d="M620 640 L780 300"/>
-      <path d="M720 640 L850 300"/>
-      <path d="M820 640 L920 300"/>
-      <path d="M920 640 L990 300"/>
-      <path d="M1020 640 L1060 300"/>
-      <path d="M1120 640 L1130 300"/>
+  <!-- app-like RGB mesh terrain (subtle) -->
+  <g opacity="0.54">
+    <path d="M0 640 L1280 640 L1280 304 Q960 292 640 302 Q320 312 0 304 Z" fill="url(#terrainFill)"/>
+    <g stroke="#C6CCD8" stroke-opacity="0.2">
+      <path d="M110 640 L410 304"/>
+      <path d="M210 640 L490 304"/>
+      <path d="M310 640 L560 304"/>
+      <path d="M410 640 L630 304"/>
+      <path d="M510 640 L700 304"/>
+      <path d="M610 640 L770 304"/>
+      <path d="M710 640 L840 304"/>
+      <path d="M810 640 L910 304"/>
+      <path d="M910 640 L980 304"/>
+      <path d="M1010 640 L1050 304"/>
+      <path d="M1110 640 L1120 304"/>
     </g>
-    <g stroke="#79FFE1" stroke-opacity="0.16">
-      <path d="M0 610 Q640 545 1280 610"/>
-      <path d="M0 570 Q640 505 1280 570"/>
-      <path d="M0 530 Q640 465 1280 530"/>
-      <path d="M0 490 Q640 425 1280 490"/>
-      <path d="M0 450 Q640 385 1280 450"/>
-      <path d="M0 410 Q640 345 1280 410"/>
-      <path d="M0 370 Q640 305 1280 370"/>
+    <g stroke="#AAB2C3" stroke-opacity="0.2">
+      <path d="M0 610 Q640 548 1280 610"/>
+      <path d="M0 572 Q640 510 1280 572"/>
+      <path d="M0 534 Q640 472 1280 534"/>
+      <path d="M0 496 Q640 434 1280 496"/>
+      <path d="M0 458 Q640 396 1280 458"/>
+      <path d="M0 420 Q640 358 1280 420"/>
+      <path d="M0 382 Q640 320 1280 382"/>
+    </g>
+    <g stroke-opacity="0.13">
+      <path d="M0 560 Q640 502 1280 560" stroke="#FF5B5B"/>
+      <path d="M0 472 Q640 414 1280 472" stroke="#58FF8A"/>
+      <path d="M0 520 Q640 462 1280 520" stroke="#6EA3FF"/>
     </g>
   </g>
 
-  <rect x="68" y="64" width="1144" height="512" rx="26" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.1)"/>
+  <rect x="68" y="64" width="1144" height="512" rx="26" fill="rgba(255,255,255,0.012)" stroke="rgba(255,255,255,0.1)"/>
 
-  <!-- logo + brand -->
-  <rect x="112" y="110" width="74" height="74" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)"/>
+  <!-- brand block -->
+  <rect x="112" y="110" width="74" height="74" rx="14" fill="rgba(255,255,255,0.045)" stroke="rgba(255,255,255,0.22)"/>
   <image href="https://raw.githubusercontent.com/smouj/kanclaw/main/frontend/public/kanclaw-logo-dark.png" x="121" y="119" width="56" height="56"/>
 
-  <text x="206" y="145" fill="#A3AEC2" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="17" letter-spacing="3">LIVING WORKSPACE OS</text>
-  <text x="206" y="200" fill="#F3F6FF" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="68" font-weight="700">KanClaw</text>
+  <text x="206" y="146" fill="#AEB5C3" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="17" letter-spacing="3">LIVING WORKSPACE OS</text>
+  <text x="206" y="202" fill="#F4F6FA" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="68" font-weight="700">KanClaw</text>
 
-  <text x="112" y="290" fill="#DEE5F7" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="34" font-weight="600">Premium local-first workspace for AI agent teams</text>
-  <text x="112" y="334" fill="#98A6BF" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="23">Persistent memory · Real run tracking · GitHub + OpenClaw integration</text>
+  <text x="112" y="292" fill="#E2E6EF" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="34" font-weight="600">Premium black/silver workspace for AI agent teams</text>
+  <text x="112" y="336" fill="#99A2B4" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="23">Persistent memory · Real run tracking · GitHub + OpenClaw integration</text>
 
   <g>
-    <rect x="112" y="388" width="238" height="52" rx="26" fill="rgba(121,255,225,0.16)" stroke="rgba(121,255,225,0.45)"/>
-    <text x="154" y="421" fill="#E7FFF8" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">AI Agents</text>
+    <rect x="112" y="390" width="238" height="52" rx="26" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.28)"/>
+    <text x="156" y="423" fill="#F1F4FA" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">AI Agents</text>
 
-    <rect x="368" y="388" width="238" height="52" rx="26" fill="rgba(140,180,255,0.16)" stroke="rgba(140,180,255,0.45)"/>
-    <text x="422" y="421" fill="#ECF1FF" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">Local-First</text>
+    <rect x="368" y="390" width="238" height="52" rx="26" fill="rgba(198,206,220,0.14)" stroke="rgba(198,206,220,0.34)"/>
+    <text x="430" y="423" fill="#EEF2FA" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">Local-First</text>
 
-    <rect x="624" y="388" width="238" height="52" rx="26" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.24)"/>
-    <text x="690" y="421" fill="#F4F7FC" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">Desktop Ready</text>
+    <rect x="624" y="390" width="238" height="52" rx="26" fill="rgba(160,170,186,0.14)" stroke="rgba(160,170,186,0.34)"/>
+    <text x="690" y="423" fill="#EAF0FA" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">Desktop Ready</text>
   </g>
 
-  <text x="112" y="518" fill="#6E7B94" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20">github.com/smouj/kanclaw</text>
+  <text x="112" y="520" fill="#6F7A8E" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20">github.com/smouj/kanclaw</text>
 </svg>
