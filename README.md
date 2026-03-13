@@ -1,8 +1,10 @@
 <div align="center">
-  
-<img width="1024" height="1024" alt="logo-bg-black-icon-white-kanclaw" src="https://github.com/user-attachments/assets/0dabbdf6-5713-4be6-9821-4c14c86e702e" />
 
 # KanClaw
+
+<p align="center">
+  <img src="./screenshots/01-dashboard.png" alt="KanClaw Dashboard" width="100%" style="border-radius: 4px; border: 1px solid #222;" />
+</p>
 
 **Premium Local-First Living Workspace OS for AI Agent Teams**
 
@@ -11,6 +13,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 [![Tauri](https://img.shields.io/badge/Tauri-2.0-black?style=flat&logo=tauri)](https://tauri.app/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/smouj/kanclaw/pulls)
+[![Discord](https://img.shields.io/badge/Discord-KanClaw-5865F2?style=flat&logo=discord)](https://discord.gg/kanclaw)
 
 ---
 
@@ -21,8 +24,6 @@
 ---
 
 ## What is KanClaw?
-
-![KanClaw](./screenshots/01-dashboard.png)
 
 KanClaw is a **premium local-first workspace operating system** for AI agent teams. It provides a persistent, cinematic environment where humans and AI agents collaborate on projects with structured memory, task management, real-time chat, and deep GitHub integration.
 
@@ -116,6 +117,14 @@ Tauri 2 wrapper for native desktop experience
 | Dashboard | Project Workspace | Kanban Board | Agent Chat |
 |-----------|-----------------|--------------|------------|
 | ![Dashboard](./screenshots/01-dashboard.png) | ![Workspace](./screenshots/02-project-workspace.png) | ![Kanban](./screenshots/03-kanban.png) | ![Chat](./screenshots/04-chat.png) |
+
+---
+
+## Screenshots
+
+| Dashboard | Project Workspace |
+|-----------|-----------------|
+| ![Dashboard](./screenshots/01-dashboard.png) | ![Workspace](./screenshots/02-workspace.png) |
 
 ---
 
