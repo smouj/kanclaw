@@ -3,8 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KanClaw Docs — Local-First Workspace OS</title>
-  <meta name="description" content="KanClaw documentation landing: quick start, architecture, feature map, and implementation notes." />
+  <title>KanClaw Docs — Local-First Workspace OS for AI Agent Teams</title>
+  <meta name="description" content="KanClaw documentation landing: local-first AI agent workspace, quick start guides, architecture, integrations, and implementation references." />
+  <meta name="keywords" content="kanclaw, ai agent workspace, local-first, nextjs, prisma, tauri, openclaw, developer productivity" />
+  <meta property="og:title" content="KanClaw Docs — Local-First Workspace OS" />
+  <meta property="og:description" content="Guides and architecture for KanClaw: a premium local-first workspace for AI agent teams." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://raw.githubusercontent.com/smouj/kanclaw/main/screenshots/01-dashboard.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="KanClaw Docs" />
+  <meta name="twitter:description" content="Local-first workspace OS for AI agent teams." />
   <style>
     :root {
       --bg: #07090f;
@@ -53,6 +61,15 @@
       max-width: 72vw;
       display: block;
       margin: 0 0 18px;
+    }
+
+    .logo-wrap picture, .logo-wrap img { display: block; }
+
+    .seo-note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 780px;
     }
 
     h1 {
@@ -161,11 +178,19 @@
 <body>
   <header class="hero">
     <div class="wrap hero-card">
-      <img class="logo" src="../frontend/public/kanclaw-logo-light.png" alt="KanClaw" />
+      <div class="logo-wrap">
+        <picture>
+          <source media="(prefers-color-scheme: dark)" srcset="../frontend/public/kanclaw-logo-dark.png">
+          <source media="(prefers-color-scheme: light)" srcset="../frontend/public/kanclaw-logo-light.png">
+          <img class="logo" src="../frontend/public/kanclaw-logo-light.png" alt="KanClaw official logo" />
+        </picture>
+      </div>
       <h1>KanClaw Documentation</h1>
       <p class="lead">Everything you need to run, customize, and extend KanClaw: architecture, setup flows, product map, and implementation references.</p>
+      <p class="seo-note">Built for developers and AI-native teams who want local-first reliability, faster execution loops, and clean project visibility.</p>
       <div class="actions">
         <a class="btn primary" href="https://github.com/smouj/kanclaw">View Repository</a>
+        <a class="btn" href="https://github.com/smouj/kanclaw/stargazers">Star on GitHub</a>
         <a class="btn" href="https://github.com/smouj/kanclaw/blob/main/README.md">Read README</a>
         <a class="btn" href="https://github.com/smouj/kanclaw/blob/main/ARCHITECTURE.md">Architecture</a>
       </div>

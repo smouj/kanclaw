@@ -26,8 +26,18 @@
   <img src="https://img.shields.io/badge/Tauri-2-111827?logo=tauri" alt="Tauri" />
 </p>
 
-[Español](./README.es.md) · [Architecture](./ARCHITECTURE.md) · [Docs Landing](./docs/index.html)
+[Español](./README.es.md) · [Architecture](./ARCHITECTURE.md) · [Docs Landing](./docs/index.html) · [Open Issues](https://github.com/smouj/kanclaw/issues)
 </div>
+
+---
+
+## 🧭 Who is this for?
+
+- **Founders** shipping product features with AI copilots
+- **Indie hackers** who need speed without losing traceability
+- **Small teams** coordinating agent runs with persistent context
+
+> KanClaw helps you move fast with AI while keeping structure, auditability, and delivery quality.
 
 ---
 
@@ -172,8 +182,23 @@ kanclaw/
 
 ---
 
+## 📈 Why teams share KanClaw
+
+- Clear product story (local-first + agent workflows)
+- Professional visual identity and premium UX
+- Practical setup (Next.js + Prisma + SQLite + Tauri)
+- Ready for rapid iteration and public demos
+
+---
+
 ## 🤝 Contributing
 
 PRs are welcome. For major changes, open an issue first to align on scope, UX direction, and architecture.
 
-If you like KanClaw, consider starring the repo ⭐
+### Support the project
+
+If KanClaw helps your workflow:
+- ⭐ Star the repository
+- 🍴 Fork and build your flavor
+- 🐛 Report issues with reproducible steps
+- 📣 Share it with #aiagents and #buildinpublic communities
