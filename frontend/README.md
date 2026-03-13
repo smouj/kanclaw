@@ -39,10 +39,12 @@ project-memory.md
 
 ## Configuración local
 
-1. Instala dependencias:
+1. Instala dependencias (usa Yarn o npm):
 
    ```bash
    yarn install
+   # o
+   npm install
    ```
 
 2. Crea tu entorno local:
@@ -68,6 +70,8 @@ project-memory.md
 
    ```bash
    yarn dev
+   # o
+   npm run dev
    ```
 
 6. Abre `http://localhost:3000`.
@@ -181,6 +185,7 @@ El chat del proyecto ahora incluye:
 
 - `yarn dev`
 - `yarn build`
+- `yarn start`
 - `yarn serve`
 - `yarn db:generate`
 - `yarn db:push`

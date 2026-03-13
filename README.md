@@ -3,13 +3,13 @@
 El proyecto principal vive en:
 
 ```bash
-/app/frontend
+/workspace/kanclaw/frontend
 ```
 
 Consulta la guía completa aquí:
 
 ```bash
-/app/frontend/README.md
+/workspace/kanclaw/frontend/README.md
 ```
 
 Resumen rápido:

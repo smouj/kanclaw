@@ -16,9 +16,10 @@ interface TaskCardProps {
   onDragStart?: (taskId: string) => void;
   onDragEnd?: () => void;
   onPointerDragStart?: (taskId: string) => void;
+  onTaskUpdated?: (task: Task) => void;
 }
 
-export function TaskCard({ projectSlug, task, agents, subtasks, onSubtaskCreated, onDragStart, onDragEnd, onPointerDragStart }: TaskCardProps) {
+export function TaskCard({ projectSlug, task, agents, subtasks, onSubtaskCreated, onDragStart, onDragEnd, onPointerDragStart, onTaskUpdated }: TaskCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [title, setTitle] = useState('');
   const assignee = useMemo(() => agents.find((agent) => agent.id === task.assigneeAgentId)?.name, [agents, task.assigneeAgentId]);
@@ -46,6 +47,24 @@ export function TaskCard({ projectSlug, task, agents, subtasks, onSubtaskCreated
     onSubtaskCreated(subtask);
     setTitle('');
     setExpanded(true);
+  }
+
+  async function handleAssigneeChange(nextAgentId: string) {
+    const normalizedId = nextAgentId || null;
+    const response = await fetch('/api/tasks', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ taskId: task.id, assigneeAgentId: normalizedId }),
+    });
+
+    if (!response.ok) {
+      toast.error('No se pudo actualizar el agente asignado.');
+      return;
+    }
+
+    const updated = (await response.json()) as Task;
+    onTaskUpdated?.(updated);
+    toast.success('Agente asignado actualizado.');
   }
 
   return (
@@ -82,6 +101,22 @@ export function TaskCard({ projectSlug, task, agents, subtasks, onSubtaskCreated
 
       {expanded && (
         <div className="mt-4 space-y-3 border-t border-white/5 pt-4" data-testid={`task-subtasks-panel-${task.id}`}>
+          <label className="block text-[11px] uppercase tracking-[0.2em] text-zinc-500">
+            Agente asignado
+            <select
+              className="mt-2 w-full rounded-xl border border-white/10 bg-black/50 px-3 py-2 text-sm text-zinc-100"
+              value={task.assigneeAgentId ?? ''}
+              onChange={(event) => void handleAssigneeChange(event.target.value)}
+            >
+              <option value="">Sin agente</option>
+              {agents.map((agent) => (
+                <option key={agent.id} value={agent.id}>
+                  {agent.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
           {subtasks.length === 0 ? <p className="text-xs text-zinc-500">No hay subtareas todavía.</p> : null}
           {subtasks.map((subtask) => (
             <div key={subtask.id} className="rounded-2xl border border-white/6 bg-black/20 p-3" data-testid={`subtask-item-${subtask.id}`}>
