@@ -2,39 +2,90 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./frontend/public/kanclaw-logo-dark.png">
     <source media="(prefers-color-scheme: light)" srcset="./frontend/public/kanclaw-logo-light.png">
-    <img src="./frontend/public/kanclaw-logo-light.png" alt="KanClaw logo" width="320" />
+    <img src="./frontend/public/kanclaw-logo-light.png" alt="KanClaw official logo" width="340" />
   </picture>
 
 # KanClaw
 
-**Premium Local-First Workspace OS for AI Agent Teams**
+### Premium Local-First Workspace OS for AI Agent Teams
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat&logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
-[![Tauri](https://img.shields.io/badge/Tauri-2.0-black?style=flat&logo=tauri)](https://tauri.app/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/smouj/kanclaw/pulls)
+<p>
+  <a href="https://github.com/smouj/kanclaw/stargazers"><img src="https://img.shields.io/github/stars/smouj/kanclaw?style=for-the-badge" alt="stars" /></a>
+  <a href="https://github.com/smouj/kanclaw/network/members"><img src="https://img.shields.io/github/forks/smouj/kanclaw?style=for-the-badge" alt="forks" /></a>
+  <a href="https://github.com/smouj/kanclaw/issues"><img src="https://img.shields.io/github/issues/smouj/kanclaw?style=for-the-badge" alt="issues" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=for-the-badge" alt="license" /></a>
+</p>
 
-[Español](./README.es.md) · [Architecture](./ARCHITECTURE.md)
+<p>
+  <img src="https://img.shields.io/badge/Next.js-14-000?logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-18-149eca?logo=react&logoColor=white" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind-3-06b6d4?logo=tailwindcss&logoColor=white" alt="Tailwind" />
+  <img src="https://img.shields.io/badge/Prisma-5-2d3748?logo=prisma" alt="Prisma" />
+  <img src="https://img.shields.io/badge/SQLite-Local--First-0f766e?logo=sqlite" alt="SQLite" />
+  <img src="https://img.shields.io/badge/Tauri-2-111827?logo=tauri" alt="Tauri" />
+</p>
+
+[Español](./README.es.md) · [Architecture](./ARCHITECTURE.md) · [Docs Landing](./docs/index.html)
 </div>
 
 ---
 
-## Overview
+## 📚 Table of Contents
 
-KanClaw is a local-first operating workspace where humans and AI agents collaborate with persistent context, structured memory, task orchestration, and deep GitHub integration.
-
-### Why KanClaw
-
-- **Persistent context** with Memory Hub (Knowledge, Decisions, Artifacts, Runs)
-- **Local-first storage** using SQLite + filesystem
-- **Real run tracking** for agent execution and provenance
-- **Secure GitHub connector** with local PAT handling
-- **Premium UI system** guided by the "Anti-AI Slop" design philosophy
+- [Why KanClaw](#-why-kanclaw)
+- [Feature Highlights](#-feature-highlights)
+- [Screenshots](#-screenshots)
+- [Quick Start](#-quick-start)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Available Scripts](#-available-scripts)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
 
 ---
 
-## Quick Start
+## 🚀 Why KanClaw
+
+KanClaw is a local-first workspace OS where **humans + AI agents** collaborate with persistent context, structured memory, and production-ready team workflows.
+
+| Problem | KanClaw Solution |
+|---|---|
+| Context gets lost between sessions | Persistent Memory Hub (Knowledge, Decisions, Artifacts, Runs) |
+| AI delegation is opaque | Real run tracking with provenance and activity logs |
+| Tooling is fragmented | GitHub connector + OpenClaw integration in one interface |
+| Generic UI fatigue | Premium cinematic UX with strict anti-slop design system |
+
+---
+
+## ✨ Feature Highlights
+
+- **Workspace Shell:** focused, cinematic interface with command palette and context rails
+- **Agent Collaboration:** team room, per-agent channels, real task execution traces
+- **Memory Hub:** queryable knowledge, decision records, artifacts and run history
+- **Project Ops:** tasks, snapshots, imports, and structured execution loops
+- **Desktop-ready:** native packaging via Tauri 2
+
+<details>
+<summary><strong>🔎 Product positioning</strong></summary>
+
+KanClaw is designed for indie builders and small teams that need **speed + structure**: move fast with agents, without losing reliability, context, or auditability.
+
+</details>
+
+---
+
+## 🖼 Screenshots
+
+| Dashboard | Project Workspace |
+|---|---|
+| ![KanClaw Dashboard](./screenshots/01-dashboard.png) | ![KanClaw Workspace](./screenshots/02-workspace.png) |
+
+> Screenshots are maintained in `./screenshots` and verified against real file paths.
+
+---
+
+## ⚡ Quick Start
 
 ### 1) Clone and install
 
@@ -55,11 +106,11 @@ cp .env.example .env
 ```bash
 npm run db:generate
 npm run db:push
-# Optional demo data
+# optional demo data
 npm run seed
 ```
 
-### 4) Start development
+### 4) Run development server
 
 ```bash
 npm run dev
@@ -69,67 +120,60 @@ Open: `http://localhost:3000`
 
 ---
 
-## Screenshots
+## 🧱 Tech Stack
 
-| Dashboard | Project Workspace |
+| Layer | Stack |
 |---|---|
-| ![KanClaw Dashboard](./screenshots/01-dashboard.png) | ![KanClaw Workspace](./screenshots/02-workspace.png) |
-
-> Screenshots are maintained in `./screenshots` and validated to avoid broken references.
-
----
-
-## Tech Stack
-
-- **Frontend:** Next.js 14, React 18, TypeScript
-- **State/UI:** Zustand, Tailwind CSS, shadcn/ui, dnd-kit
-- **3D Ambient Layer:** React Three Fiber + drei + three
-- **Data:** Prisma + SQLite
-- **Desktop:** Tauri 2
-- **Integrations:** OpenClaw (HTTP/WS), GitHub REST
+| Frontend | Next.js 14, React 18, TypeScript |
+| Styling/UI | Tailwind CSS, shadcn/ui, dnd-kit |
+| State | Zustand |
+| 3D Ambient | React Three Fiber, drei, three |
+| Data | Prisma + SQLite |
+| Desktop | Tauri 2 |
+| Integrations | OpenClaw (HTTP/WS), GitHub REST API |
 
 ---
 
-## Project Structure
+## 🗂 Project Structure
 
 ```text
 kanclaw/
 ├── frontend/            # Next.js app
 ├── backend/             # Legacy Python backend
+├── docs/                # Landing + static docs
 ├── screenshots/         # README visual assets
-├── docs/                # Project docs site/static docs
 └── ARCHITECTURE.md      # High-level architecture
 ```
 
 ---
 
-## Available Scripts (frontend)
+## 🛠 Available Scripts
 
-- `npm run dev` — development server
-- `npm run build` — production build
-- `npm run start` — production server
-- `npm run db:generate` — Prisma client generation
-- `npm run db:push` — sync Prisma schema
-- `npm run seed` — seed demo data
-- `npm run lint` — lint checks
-- `npm run desktop:dev` — Tauri dev
-- `npm run desktop:build` — Tauri build
-
----
-
-## Design Direction
-
-KanClaw follows a strict **Anti-AI Slop** system:
-
-- Cinematic and quiet visual language
-- High contrast and readable hierarchy
-- Purposeful spacing and restrained motion
-- No generic AI gradients, no noisy effects
-
-See `design_guidelines.json` for design rules.
+| Command | Description |
+|---|---|
+| `npm run dev` | Start dev server |
+| `npm run build` | Build production bundle |
+| `npm run start` | Start production server |
+| `npm run db:generate` | Generate Prisma client |
+| `npm run db:push` | Push Prisma schema |
+| `npm run seed` | Seed demo project data |
+| `npm run lint` | Run lint checks |
+| `npm run desktop:dev` | Run Tauri development mode |
+| `npm run desktop:build` | Build Tauri app |
 
 ---
 
-## Contributing
+## 🗺 Roadmap
+
+- [ ] One-command CLI installer
+- [ ] Multi-project templates and starter packs
+- [ ] Live analytics + observability overlay
+- [ ] Expanded automation library for agent workflows
+
+---
+
+## 🤝 Contributing
 
 PRs are welcome. For major changes, open an issue first to align on scope, UX direction, and architecture.
+
+If you like KanClaw, consider starring the repo ⭐
