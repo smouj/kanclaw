@@ -1,8 +1,15 @@
-# KanClaw
+# KanClaw — Legacy Reference
 
-Este archivo antiguo ya no es la referencia principal.
+> ⚠️ **This file is kept for backward compatibility only.**
 
-Usa:
+For current documentation, please refer to:
 
-- `/app/README.md`
-- `/app/frontend/README.md`
+- **[README.md](./README.md)** — Main documentation (English)
+- **[README.es.md](./README.es.md)** — Documentación en Español
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — System architecture
+
+The project now includes comprehensive setup guides, feature documentation, and design guidelines.
+
+---
+
+*Last updated: 2026-03-13*
