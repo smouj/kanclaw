@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
-import { getFileTree, readProjectFile, writeProjectFile } from '@/utils/fs';
+import { getFileMetadata, getFileTree, readProjectFile, writeProjectFile } from '@/utils/fs';
 
 const writeSchema = z.object({
   projectSlug: z.string().min(1),
@@ -24,8 +24,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ tree });
     }
 
-    const content = await readProjectFile(projectSlug, targetPath);
-    return NextResponse.json({ content });
+    const [content, metadata] = await Promise.all([readProjectFile(projectSlug, targetPath), getFileMetadata(projectSlug, targetPath)]);
+    return NextResponse.json({ content, metadata });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'No se pudo leer el archivo.' }, { status: 500 });
   }

@@ -4,6 +4,7 @@
 
 :root {
   color-scheme: dark;
+  --kc-bg: #020202;
 }
 
 * {
@@ -15,9 +16,8 @@ body {
   margin: 0;
   min-height: 100%;
   background:
-    radial-gradient(circle at top left, rgba(255,255,255,0.06), transparent 24%),
-    radial-gradient(circle at right 20%, rgba(255,255,255,0.04), transparent 18%),
-    linear-gradient(180deg, #09090b 0%, #070709 100%);
+    radial-gradient(circle at top left, rgba(255,255,255,0.04), transparent 20%),
+    linear-gradient(180deg, #030303 0%, #020202 100%);
   color: #f4f4f5;
 }
 
@@ -48,6 +48,14 @@ select {
 
 .panel-muted {
   @apply rounded-2xl border border-white/5 bg-panel2/80;
+}
+
+.kanclaw-panel {
+  border: 1px solid rgba(255,255,255,0.075);
+  background: linear-gradient(180deg, rgba(12,12,13,0.92) 0%, rgba(7,7,7,0.94) 100%);
+  border-radius: 2rem;
+  box-shadow: 0 20px 90px rgba(0,0,0,0.46);
+  backdrop-filter: blur(18px);
 }
 
 .scrollbar-thin {

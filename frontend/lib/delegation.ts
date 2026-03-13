@@ -73,7 +73,12 @@ export function parseDelegationActions(input: unknown): ParsedAction[] {
   return parsed;
 }
 
-export async function executeDelegationActions(projectSlug: string, projectId: string, actions: ParsedAction[]) {
+export async function executeDelegationActions(
+  projectSlug: string,
+  projectId: string,
+  actions: ParsedAction[],
+  context?: { sourceRunId?: string; originThreadId?: string },
+) {
   const executed: string[] = [];
 
   for (const action of actions) {
@@ -93,6 +98,8 @@ export async function executeDelegationActions(projectSlug: string, projectId: s
           description: action.description,
           status: 'TODO',
           assigneeAgentId: agent.id,
+          sourceRunId: context?.sourceRunId,
+          originThreadId: context?.originThreadId,
         },
       });
 
@@ -119,7 +126,7 @@ export async function executeDelegationActions(projectSlug: string, projectId: s
         projectId,
         actor: 'System',
         action: action.action,
-        details: JSON.stringify(action),
+        details: JSON.stringify({ action, ...context }),
       },
     });
   }

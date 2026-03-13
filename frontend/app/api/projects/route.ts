@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { createProjectFolders } from '@/utils/fs';
+import { ensureProjectThreads } from '@/lib/project-os';
 
 const projectSchema = z.object({
   name: z.string().min(2),
@@ -11,7 +12,7 @@ const projectSchema = z.object({
 
 export async function GET() {
   const projects = await prisma.project.findMany({
-    include: { agents: true, tasks: true },
+    include: { agents: true, tasks: true, runs: true, snapshots: true, imports: true },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -39,11 +40,15 @@ export async function POST(request: Request) {
         agents: {
           create: payload.agents,
         },
+        chatThreads: {
+          create: [{ title: 'Team Room', scope: 'TEAM', summary: 'Canal principal entre humano y agentes' }],
+        },
       },
       include: { agents: true },
     });
 
     await createProjectFolders(slug, project.agents.map((agent) => agent.name));
+    await ensureProjectThreads(project.id);
     await prisma.activityLog.create({
       data: {
         projectId: project.id,
@@ -57,6 +62,10 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.flatten() }, { status: 400 });
+    }
+
+    if (error instanceof Error && error.message.toLowerCase().includes('unique')) {
+      return NextResponse.json({ error: 'Ya existe un proyecto con ese nombre.' }, { status: 409 });
     }
 
     return NextResponse.json({ error: 'No se pudo crear el proyecto.' }, { status: 500 });

@@ -45,6 +45,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
   const [tree, setTree] = useState(initialTree);
   const [content, setContent] = useState('');
   const [newPath, setNewPath] = useState('knowledge/notes.md');
+  const [metadata, setMetadata] = useState<{ absolutePath: string; relativePath: string; size: number; updatedAt: string } | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -62,6 +63,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
     }
     const data = await response.json();
     setContent(data.content);
+    setMetadata(data.metadata || null);
   }
 
   async function saveFile(path: string) {
@@ -118,6 +120,15 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
             <span data-testid="selected-file-path">{selectedFilePath || 'Selecciona un archivo para editar'}</span>
             {selectedFilePath ? <Button type="button" onClick={() => saveFile(selectedFilePath)} className="gap-2" data-testid="file-save-button"><Save className="h-4 w-4" />Guardar</Button> : null}
           </div>
+          {selectedFilePath ? (
+            <div className="mb-3 rounded-[1.3rem] border border-white/7 bg-white/[0.03] px-4 py-3 text-xs text-zinc-500" data-testid="file-metadata-panel">
+              <div className="flex flex-wrap gap-4">
+                <span>{selectedFilePath.split('/').join(' / ')}</span>
+                {metadata ? <span>{metadata.size} bytes</span> : null}
+                {metadata ? <span>Actualizado {new Date(metadata.updatedAt).toLocaleString('es-ES')}</span> : null}
+              </div>
+            </div>
+          ) : null}
           <Textarea value={content} onChange={(event) => setContent(event.target.value)} rows={18} className="h-full min-h-[320px] flex-1 font-mono text-xs" disabled={!selectedFilePath || loading} data-testid="file-editor-textarea" />
         </div>
       </div>

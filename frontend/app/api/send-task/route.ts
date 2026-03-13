@@ -46,6 +46,18 @@ export async function POST(request: Request) {
       },
     });
 
+    const run = await prisma.run.create({
+      data: {
+        projectId: project.id,
+        taskId: task.id,
+        agentId: agent.id,
+        origin: 'manual_dispatch',
+        title: task.title,
+        status: 'running',
+        input: payload.prompt,
+      },
+    });
+
     let response: Response;
     try {
       response = await sendOpenClawTask(payload);
@@ -59,6 +71,7 @@ export async function POST(request: Request) {
         },
       });
       await prisma.task.update({ where: { id: task.id }, data: { status: 'TODO' } });
+      await prisma.run.update({ where: { id: run.id }, data: { status: 'failed', output: 'OpenClaw offline' } });
       return NextResponse.json(
         { error: 'OpenClaw no está disponible. Revisa OPENCLAW_HTTP, OPENCLAW_WS y el Bearer token.' },
         { status: 503 },
@@ -78,11 +91,16 @@ export async function POST(request: Request) {
         },
       });
       await prisma.task.update({ where: { id: task.id }, data: { status: 'TODO' } });
+      await prisma.run.update({ where: { id: run.id }, data: { status: 'failed', output: typeof body === 'string' ? body : JSON.stringify(body) } });
       return NextResponse.json({ error: 'OpenClaw rechazó la tarea.', details: body }, { status: response.status });
     }
 
     const actions = parseDelegationActions(typeof body === 'string' ? body : body.actions || body.message || body);
-    const executedActions = await executeDelegationActions(project.slug, project.id, actions);
+    const executedActions = await executeDelegationActions(project.slug, project.id, actions, { sourceRunId: run.id });
+    await prisma.run.update({
+      where: { id: run.id },
+      data: { status: 'completed', output: typeof body === 'string' ? body : JSON.stringify(body), metadata: JSON.stringify({ executedActions }) },
+    });
 
     await prisma.activityLog.create({
       data: {

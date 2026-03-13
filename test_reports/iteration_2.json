@@ -1,0 +1,57 @@
+{
+  "summary": "Ran backend+frontend regression for premium Project OS scope: chat persistence/offline honesty, GitHub connector flows, snapshots, filesystem local-first pathing, workspace shell navigation, files explorer, memory hub, and kanban. All backend/API checks passed; one frontend kanban drag regression remains.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "KanbanBoard",
+        "issue": "Dragging a task card from TODO to RUNNING does not move or persist status; task remains TODO.",
+        "selector": "[data-testid^='task-drag-handle-'] -> [data-testid='kanban-column-running']",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "Kanban drag-and-drop status transition",
+        "issue": "DnD interaction does not produce persisted status update in project data.",
+        "affected_selectors": [
+          "[data-testid='kanban-column-todo']",
+          "[data-testid='kanban-column-running']",
+          "[data-testid^='task-card-']"
+        ]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_kanclaw_mvp_api.py",
+    "/app/backend/tests/test_project_os_integrations.py",
+    "/app/backend/tests/conftest.py",
+    "/app/test_reports/pytest/pytest_results.xml",
+    "/root/.emergent/automation_output/20260313_012634/console_20260313_012634.log",
+    "/root/.emergent/automation_output/20260313_012709/console_20260313_012709.log"
+  ],
+  "action_items": [
+    "Fix Kanban drag/drop so dropping on RUNNING/DONE always triggers valid status update and persistence.",
+    "After fix, retest drag with both manual browser interaction and Playwright DnD flow."
+  ],
+  "critical_code_review_comments": [
+    "Kanban drag path still does not persist state transition in UI workflow, while direct API status updates pass; issue is isolated to board drag interaction logic/event handling."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_project_os_integrations.py",
+    "/app/test_reports/iteration_2.json"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "92%"
+  },
+  "seed_data_creation": "Created TEST_Chat_*, TEST_Snap_*, TEST_FS_* projects and related chat/files/snapshot/import artifacts during automated tests.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Validated on preview URL. GitHub PAT is connected (status badge PAT · smouj), repositories + preview load, attach import works, snapshot button creates new card, chat persists human+system offline messages, local-first files are written under /root/.kanclaw/workspace/projects/<slug>/. Repro project for kanban issue: test-fs-41c95c58, task title UI Drag Task RETEST remains TODO after drag.",
+  "rca of the issue": "Repro: open /project/test-fs-41c95c58 -> Board -> create task -> drag task handle to RUNNING column. Result: card stays in TODO; API data confirms status TODO. Likely UI DnD destination resolution/drag event handling is not completing status transition in this interaction path."
+}
