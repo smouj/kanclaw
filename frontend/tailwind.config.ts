@@ -26,18 +26,10 @@ const config: Config = {
         'text-secondary': 'var(--kc-text-secondary)',
         'text-muted': 'var(--kc-text-muted)',
         
-        // RGB Accents
-        accent: {
-          red: 'var(--kc-accent-red)',
-          green: 'var(--kc-accent-green)',
-          blue: 'var(--kc-accent-blue)',
-          'red-dark': '#cc0000',
-          'green-dark': '#00aa00',
-          'blue-dark': '#0000cc',
-          'red-glow': 'rgba(255, 51, 51, 0.5)',
-          'green-glow': 'rgba(51, 255, 51, 0.5)',
-          'blue-glow': 'rgba(51, 51, 255, 0.5)',
-        },
+        // RGB Accents - using CSS variables
+        'accent-red': 'var(--kc-accent-red)',
+        'accent-green': 'var(--kc-accent-green)',
+        'accent-blue': 'var(--kc-accent-blue)',
         
         // Legacy support
         success: 'var(--kc-accent-green)',
@@ -70,11 +62,6 @@ const config: Config = {
       boxShadow: {
         panel: '0 0 0 1px rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.5)',
         'panel-hover': '0 0 0 1px rgba(255,255,255,0.12), 0 12px 48px rgba(0,0,0,0.6)',
-        glow: {
-          red: '0 0 20px rgba(255, 51, 51, 0.4)',
-          green: '0 0 20px rgba(51, 255, 51, 0.4)',
-          blue: '0 0 20px rgba(51, 51, 255, 0.4)',
-        },
       },
       keyframes: {
         rise: {
