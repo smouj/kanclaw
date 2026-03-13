@@ -22,12 +22,10 @@ function KanbanColumn({
   status,
   children,
   count,
-  onNativeDrop,
 }: {
   status: (typeof columns)[number];
   children: ReactNode;
   count: number;
-  onNativeDrop: (status: (typeof columns)[number]) => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: status, data: { status } });
 
@@ -40,8 +38,6 @@ function KanbanColumn({
       <div
         ref={setNodeRef}
         id={status}
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={() => onNativeDrop(status)}
         className={`flex h-full flex-col gap-3 rounded-[1.75rem] transition ${isOver ? 'bg-white/[0.04]' : ''}`}
         data-testid={`kanban-column-${status.toLowerCase()}`}
       >
@@ -55,7 +51,6 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
   const [mounted, setMounted] = useState(false);
   const [tasks, setTasks] = useState(initialTasks);
   const [newTitle, setNewTitle] = useState('');
-  const [nativeDragTaskId, setNativeDragTaskId] = useState<string | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
 
   useEffect(() => {
@@ -131,15 +126,6 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
     setTasks((current) => current.map((task) => (task.id === taskId ? updatedTask : task)));
   }
 
-  async function handleNativeDrop(status: (typeof columns)[number]) {
-    if (!nativeDragTaskId) {
-      return;
-    }
-
-    await moveTask(nativeDragTaskId, status);
-    setNativeDragTaskId(null);
-  }
-
   async function handleCreateTask() {
     if (!newTitle.trim()) return;
     const response = await fetch('/api/tasks', {
@@ -190,7 +176,7 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
         <div className="grid h-full gap-4 xl:grid-cols-3">
           {columns.map((status) => (
-            <KanbanColumn key={status} status={status} count={tasksByStatus[status].length} onNativeDrop={handleNativeDrop}>
+            <KanbanColumn key={status} status={status} count={tasksByStatus[status].length}>
               <SortableContext items={tasksByStatus[status].map((task) => task.id)} strategy={verticalListSortingStrategy}>
                 <div className="flex h-full flex-col gap-3" data-status={status}>
                   {tasksByStatus[status].length === 0 ? (
@@ -206,8 +192,6 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
                         agents={agents}
                         subtasks={subtasksByParent[task.id] || []}
                         onSubtaskCreated={(subtask) => setTasks((current) => [subtask, ...current])}
-                        onNativeDragStart={setNativeDragTaskId}
-                        onNativeDragEnd={() => setNativeDragTaskId(null)}
                       />
                     ))
                   )}
