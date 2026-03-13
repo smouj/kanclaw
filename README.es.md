@@ -163,3 +163,20 @@ KanClaw sigue una guía estricta **Anti-AI Slop**:
 - Sin gradientes IA genéricos ni efectos ruidosos
 
 Consulta `design_guidelines.json` para reglas completas.
+
+---
+
+## Banner del repositorio / Social preview
+
+Se incluye un banner optimizado para GitHub y redes en:
+
+- `assets/social/github-social-preview.png` (1280×640)
+- `assets/social/github-social-preview.svg` (fuente editable)
+
+Para activarlo en GitHub:
+
+1. Ve a **Settings → General** del repositorio
+2. Busca **Social preview**
+3. Sube `assets/social/github-social-preview.png`
+
+Esto mejora la presentación del repositorio y el CTR cuando se comparte el enlace.

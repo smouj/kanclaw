@@ -1,0 +1,60 @@
+<svg width="1280" height="640" viewBox="0 0 1280 640" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07090F"/>
+      <stop offset="1" stop-color="#0B1020"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1060 120) rotate(140) scale(460 260)">
+      <stop stop-color="#79FFE1" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#79FFE1" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(170 80) rotate(38) scale(560 320)">
+      <stop stop-color="#8CB4FF" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#8CB4FF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1280" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <rect width="1280" height="640" fill="url(#glowA)"/>
+  <rect width="1280" height="640" fill="url(#glowB)"/>
+
+  <g opacity="0.18">
+    <path d="M0 92H1280" stroke="url(#line)"/>
+    <path d="M0 184H1280" stroke="url(#line)"/>
+    <path d="M0 276H1280" stroke="url(#line)"/>
+    <path d="M0 368H1280" stroke="url(#line)"/>
+    <path d="M0 460H1280" stroke="url(#line)"/>
+    <path d="M0 552H1280" stroke="url(#line)"/>
+  </g>
+
+  <rect x="72" y="76" width="1136" height="488" rx="24" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.12)"/>
+
+  <g>
+    <rect x="116" y="120" width="72" height="72" rx="14" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)"/>
+    <image href="https://raw.githubusercontent.com/smouj/kanclaw/main/frontend/public/kanclaw-logo-dark.png" x="125" y="129" width="54" height="54"/>
+  </g>
+
+  <text x="210" y="152" fill="#A8B3C7" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" letter-spacing="3">LOCAL-FIRST WORKSPACE OS</text>
+  <text x="210" y="202" fill="#F3F6FF" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="64" font-weight="700">KanClaw</text>
+
+  <text x="116" y="292" fill="#D7DEEF" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="33" font-weight="600">Premium workspace for AI agent teams</text>
+  <text x="116" y="336" fill="#99A6BD" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="24">Persistent memory · Real run tracking · GitHub + OpenClaw integration</text>
+
+  <g>
+    <rect x="116" y="392" width="250" height="52" rx="26" fill="rgba(121,255,225,0.16)" stroke="rgba(121,255,225,0.45)"/>
+    <text x="149" y="425" fill="#E9FFF8" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">AI Agents</text>
+
+    <rect x="384" y="392" width="250" height="52" rx="26" fill="rgba(140,180,255,0.16)" stroke="rgba(140,180,255,0.45)"/>
+    <text x="430" y="425" fill="#ECF2FF" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">Local-First</text>
+
+    <rect x="652" y="392" width="250" height="52" rx="26" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.25)"/>
+    <text x="713" y="425" fill="#F5F7FC" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">Desktop Ready</text>
+  </g>
+
+  <text x="116" y="510" fill="#6F7C95" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20">github.com/smouj/kanclaw</text>
+</svg>

@@ -229,6 +229,23 @@ Generated installers/bundles are available under:
 
 ---
 
+## 🖼 Repository Banner / Social Preview
+
+A production-ready social banner is included at:
+
+- `assets/social/github-social-preview.png` (1280×640)
+- `assets/social/github-social-preview.svg` (editable source)
+
+To activate it on GitHub:
+
+1. Open **Repo → Settings → General**
+2. Scroll to **Social preview**
+3. Upload `assets/social/github-social-preview.png`
+
+This improves link previews and repository click-through on social channels.
+
+---
+
 ## 🤝 Contributing
 
 PRs are welcome. For major changes, open an issue first to align on scope, UX direction, and architecture.
