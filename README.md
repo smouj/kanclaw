@@ -87,9 +87,18 @@ KanClaw is designed for indie builders and small teams that need **speed + struc
 
 ## 🖼 Screenshots
 
-| Dashboard | Project Workspace |
-|---|---|
-| ![KanClaw Dashboard](./screenshots/01-dashboard.png) | ![KanClaw Workspace](./screenshots/02-workspace.png) |
+<div align="center">
+  <a href="./screenshots/01-dashboard.png">
+    <img src="./screenshots/01-dashboard.png" alt="KanClaw Dashboard" width="48%" />
+  </a>
+  <a href="./screenshots/02-workspace.png">
+    <img src="./screenshots/02-workspace.png" alt="KanClaw Project Workspace" width="48%" />
+  </a>
+</div>
+
+<p align="center">
+  <sub>Click any screenshot to open full resolution.</sub>
+</p>
 
 > Screenshots are maintained in `./screenshots` and verified against real file paths.
 

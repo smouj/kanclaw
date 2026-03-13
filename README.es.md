@@ -71,9 +71,18 @@ Abrir: `http://localhost:3000`
 
 ## Capturas
 
-| Dashboard | Workspace de proyecto |
-|---|---|
-| ![Dashboard KanClaw](./screenshots/01-dashboard.png) | ![Workspace KanClaw](./screenshots/02-workspace.png) |
+<div align="center">
+  <a href="./screenshots/01-dashboard.png">
+    <img src="./screenshots/01-dashboard.png" alt="Dashboard KanClaw" width="48%" />
+  </a>
+  <a href="./screenshots/02-workspace.png">
+    <img src="./screenshots/02-workspace.png" alt="Workspace KanClaw" width="48%" />
+  </a>
+</div>
+
+<p align="center">
+  <sub>Haz clic en una captura para verla en resolución completa.</sub>
+</p>
 
 > Las capturas se mantienen en `./screenshots` y se validan para evitar enlaces rotos.
 
