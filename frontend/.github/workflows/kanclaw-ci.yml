@@ -1,0 +1,74 @@
+name: KanClaw CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: kanclaw-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prisma generate
+        run: npm run db:generate
+
+      - name: Prisma push
+        run: npm run db:push
+
+      - name: Seed DB
+        run: npm run seed
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Start app (background)
+        run: |
+          nohup npm run start -- --hostname 127.0.0.1 --port 3020 > /tmp/kanclaw.log 2>&1 &
+          echo $! > /tmp/kanclaw.pid
+
+      - name: Wait for health
+        run: |
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:3020/api/health >/dev/null; then
+              echo "KanClaw is up"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "KanClaw did not become ready in time"
+          cat /tmp/kanclaw.log || true
+          exit 1
+
+      - name: Smoke API
+        run: node scripts/e2e-smoke-api.mjs
+
+      - name: Dependency audit policy
+        run: node scripts/audit-policy.mjs
+
+      - name: Upload server log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kanclaw-server-log
+          path: /tmp/kanclaw.log

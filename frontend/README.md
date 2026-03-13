@@ -81,6 +81,8 @@ OPENCLAW_WS="ws://localhost:3001/events"
 OPENCLAW_BEARER_TOKEN=""
 ```
 
+> Seguridad: si configuras URLs OpenClaw remotas (no loopback), KanClaw exige bearer token para guardar la configuración.
+
 ## Conector GitHub
 
 KanClaw guarda la configuración del conector en local de forma cifrada dentro de:
@@ -186,18 +188,52 @@ El chat del proyecto ahora incluye:
 - `npm run db:generate`
 - `npm run db:push`
 - `npm run seed`
+- `npm run smoke:api`
+- `npm run audit:policy`
 - `npm run desktop:dev`
 - `npm run desktop:prepare-sidecar`
 - `npm run desktop:build`
 
-
 ## CI / calidad
 
-El repositorio incluye workflow de CI para frontend en `.github/workflows/frontend-ci.yml` con:
+Workflow activo: `.github/workflows/kanclaw-ci.yml`
 
+Incluye:
 - `npm ci`
 - `npm run db:generate`
 - `npm run db:push`
 - `npm run seed`
 - `npm run lint`
 - `npm run build`
+- smoke API (`node scripts/e2e-smoke-api.mjs`)
+- auditoría de dependencias con política (`node scripts/audit-policy.mjs`)
+
+## Runbook rápido (rollback + troubleshooting)
+
+### Rollback a commit anterior
+
+```bash
+cd /home/smouj/apps/kanclaw/frontend
+git log --oneline -5
+git revert <commit>
+npm install
+npm run build
+systemctl --user restart kanclaw.service
+```
+
+### Diagnóstico básico de servicio
+
+```bash
+systemctl --user status kanclaw.service --no-pager -n 50
+journalctl --user -u kanclaw.service -n 100 --no-pager
+curl -sf http://127.0.0.1:3020/api/health
+```
+
+### Validación de chat OpenClaw
+
+```bash
+curl -sS -X POST http://127.0.0.1:3020/api/chat \
+  -H 'content-type: application/json' \
+  --data '{"projectSlug":"flickclaw","threadId":"<thread-id>","targetAgentName":"ClipAgent","content":"ping"}'
+```
+
