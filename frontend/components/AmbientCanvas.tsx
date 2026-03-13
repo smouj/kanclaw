@@ -4,27 +4,26 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
-// Unique "Digital Terrain" effect - not the typical particle cloud
+// Enhanced Digital Terrain with RGB grid lines
 function DigitalTerrain() {
   const meshRef = useRef<THREE.Mesh>(null);
   const { viewport } = useThree();
   
   const geometry = useMemo(() => {
-    const geo = new THREE.PlaneGeometry(12, 8, 48, 32);
+    const geo = new THREE.PlaneGeometry(14, 10, 64, 48);
     const positions = geo.attributes.position;
     
-    // Create terrain-like wave patterns
+    // Subtle wave patterns
     for (let i = 0; i < positions.count; i++) {
       const x = positions.getX(i);
       const y = positions.getY(i);
       
-      // Multiple wave layers for organic feel
-      const wave1 = Math.sin(x * 0.8 + y * 0.3) * 0.15;
-      const wave2 = Math.cos(x * 1.2 - y * 0.5) * 0.1;
-      const wave3 = Math.sin(x * 2.1 + y * 1.8) * 0.05;
-      const noise = (Math.random() - 0.5) * 0.02;
+      // Gentle wave
+      const wave = Math.sin(x * 0.6 + y * 0.2) * 0.08 
+                 + Math.cos(x * 0.9 - y * 0.4) * 0.05
+                 + Math.sin(x * 1.5 + y * 1.2) * 0.03;
       
-      positions.setZ(i, wave1 + wave2 + wave3 + noise);
+      positions.setZ(i, wave);
     }
     
     geo.computeVertexNormals();
@@ -35,9 +34,8 @@ function DigitalTerrain() {
     return new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 },
-        uColor1: { value: new THREE.Color('#0a0a0a') },
-        uColor2: { value: new THREE.Color('#1a1a2e') },
-        uAccent: { value: new THREE.Color('#33ff33') },
+        uColor1: { value: new THREE.Color('#050508') },
+        uColor2: { value: new THREE.Color('#0a0a15') },
       },
       vertexShader: `
         varying float vElevation;
@@ -48,10 +46,10 @@ function DigitalTerrain() {
           vUv = uv;
           vec3 pos = position;
           
-          // Animated wave displacement
-          float wave = sin(pos.x * 2.0 + uTime * 0.5) * 0.08;
-          wave += cos(pos.y * 1.5 + uTime * 0.3) * 0.06;
-          wave += sin((pos.x + pos.y) * 3.0 + uTime) * 0.03;
+          // Subtle animated wave
+          float wave = sin(pos.x * 1.2 + uTime * 0.4) * 0.06;
+          wave += cos(pos.y * 0.8 + uTime * 0.3) * 0.04;
+          wave += sin((pos.x + pos.y) * 2.0 + uTime * 0.6) * 0.02;
           
           pos.z += wave;
           vElevation = pos.z;
@@ -64,22 +62,32 @@ function DigitalTerrain() {
         varying vec2 vUv;
         uniform vec3 uColor1;
         uniform vec3 uColor2;
-        uniform vec3 uAccent;
+        
+        // RGB colors
+        vec3 red = vec3(1.0, 0.2, 0.2);
+        vec3 green = vec3(0.2, 1.0, 0.2);
+        vec3 blue = vec3(0.2, 0.4, 1.0);
         
         void main() {
           // Base gradient
-          float mixStrength = (vElevation + 0.2) * 2.0;
+          float mixStrength = (vElevation + 0.15) * 3.0;
           vec3 color = mix(uColor1, uColor2, mixStrength);
           
-          // Grid lines effect
-          float gridX = step(0.97, fract(vUv.x * 24.0));
-          float gridY = step(0.97, fract(vUv.y * 16.0));
+          // Fine grid lines - smaller squares
+          float gridX = step(0.97, fract(vUv.x * 48.0));
+          float gridY = step(0.97, fract(vUv.y * 48.0));
           float grid = max(gridX, gridY);
           
-          // Accent glow at peaks
-          float accent = smoothstep(0.15, 0.25, vElevation) * 0.15;
+          // RGB color cycling based on position and time
+          float colorShift = sin(vUv.x * 6.28 + vUv.y * 3.14) * 0.5 + 0.5;
+          vec3 rgbColor = mix(red, green, colorShift);
+          rgbColor = mix(rgbColor, blue, sin(colorShift * 3.14) * 0.5 + 0.5);
           
-          color = mix(color, uAccent, grid * 0.3 + accent);
+          // Accent glow at peaks - subtle
+          float accent = smoothstep(0.08, 0.15, vElevation) * 0.4;
+          
+          // Apply grid and accent
+          color = mix(color, rgbColor, grid * 0.25 + accent);
           
           gl_FragColor = vec4(color, 1.0);
         }
@@ -94,7 +102,7 @@ function DigitalTerrain() {
       material.uniforms.uTime.value = clock.getElapsedTime();
     }
     if (meshRef.current) {
-      meshRef.current.rotation.x = -0.3;
+      meshRef.current.rotation.x = -0.25;
     }
   });
 
@@ -103,22 +111,21 @@ function DigitalTerrain() {
   );
 }
 
-// Floating code symbols effect
-function FloatingSymbols() {
+// Subtle floating particles
+function FloatingParticles() {
   const pointsRef = useRef<THREE.Points>(null);
   
-  const { positions, symbols } = useMemo(() => {
-    const count = 80;
+  const { positions } = useMemo(() => {
+    const count = 60;
     const pos = new Float32Array(count * 3);
-    const sym = new Array(count).fill(0).map(() => Math.random());
     
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 10;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 6;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 3;
+      pos[i * 3] = (Math.random() - 0.5) * 12;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 8;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 2;
     }
     
-    return { positions: pos, symbols: sym };
+    return { positions: pos };
   }, []);
 
   useFrame(({ clock }) => {
@@ -127,13 +134,11 @@ function FloatingSymbols() {
       const time = clock.getElapsedTime();
       
       for (let i = 0; i < posArray.length / 3; i++) {
-        // Floating upward motion
-        posArray[i * 3 + 1] += Math.sin(time + i) * 0.001;
+        // Gentle floating
+        posArray[i * 3 + 1] += Math.sin(time * 0.3 + i * 0.5) * 0.0008;
         
         // Wrap around
-        if (posArray[i * 3 + 1] > 3) {
-          posArray[i * 3 + 1] = -3;
-        }
+        if (posArray[i * 3 + 1] > 4) posArray[i * 3 + 1] = -4;
       }
       
       pointsRef.current.geometry.attributes.position.needsUpdate = true;
@@ -151,41 +156,13 @@ function FloatingSymbols() {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.04}
-        color="#444466"
+        size={0.025}
+        color="#334455"
         transparent
-        opacity={0.6}
+        opacity={0.5}
         sizeAttenuation
       />
     </points>
-  );
-}
-
-// Scanline overlay effect
-function Scanlines() {
-  return (
-    <mesh rotation={[0, 0, 0]} position={[0, 0, 0.1]}>
-      <planeGeometry args={[20, 20]} />
-      <shaderMaterial
-        transparent
-        uniforms={{}}
-        vertexShader={`
-          varying vec2 vUv;
-          void main() {
-            vUv = uv;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }
-        `}
-        fragmentShader={`
-          varying vec2 vUv;
-          void main() {
-            float scanline = sin(vUv.y * 200.0) * 0.02;
-            float vignette = 1.0 - length(vUv - 0.5) * 0.5;
-            gl_FragColor = vec4(0.0, 0.0, 0.0, scanline * 0.3 + (1.0 - vignette) * 0.15);
-          }
-        `}
-      />
-    </mesh>
   );
 }
 
@@ -209,22 +186,21 @@ export function AmbientCanvas({ className = '' }: { className?: string }) {
 
   return (
     <div 
-      className={`absolute inset-0 ${className}`} 
+      className={`absolute inset-0 ${className}`}
       data-testid="ambient-canvas-layer"
     >
       <Canvas 
-        camera={{ position: [0, 0, 4], fov: 45 }} 
-        dpr={[1, 1.5]}
+        camera={{ position: [0, 0, 4.5], fov: 40 }} 
+        dpr={[1, 1.25]}
         gl={{ antialias: true, alpha: true }}
       >
-        <color attach="background" args={['#030306']} />
-        <fog attach="fog" args={['#030306', 3, 10]} />
+        <color attach="background" args={['#030305']} />
+        <fog attach="fog" args={['#030305', 3.5, 12]} />
         
-        <ambientLight intensity={0.2} />
+        <ambientLight intensity={0.15} />
         
         <DigitalTerrain />
-        <FloatingSymbols />
-        <Scanlines />
+        <FloatingParticles />
       </Canvas>
     </div>
   );
