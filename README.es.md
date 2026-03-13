@@ -1,27 +1,22 @@
+<div align="center">
+
+![KanClaw](./screenshots/01-dashboard.png)
+
 # KanClaw
 
-<p align="center">
-  <img src="https://kanclaw.com/logo-light.png" alt="KanClaw" width="200" />
-</p>
+**Sistema Operativo de Workspace Local-First Premium para Equipos de Agentes IA**
 
-<p align="center">
-  <strong>Sistema Operativo de Workspace Local-First Premium para Equipos de Agentes IA</strong>
-</p>
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![Tauri](https://img.shields.io/badge/Tauri-2.0-black?style=flat&logo=tauri)](https://tauri.app/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/smouj/kanclaw/pulls)
 
-<p align="center">
-  <a href="https://kanclaw.com">
-    <img src="https://img.shields.io/badge/Live-kanclaw.com-000000?style=for-the-badge" alt="Sitio Web" />
-  </a>
-  <a href="https://github.com/smouj/kanclaw">
-    <img src="https://img.shields.io/github/stars/smouj/kanclaw?style=for-the-badge" alt="Estrellas" />
-  </a>
-  <a href="https://github.com/smouj/kanclaw/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/smouj/kanclaw?style=for-the-badge" alt="Licencia" />
-  </a>
-  <a href="https://discord.gg/kanclaw">
-    <img src="https://img.shields.io/badge/Discord-KanClaw-5865F2?style=for-the-badge" alt="Discord" />
-  </a>
-</p>
+---
+
+[English](./README.md) · [简体中文](./README.zh.md) · [Arquitectura](./ARCHITECTURE.md)
+
+</div>
 
 ---
 
@@ -29,9 +24,7 @@
 
 KanClaw es un **sistema operativo de workspace local-first premium** para equipos de agentes IA. Proporciona un entorno persistente y cinematográfico donde humanos y agentes IA colaboran en proyectos con memoria estructurada, gestión de tareas, chat en tiempo real y profunda integración con GitHub.
 
-A diferencia de soluciones basadas en la nube, KanClaw almacena todos los datos localmente en `~/.kanclaw/`, dándote propiedad total sobre el conocimiento, decisiones y artefactos de tu equipo.
-
-## ¿Por qué KanClaw?
+### ¿Por qué KanClaw?
 
 | Problema | Solución KanClaw |
 |----------|------------------|
@@ -41,71 +34,88 @@ A diferencia de soluciones basadas en la nube, KanClaw almacena todos los datos 
 | Herramientas desconectadas | Conector GitHub con autenticación PAT, cifrado local |
 | Interfaces genéricas de IA | Diseño cinematográfico premium con filosofía "Anti-AI Slop" |
 
-## Características Principales
+---
+
+## Inicio Rápido
+
+### Instalación con Un Comando
+
+```bash
+# Clonar e instalar con un solo comando
+curl -sL https://raw.githubusercontent.com/smouj/kanclaw/main/scripts/install.sh | bash
+```
+
+### Instalación Manual
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/smouj/kanclaw.git
+cd kanclaw/frontend
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Configurar entorno
+cp .env.example .env
+
+# 4. Inicializar base de datos
+npm run db:generate
+npm run db:push
+
+# 5. (Opcional) Sembrar datos demo
+npm run seed
+
+# 6. Iniciar servidor de desarrollo
+npm run dev
+```
+
+Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
+
+---
+
+## Características
 
 ### 🖥️ Workspace Shell Premium
 - Interfaz oscura cinematográfica con capas R3F ambientales
 - Paleta de comandos (Cmd+K) para navegación rápida
 - Paneles contextuales (sidebar, contenido principal, rail derecho)
-- Navegación persistente entre vistas
 
 ### 🤖 Colaboración con Agentes
 - **Sala de Equipo** — Chat global para colaboración humano-agente
-- **Canales por Agente** — Conversaciones directas con agentes individuales
-- **Runs Reales** — Seguimiento de ejecución en vivo con integración OpenClaw
-- **Estado Offline** — Respuesta honesta cuando OpenClaw no está disponible
+- **Canales por Agente** — Conversaciones directas
+- **Runs Reales** — Seguimiento de ejecución en vivo con OpenClaw
 
 ### 🧠 Memory Hub
-Acumulación estructurada del conocimiento del proyecto:
-- **Overview** — Grid bento con métricas del proyecto
+- **Overview** — Grid bento con métricas
 - **Knowledge** — Base de información estructurada
-- **Decisions** — Decisiones arquitectónicas y su rationale
-- **Artifacts** — Salidas generadas y exportaciones
-- **Agent Souls** — Personalidades de agentes (SOUL.md)
-- **Runs** — Historial de ejecuciones y provenance
+- **Decisions** — Decisiones arquitectónicas
+- **Artifacts** — Salidas generadas
+- **Runs** — Historial de ejecuciones
 
 ### 📸 Snapshots
-- Exportaciones de estado del proyecto en un momento dado
-- Artefactos JSON para auditoría y recuperación
-- Incluye tareas, runs, decisiones, knowledge y artifacts
+- Exportaciones punto-en-tiempo
+- Artefactos JSON para auditoría
 
 ### 🔗 Conector GitHub
 - Almacenamiento seguro de PAT (cifrado local)
-- Listado y búsqueda de repositorios
-- Previsualización antes de importar
-- Importar como proyecto nuevo o enlazar a existente
+- Listado y previsualización de repositorios
+- Importar como proyecto nuevo o enlazar existente
 
-### 📁 Arquitectura Local-First
-Todos los datos viven en `~/.kanclaw/`:
-```
-~/.kanclaw/workspace/projects/<slug>/
-├── agents/          # Definiciones de agentes + memoria
-├── tasks/           # Tablero Kanban
-├── knowledge/       # Base de conocimiento
-├── decisions/       # Decisiones arquitectónicas
-├── artifacts/       # Salidas generadas
-│   └── snapshots/  # Exportaciones punto-en-tiempo
-└── project-memory.md
-```
+### 📁 Local-First
+Todos los datos viven en `~/.kanclaw/workspace/projects/<slug>/`
 
 ### 🖥️ Listo para Desktop
-- Wrapper Tauri 2 para experiencia nativa
-- Servidor standalone de Next.js como sidecar
-- Local-first conservado en modo desktop
+Wrapper Tauri 2 para experiencia de escritorio nativa
+
+---
 
 ## Capturas de Pantalla
 
-| Vista | Descripción |
-|------|-------------|
-| Dashboard | Vista general del workspace con fondo R3F ambiental |
-| Project Workspace | Shell completo con sidebar y paneles |
-| Kanban Board | Gestión de tareas con drag-and-drop |
-| Agent Chat | Sala de equipo + canales por agente |
-| Memory Hub | Grid bento con knowledge/decisions/artifacts |
-| GitHub Connector | Input de PAT, listado de repos, flujo de importación |
-| Command Palette | Acciones rápidas con Cmd+K |
+| Dashboard | Workspace de Proyecto | Kanban | Chat de Agentes |
+|-----------|----------------------|--------|-----------------|
+| ![Dashboard](./screenshots/01-dashboard.png) | ![Workspace](./screenshots/02-project-workspace.png) | ![Kanban](./screenshots/03-kanban.png) | ![Chat](./screenshots/04-chat.png) |
 
-*Ver [`screenshots/`](screenshots/) para los assets visuales requeridos.*
+---
 
 ## Stack Tecnológico
 
@@ -118,53 +128,10 @@ Todos los datos viven en `~/.kanclaw/`:
 | 3D Ambiental | React Three Fiber (R3F) |
 | Base de Datos | Prisma + SQLite |
 | Desktop | Tauri 2 |
-| Integración IA | OpenClaw (eventos WebSocket) |
+| Integración IA | OpenClaw (WebSocket) |
 | GitHub | REST API con almacenamiento PAT local |
 
-## Inicio Rápido
-
-### Requisitos Previos
-
-- Node.js 20+
-- npm o yarn
-- (Opcional) CLI de Tauri para builds de escritorio
-
-### Instalación
-
-```bash
-# Clonar el repositorio
-git clone https://github.com/smouj/kanclaw.git
-cd kanclaw/frontend
-
-# Instalar dependencias
-npm install
-# o
-yarn install
-
-# Copiar plantilla de entorno
-cp .env.example .env
-
-# Generar cliente Prisma y crear base de datos
-npm run db:generate
-npm run db:push
-
-# (Opcional) Sembrar proyecto demo
-npm run seed
-
-# Iniciar servidor de desarrollo
-npm run dev
-```
-
-Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
-
-### Variables de Entorno
-
-```env
-DATABASE_URL="file:./dev.db"
-OPENCLAW_HTTP="http://localhost:3001"
-OPENCLAW_WS="ws://localhost:3001/events"
-OPENCLAW_BEARER_TOKEN=""
-```
+---
 
 ## Estructura del Proyecto
 
@@ -172,17 +139,7 @@ OPENCLAW_BEARER_TOKEN=""
 kanclaw/
 ├── frontend/                 # Aplicación Next.js
 │   ├── app/                # Páginas App Router
-│   │   ├── page.tsx       # Dashboard
-│   │   └── project/
-│   │       └── [slug]/
-│   │           └── page.tsx  # Workspace de proyecto
 │   ├── components/          # Componentes React
-│   │   ├── shell/         # Workspace shell
-│   │   ├── kanban/        # Tablero de tareas
-│   │   ├── chat/          # Chat de agentes
-│   │   ├── memory/        # Memory Hub
-│   │   ├── connectors/     # Conector GitHub
-│   │   └── ui/            # Componentes compartidos
 │   ├── prisma/             # Esquema de base de datos
 │   └── public/             # Assets estáticos
 ├── backend/                 # Servidor Python (heredado)
@@ -190,6 +147,8 @@ kanclaw/
 ├── design_guidelines.json  # Spec del sistema de diseño
 └── screenshots/            # Documentación visual
 ```
+
+---
 
 ## Comandos Disponibles
 
@@ -205,38 +164,44 @@ kanclaw/
 | `yarn desktop:dev` | Ejecutar Tauri en modo desarrollo |
 | `yarn desktop:build` | Construir app Tauri |
 
-## CI/CD
+---
 
-El repositorio incluye workflows de GitHub Actions:
+## Variables de Entorno
 
-- **Frontend CI** — `.github/workflows/frontend-ci.yml`
-  - Instalación de dependencias
-  - Generación Prisma + push a base de datos
-  - Siembra de base de datos
-  - Validación ESLint
-  - Build de producción
+```env
+DATABASE_URL="file:./dev.db"
+OPENCLAW_HTTP="http://localhost:3001"
+OPENCLAW_WS="ws://localhost:3001/events"
+OPENCLAW_BEARER_TOKEN=""
+```
+
+---
+
+## Instalador CLI (Próximamente)
+
+Estamos desarrollando un instalador de un comando para KanClaw:
+
+```bash
+# Instalación futura
+npx kanclaw create mi-workspace
+kanclaw start
+kanclaw connect github
+kanclaw agent add planner
+```
+
+¿Te gustaría ayudar a construir el CLI? [¡Contribuciones bienvenidas!](#contribuir)
+
+---
 
 ## Filosofía de Diseño
 
 KanClaw sigue una filosofía "Anti-AI Slop":
 
-### Principios Fundamentales
-- ✅ Estética **Cinematográfica, Tranquila, Precisa**
-- ✅ **Alto contraste** de texto sobre fondos profundos
-- ✅ **Espaciado lujoso** (2-3x lo normal)
-- ✅ **Movimiento significativo** con soporte para reduced-motion
-- ✅ **Glass morphism** con backdrop blur
-
-### Tipografía
-- **Encabezados:** Manrope
-- **Cuerpo:** IBM Plex Sans
-- **Mono:** JetBrains Mono
-
-### Paleta de Colores
-- Canvas: `#020202`
-- Surface: `#0A0A0A`, `#121212`, `#1A1A1A`
-- Border: `#1F1F1F`, `#2A2A2A`
-- Texto: `#EDEDED`, `#A1A1AA`, `#52525B`
+- ✅ Estética Cinematográfica, Tranquila, Precisa
+- ✅ Alto contraste de texto sobre fondos profundos
+- ✅ Espaciado lujoso (2-3x lo normal)
+- ✅ Movimiento significativo con soporte para reduced-motion
+- ✅ Glass morphism con backdrop blur
 
 ### Anti-Patrones (Nunca Usar)
 - ❌ Gradientes genéricos morados/celestes de IA
@@ -244,9 +209,10 @@ KanClaw sigue una filosofía "Anti-AI Slop":
 - ❌ Fuente Space Grotesk
 - ❌ Tormentas de partículas
 - ❌ Dashboards arcoíris
-- ❌ Emojis genéricos de asistente IA
 
 Consulta [`design_guidelines.json`](design_guidelines.json) para la especificación completa.
+
+---
 
 ## Arquitectura
 
@@ -260,14 +226,27 @@ Para arquitectura detallada del sistema, ver [`ARCHITECTURE.md`](ARCHITECTURE.md
 - Modelo de seguridad
 - Consideraciones de rendimiento
 
+---
+
 ## Contribuir
 
-Las contribuciones son bienvenidas. Por favor:
+¡Las contribuciones son bienvenidas! Por favor:
 
 1. Fork del repositorio
 2. Crear una rama de feature
 3. Seguir las guías de diseño en `design_guidelines.json`
 4. Ejecutar lint y build antes de enviar PRs
+
+```bash
+# Flujo de desarrollo
+git checkout -b feat/tu-feature
+npm run dev
+# Haz tus cambios
+git commit -m "feat: tu feature"
+git push origin feat/tu-feature
+```
+
+---
 
 ## Licencia
 
@@ -275,6 +254,10 @@ Licencia MIT — ver [`LICENSE`](LICENSE) para más detalles.
 
 ---
 
-Construido con 🔥 por [Smouj](https://github.com/smouj)
+<div align="center">
+
+**Construido con 🔥 por [Smouj](https://github.com/smouj)**
 
 *KanClaw — Tu Workspace Local-First para Agentes IA*
+
+</div>
