@@ -1,5 +1,5 @@
-const OPENCLAW_HTTP = process.env.OPENCLAW_HTTP || 'http://localhost:3001';
-const OPENCLAW_WS = process.env.OPENCLAW_WS || 'ws://localhost:3001/events';
+const OPENCLAW_HTTP = process.env.OPENCLAW_HTTP;
+const OPENCLAW_WS = process.env.OPENCLAW_WS;
 const OPENCLAW_TOKEN = process.env.OPENCLAW_BEARER_TOKEN;
 
 export interface OpenClawEvent {
@@ -22,13 +22,17 @@ function authHeaders() {
 
 export function getOpenClawConfig() {
   return {
-    httpBase: OPENCLAW_HTTP,
-    wsBase: OPENCLAW_WS,
+    httpBase: OPENCLAW_HTTP || '',
+    wsBase: OPENCLAW_WS || '',
     hasToken: Boolean(OPENCLAW_TOKEN),
   };
 }
 
 export async function getOpenClawHealth() {
+  if (!OPENCLAW_HTTP) {
+    return { connected: false, status: 500, agents: [] as unknown[] };
+  }
+
   try {
     const response = await fetch(`${OPENCLAW_HTTP}/health`, {
       cache: 'no-store',
@@ -51,6 +55,10 @@ export async function getOpenClawHealth() {
 }
 
 export async function sendOpenClawTask(payload: { projectSlug: string; agentName: string; prompt: string }) {
+  if (!OPENCLAW_HTTP) {
+    throw new Error('OPENCLAW_HTTP is missing.');
+  }
+
   return fetch(`${OPENCLAW_HTTP}/agents/task`, {
     method: 'POST',
     headers: {

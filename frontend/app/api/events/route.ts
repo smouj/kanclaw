@@ -3,10 +3,17 @@ import { WebSocket } from 'ws';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const OPENCLAW_WS = process.env.OPENCLAW_WS || 'ws://localhost:3001/events';
+const OPENCLAW_WS = process.env.OPENCLAW_WS;
 const OPENCLAW_TOKEN = process.env.OPENCLAW_BEARER_TOKEN;
 
 export async function GET(request: Request) {
+  if (!OPENCLAW_WS) {
+    return new Response(JSON.stringify({ error: 'OPENCLAW_WS is missing.' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   const encoder = new TextEncoder();
   const { searchParams } = new URL(request.url);
   const projectSlug = searchParams.get('projectSlug');

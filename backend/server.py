@@ -1,11 +1,15 @@
+import os
 from typing import AsyncIterator
 
 import httpx
+from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 
+load_dotenv()
+
 app = FastAPI(title="KanClaw Companion API")
-FRONTEND_BASE_URL = "http://127.0.0.1:3000"
+FRONTEND_BASE_URL = os.getenv("FRONTEND_INTERNAL_URL")
 
 
 @app.get("/health")
@@ -29,6 +33,9 @@ async def stream_proxy(method: str, path: str, request: Request) -> AsyncIterato
 
 @app.api_route("/api/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
 async def proxy_api(path: str, request: Request):
+    if not FRONTEND_BASE_URL:
+        return JSONResponse({"error": "FRONTEND_INTERNAL_URL is missing."}, status_code=500)
+
     url = f"{FRONTEND_BASE_URL}/api/{path}"
     if request.url.query:
         url = f"{url}?{request.url.query}"

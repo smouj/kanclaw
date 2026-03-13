@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DndContext, DragEndEvent, PointerSensor, closestCorners, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import type { Agent, Task } from '@prisma/client';
@@ -22,33 +22,45 @@ function KanbanColumn({
   status,
   children,
   count,
+  onNativeDrop,
 }: {
   status: (typeof columns)[number];
   children: ReactNode;
   count: number;
+  onNativeDrop: (status: (typeof columns)[number]) => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: status, data: { status } });
 
   return (
-    <section
-      ref={setNodeRef}
-      id={status}
-      className={`panel-muted flex min-h-[440px] flex-col p-4 transition ${isOver ? 'border-white/20 bg-white/[0.06]' : ''}`}
-      data-testid={`kanban-column-${status.toLowerCase()}`}
-    >
+    <section className="panel-muted flex min-h-[440px] flex-col p-4 transition">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-sm font-medium tracking-[0.22em] text-zinc-300">{status}</h3>
         <span className="text-xs text-zinc-500">{count}</span>
       </div>
-      {children}
+      <div
+        ref={setNodeRef}
+        id={status}
+        onDragOver={(event) => event.preventDefault()}
+        onDrop={() => onNativeDrop(status)}
+        className={`flex h-full flex-col gap-3 rounded-[1.75rem] transition ${isOver ? 'bg-white/[0.04]' : ''}`}
+        data-testid={`kanban-column-${status.toLowerCase()}`}
+      >
+        {children}
+      </div>
     </section>
   );
 }
 
 export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardProps) {
+  const [mounted, setMounted] = useState(false);
   const [tasks, setTasks] = useState(initialTasks);
   const [newTitle, setNewTitle] = useState('');
+  const [nativeDragTaskId, setNativeDragTaskId] = useState<string | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const tasksByStatus = useMemo(
     () =>
@@ -74,27 +86,58 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
     const { active, over } = event;
     if (!over) return;
     const activeTaskId = String(active.id);
-    const nextStatus = String(over.data.current?.status || over.id);
+    const destinationFromOver =
+      typeof over.data.current?.status === 'string'
+        ? over.data.current.status
+        : typeof over.data.current?.sortable?.containerId === 'string'
+          ? over.data.current.sortable.containerId
+          : typeof over.id === 'string' && columns.includes(over.id as (typeof columns)[number])
+            ? over.id
+            : null;
+
+    if (!destinationFromOver || !columns.includes(destinationFromOver as (typeof columns)[number])) {
+      return;
+    }
+
+    const nextStatus = destinationFromOver;
 
     const currentTask = tasks.find((task) => task.id === activeTaskId);
     if (!currentTask || currentTask.status === nextStatus) return;
 
-    setTasks((current) => current.map((task) => (task.id === activeTaskId ? { ...task, status: nextStatus } : task)));
+    await moveTask(activeTaskId, nextStatus, currentTask);
+  }
+
+  async function moveTask(taskId: string, nextStatus: (typeof columns)[number], currentTask?: Task) {
+    const taskToMove = currentTask || tasks.find((task) => task.id === taskId);
+    if (!taskToMove || taskToMove.status === nextStatus) {
+      return;
+    }
+
+    setTasks((current) => current.map((task) => (task.id === taskId ? { ...task, status: nextStatus } : task)));
 
     const response = await fetch('/api/tasks', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ taskId: activeTaskId, status: nextStatus }),
+      body: JSON.stringify({ taskId, status: nextStatus }),
     });
 
     if (!response.ok) {
-      setTasks((current) => current.map((task) => (task.id === activeTaskId ? currentTask : task)));
+      setTasks((current) => current.map((task) => (task.id === taskId ? taskToMove : task)));
       toast.error('No se pudo actualizar el estado.');
       return;
     }
 
     const updatedTask = await response.json();
-    setTasks((current) => current.map((task) => (task.id === activeTaskId ? updatedTask : task)));
+    setTasks((current) => current.map((task) => (task.id === taskId ? updatedTask : task)));
+  }
+
+  async function handleNativeDrop(status: (typeof columns)[number]) {
+    if (!nativeDragTaskId) {
+      return;
+    }
+
+    await moveTask(nativeDragTaskId, status);
+    setNativeDragTaskId(null);
   }
 
   async function handleCreateTask() {
@@ -115,6 +158,22 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
     setNewTitle('');
   }
 
+  if (!mounted) {
+    return (
+      <div className="flex h-full flex-col gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.3em] text-muted">Execution board</p>
+          <h2 className="text-2xl font-semibold">Kanban</h2>
+        </div>
+        <div className="grid h-full gap-4 xl:grid-cols-3">
+          {columns.map((status) => (
+            <section key={status} className="panel-muted min-h-[440px] animate-pulse p-4" data-testid={`kanban-loading-${status.toLowerCase()}`} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -131,7 +190,7 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
         <div className="grid h-full gap-4 xl:grid-cols-3">
           {columns.map((status) => (
-            <KanbanColumn key={status} status={status} count={tasksByStatus[status].length}>
+            <KanbanColumn key={status} status={status} count={tasksByStatus[status].length} onNativeDrop={handleNativeDrop}>
               <SortableContext items={tasksByStatus[status].map((task) => task.id)} strategy={verticalListSortingStrategy}>
                 <div className="flex h-full flex-col gap-3" data-status={status}>
                   {tasksByStatus[status].length === 0 ? (
@@ -140,15 +199,16 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
                     </div>
                   ) : (
                     tasksByStatus[status].map((task) => (
-                      <div key={task.id} id={status} data-status={status}>
-                        <TaskCard
-                          projectSlug={projectSlug}
-                          task={task}
-                          agents={agents}
-                          subtasks={subtasksByParent[task.id] || []}
-                          onSubtaskCreated={(subtask) => setTasks((current) => [subtask, ...current])}
-                        />
-                      </div>
+                      <TaskCard
+                        key={task.id}
+                        projectSlug={projectSlug}
+                        task={task}
+                        agents={agents}
+                        subtasks={subtasksByParent[task.id] || []}
+                        onSubtaskCreated={(subtask) => setTasks((current) => [subtask, ...current])}
+                        onNativeDragStart={setNativeDragTaskId}
+                        onNativeDragEnd={() => setNativeDragTaskId(null)}
+                      />
                     ))
                   )}
                 </div>

@@ -15,9 +15,11 @@ interface TaskCardProps {
   agents: Agent[];
   subtasks: Task[];
   onSubtaskCreated: (task: Task) => void;
+  onNativeDragStart?: (taskId: string) => void;
+  onNativeDragEnd?: () => void;
 }
 
-export function TaskCard({ projectSlug, task, agents, subtasks, onSubtaskCreated }: TaskCardProps) {
+export function TaskCard({ projectSlug, task, agents, subtasks, onSubtaskCreated, onNativeDragStart, onNativeDragEnd }: TaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id, data: { task } });
   const [expanded, setExpanded] = useState(false);
   const [title, setTitle] = useState('');
@@ -53,6 +55,9 @@ export function TaskCard({ projectSlug, task, agents, subtasks, onSubtaskCreated
     <article
       ref={setNodeRef}
       style={style}
+      draggable
+      onDragStart={() => onNativeDragStart?.(task.id)}
+      onDragEnd={() => onNativeDragEnd?.()}
       className={`rounded-3xl border border-white/8 bg-white/[0.03] p-4 transition ${isDragging ? 'scale-[1.02] border-white/20 bg-white/[0.08]' : ''}`}
       data-testid={`task-card-${task.id}`}
     >
