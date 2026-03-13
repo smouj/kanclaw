@@ -63,7 +63,7 @@ export async function listGitHubRepositories() {
   return repositories.map((repo: Record<string, unknown>) => ({
     id: repo.id,
     name: repo.name,
-    owner: (repo.owner as Record<string, unknown>)?.login,
+    owner: { login: (repo.owner as Record<string, unknown>)?.login as string },
     fullName: repo.full_name,
     description: repo.description,
     private: repo.private,

@@ -4,7 +4,10 @@
 
 :root {
   color-scheme: dark;
-  --kc-bg: #020202;
+  --kc-bg: #050505;
+  --kc-accent-red: #ff3333;
+  --kc-accent-green: #33ff33;
+  --kc-accent-blue: #3333ff;
 }
 
 * {
@@ -15,14 +18,14 @@ html,
 body {
   margin: 0;
   min-height: 100%;
-  background:
-    radial-gradient(circle at top left, rgba(255,255,255,0.04), transparent 20%),
-    linear-gradient(180deg, #030303 0%, #020202 100%);
-  color: #f4f4f5;
+  background: #050505;
+  color: #ffffff;
 }
 
 body {
-  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -38,44 +41,190 @@ select {
 }
 
 ::selection {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.25);
   color: #ffffff;
 }
 
+/* Sharp corners - minimal radius (2px max) */
+* {
+  border-radius: 2px !important;
+}
+
+/* Override common components */
+.rounded-3xl,
+.rounded-2xl,
+.rounded-xl,
+.rounded-lg,
+.rounded-md,
+.rounded-sm {
+  border-radius: 2px !important;
+}
+
+/* Panel styles - Premium minimal */
 .panel {
-  @apply rounded-3xl border border-line bg-panel/90 shadow-panel backdrop-blur-xl;
+  background: #0a0a0a;
+  border: 1px solid #222222;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.5);
+}
+
+.panel:hover {
+  border-color: #333333;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 12px 48px rgba(0,0,0,0.6);
 }
 
 .panel-muted {
-  @apply rounded-2xl border border-white/5 bg-panel2/80;
+  background: #111111;
+  border: 1px solid #1a1a1a;
 }
 
 .kanclaw-panel {
-  border: 1px solid rgba(255,255,255,0.075);
-  background: linear-gradient(180deg, rgba(12,12,13,0.92) 0%, rgba(7,7,7,0.94) 100%);
-  border-radius: 2rem;
-  box-shadow: 0 20px 90px rgba(0,0,0,0.46);
-  backdrop-filter: blur(18px);
+  background: linear-gradient(180deg, rgba(10,10,10,0.95) 0%, rgba(5,5,5,0.98) 100%);
+  border: 1px solid #1a1a1a;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.5);
 }
 
+/* Focus states with RGB accents */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #555555 !important;
+  box-shadow: 0 0 0 2px rgba(51, 255, 51, 0.2);
+}
+
+input:focus-visible,
+textarea:focus-visible {
+  border-color: #555555 !important;
+}
+
+/* Buttons - Minimal sharp style */
+.btn-primary {
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  padding: 8px 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.btn-primary:hover {
+  background: #e0e0e0;
+}
+
+.btn-primary:active {
+  background: #cccccc;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #b0b0b0;
+  border: 1px solid #333333;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.btn-secondary:hover {
+  border-color: #555555;
+  color: #ffffff;
+}
+
+/* Accent colors for borders/text */
+.accent-red {
+  color: #ff3333;
+  border-color: #ff3333;
+}
+
+.accent-green {
+  color: #33ff33;
+  border-color: #33ff33;
+}
+
+.accent-blue {
+  color: #3333ff;
+  border-color: #3333ff;
+}
+
+/* Scrollbar - Minimal */
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.14) transparent;
+  scrollbar-color: #333333 transparent;
 }
 
 .scrollbar-thin::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.12);
-  border-radius: 999px;
+  background: #333333;
 }
 
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #444444;
+}
+
+/* Grid background */
 .grid-glow {
   background-image:
-    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: 28px 28px;
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* VSCode-like file tree */
+.file-tree-item {
+  padding: 4px 8px;
+  margin: 1px 0;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 100ms ease;
+}
+
+.file-tree-item:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.file-tree-item.active {
+  background: rgba(51, 255, 51, 0.1);
+  border-left: 2px solid #33ff33;
+}
+
+/* Status indicators */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-online {
+  background: #33ff33;
+  box-shadow: 0 0 8px rgba(51, 255, 51, 0.5);
+}
+
+.status-offline {
+  background: #666666;
+}
+
+.status-error {
+  background: #ff3333;
+  box-shadow: 0 0 8px rgba(255, 51, 51, 0.5);
+}
+
+/* Glow effects */
+.glow-red {
+  box-shadow: 0 0 20px rgba(255, 51, 51, 0.4);
+}
+
+.glow-green {
+  box-shadow: 0 0 20px rgba(51, 255, 51, 0.4);
+}
+
+.glow-blue {
+  box-shadow: 0 0 20px rgba(51, 51, 255, 0.4);
 }
