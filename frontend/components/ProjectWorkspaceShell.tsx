@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Bot, BrainCircuit, Cable, Command as CommandIcon, FolderTree, LayoutGrid, MessageSquareText, RefreshCcw, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -70,7 +70,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
 
   const teamThreadId = model.threads.find((thread) => thread.scope === 'TEAM')?.id || model.threads[0]?.id || '';
 
-  async function createSnapshot() {
+  const createSnapshot = useCallback(async () => {
     setBusy(true);
     const response = await fetch('/api/snapshots', {
       method: 'POST',
@@ -84,7 +84,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
     }
     toast.success('Snapshot creado.');
     router.refresh();
-  }
+  }, [project.name, project.slug, router]);
 
   async function createAgent() {
     if (!agentName.trim()) return;
@@ -164,7 +164,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
         setPreferredTargetAgent(agent.name);
       },
     })),
-  ], [model.threads, project.agents, router, teamThreadId]);
+  ], [createSnapshot, model.threads, project.agents, router, teamThreadId]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#020202] text-white">

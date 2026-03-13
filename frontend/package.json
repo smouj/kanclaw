@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next dev",
+    "start": "next start",
     "serve": "next start",
     "desktop:prepare-sidecar": "node scripts/desktop/prepare-sidecar.mjs",
     "desktop:dev": "tauri dev",

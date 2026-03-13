@@ -13,7 +13,10 @@ const createTaskSchema = z.object({
 
 const updateTaskSchema = z.object({
   taskId: z.string().min(1),
-  status: z.enum(['TODO', 'RUNNING', 'DONE']),
+  status: z.enum(['TODO', 'RUNNING', 'DONE']).optional(),
+  assigneeAgentId: z.string().nullable().optional(),
+  title: z.string().min(1).optional(),
+  description: z.string().optional(),
 });
 
 export async function POST(request: Request) {
@@ -40,7 +43,7 @@ export async function POST(request: Request) {
         projectId: project.id,
         actor: 'Human',
         action: payload.parentTaskId ? 'subtask_created' : 'task_created',
-        details: JSON.stringify({ title: task.title, status: task.status }),
+        details: JSON.stringify({ title: task.title, status: task.status, assigneeAgentId: task.assigneeAgentId }),
       },
     });
 
@@ -56,21 +59,35 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const payload = updateTaskSchema.parse(await request.json());
-    const task = await prisma.task.update({
+    if (!payload.status && payload.assigneeAgentId === undefined && !payload.title && payload.description === undefined) {
+      return NextResponse.json({ error: 'No se proporcionaron cambios para actualizar la tarea.' }, { status: 400 });
+    }
+
+    const task = await prisma.task.findUnique({ where: { id: payload.taskId } });
+    if (!task) {
+      return NextResponse.json({ error: 'Tarea no encontrada.' }, { status: 404 });
+    }
+
+    const updatedTask = await prisma.task.update({
       where: { id: payload.taskId },
-      data: { status: payload.status },
+      data: {
+        status: payload.status ?? task.status,
+        assigneeAgentId: payload.assigneeAgentId === undefined ? task.assigneeAgentId : payload.assigneeAgentId,
+        title: payload.title ?? task.title,
+        description: payload.description === undefined ? task.description : payload.description,
+      },
     });
 
     await prisma.activityLog.create({
       data: {
         projectId: task.projectId,
         actor: 'Human',
-        action: 'task_status_changed',
-        details: JSON.stringify({ taskId: task.id, status: task.status }),
+        action: 'task_updated',
+        details: JSON.stringify({ taskId: updatedTask.id, status: updatedTask.status, assigneeAgentId: updatedTask.assigneeAgentId }),
       },
     });
 
-    return NextResponse.json(task);
+    return NextResponse.json(updatedTask);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.flatten() }, { status: 400 });

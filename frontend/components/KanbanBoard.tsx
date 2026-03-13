@@ -236,6 +236,9 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
                         setDraggedTaskId(null);
                         setHoveredColumn(null);
                       }}
+                      onTaskUpdated={(updatedTask) =>
+                        setTasks((current) => current.map((task) => (task.id === updatedTask.id ? updatedTask : task)))
+                      }
                     />
                   ))
                 )}
