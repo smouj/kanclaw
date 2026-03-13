@@ -246,7 +246,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
 
   return (
     <div className="relative h-screen overflow-hidden bg-background text-text-primary">
-      <AmbientCanvas className="opacity-50" />
+      <AmbientCanvas className="opacity-28" />
       <CommandPalette open={paletteOpen} setOpen={setPaletteOpen} items={commands} />
 
       {/* Top Header */}

@@ -90,10 +90,10 @@ function DigitalTerrain() {
           // For light theme, make grid darker
           vec3 gridColor = mix(rgb, vec3(0.3), uIsLight * 0.7);
           
-          // Accent
-          float accent = smoothstep(0.08, 0.15, vElevation) * 0.35;
+          // Accent (reduced intensity for subtler background)
+          float accent = smoothstep(0.08, 0.15, vElevation) * 0.12;
           
-          color = mix(color, gridColor, grid * 0.2 + accent);
+          color = mix(color, gridColor, grid * 0.08 + accent);
           
           gl_FragColor = vec4(color, 1.0);
         }
@@ -157,10 +157,10 @@ function FloatingParticles() {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.025}
-        color="#334455"
+        size={0.02}
+        color="#2a3340"
         transparent
-        opacity={0.5}
+        opacity={0.22}
         sizeAttenuation
       />
     </points>

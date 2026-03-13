@@ -156,7 +156,7 @@ export function AgentChatSurface({ projectSlug, agents, initialThreads, openClaw
         </div>
       </aside>
 
-      <section className="grid min-h-0 grid-rows-[auto_1fr_auto] overflow-hidden rounded-[1.8rem] border border-white/8 bg-white/[0.025]">
+      <section className="grid min-h-0 grid-rows-[auto_1fr_auto] overflow-hidden rounded-[1.8rem] border border-white/10 bg-black/50 backdrop-blur-[1px]">
         <div className="border-b border-white/6 px-5 py-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
