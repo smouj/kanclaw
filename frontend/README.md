@@ -39,11 +39,9 @@ project-memory.md
 
 ## Configuración local
 
-1. Instala dependencias (recomendado en este repo: npm por lockfile versionado):
+1. Instala dependencias (recomendado: `npm` por `package-lock.json`):
 
    ```bash
-   yarn install
-   # o
    npm install
    ```
 
@@ -56,21 +54,19 @@ project-memory.md
 3. Genera Prisma y crea la base de datos:
 
    ```bash
-   yarn db:generate
-   yarn db:push
+   npm run db:generate
+   npm run db:push
    ```
 
 4. Opcional: carga el proyecto demo:
 
    ```bash
-   yarn seed
+   npm run seed
    ```
 
 5. Arranca KanClaw:
 
    ```bash
-   yarn dev
-   # o
    npm run dev
    ```
 
@@ -147,9 +143,9 @@ KanClaw ahora incluye una base real para wrapper desktop con **Tauri 2 + sidecar
 ### Scripts
 
 ```bash
-yarn desktop:dev
-yarn desktop:prepare-sidecar
-yarn desktop:build
+npm run desktop:dev
+npm run desktop:prepare-sidecar
+npm run desktop:build
 ```
 
 ### Qué hace
@@ -183,13 +179,16 @@ El chat del proyecto ahora incluye:
 
 ## Scripts
 
-- `yarn dev`
-- `yarn build`
-- `yarn start`
-- `yarn serve`
-- `yarn db:generate`
-- `yarn db:push`
-- `yarn seed`
+- `npm run dev`
+- `npm run build`
+- `npm run start`
+- `npm run serve`
+- `npm run db:generate`
+- `npm run db:push`
+- `npm run seed`
+- `npm run desktop:dev`
+- `npm run desktop:prepare-sidecar`
+- `npm run desktop:build`
 
 
 ## CI / calidad

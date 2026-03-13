@@ -250,10 +250,14 @@ npm run start
 
 ### Desktop (Tauri)
 ```bash
-yarn desktop:build
+cd frontend
+npm run build
+npm run desktop:prepare-sidecar
+npm run desktop:build
 ```
 
 The Tauri build packages Next.js as a sidecar for native desktop experience.
+Build artifacts are generated in `frontend/src-tauri/target/release/bundle/`.
 
 ## Performance Considerations
 
