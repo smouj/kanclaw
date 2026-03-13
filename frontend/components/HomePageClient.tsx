@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react';
 import {
   Cable,
   Command as CommandIcon,
+  ExternalLink,
   FolderKanban,
   MemoryStick,
   PlugZap,
@@ -66,13 +67,25 @@ export function HomePageClient({
           {/* Header */}
           <div className="flex items-center justify-between gap-3">
             <ThemeToggle />
-            <button
-              onClick={() => setShowOpenClawConfig((prev) => !prev)}
-              className="flex items-center gap-2 rounded border border-border bg-surface px-4 py-2 transition-colors hover:bg-surface2"
-            >
-              <Settings className="h-4 w-4" />
-              <span className="text-sm">OpenClaw</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <a
+                href="http://76.13.37.123:18789/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded border border-border bg-surface px-4 py-2 transition-colors hover:bg-surface2"
+                title="Abrir OpenClaw del VPS"
+              >
+                <ExternalLink className="h-4 w-4" />
+                <span className="text-sm">OpenClaw</span>
+              </a>
+              <button
+                onClick={() => setShowOpenClawConfig((prev) => !prev)}
+                className="flex items-center gap-2 rounded border border-border bg-surface px-4 py-2 transition-colors hover:bg-surface2"
+              >
+                <Settings className="h-4 w-4" />
+                <span className="text-sm">Config</span>
+              </button>
+            </div>
           </div>
 
           {/* OpenClaw Config Modal */}
