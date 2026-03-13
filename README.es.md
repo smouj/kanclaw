@@ -117,6 +117,14 @@ Wrapper Tauri 2 para experiencia de escritorio nativa
 
 ---
 
+## Capturas de Pantalla
+
+| Dashboard | Workspace de Proyecto |
+|-----------|----------------------|
+| ![Dashboard](./screenshots/01-dashboard.png) | ![Workspace](./screenshots/02-workspace.png) |
+
+---
+
 ## Stack Tecnológico
 
 | Capa | Tecnología |
