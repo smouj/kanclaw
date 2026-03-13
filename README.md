@@ -13,7 +13,6 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 [![Tauri](https://img.shields.io/badge/Tauri-2.0-black?style=flat&logo=tauri)](https://tauri.app/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/smouj/kanclaw/pulls)
-[![Discord](https://img.shields.io/badge/Discord-KanClaw-5865F2?style=flat&logo=discord)](https://discord.gg/kanclaw)
 
 ---
 
