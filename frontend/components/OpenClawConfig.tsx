@@ -1,9 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Settings, Wifi, WifiOff, Key, RefreshCw, Loader2, Eye, EyeOff, Plug } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Settings, Wifi, WifiOff, Key, RefreshCw, Loader2, Eye, EyeOff, Plug, Check, X } from 'lucide-react';
 
 interface OpenClawConfigProps {
   onSave?: () => void;
@@ -46,7 +44,7 @@ export function OpenClawConfig({ onSave }: OpenClawConfigProps) {
       return;
     }
     setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setTimeout(() => setSaved(false), 3000);
     if (onSave) onSave();
     setLoading(false);
   }
@@ -63,80 +61,139 @@ export function OpenClawConfig({ onSave }: OpenClawConfigProps) {
   }
 
   return (
-    <div className="panel-muted p-5 space-y-4">
-      <div className="flex items-center gap-3">
-        <Plug className="w-5 h-5" />
-        <h3 className="text-lg font-semibold">OpenClaw Connection</h3>
+    <div 
+      className="rounded-xl border p-6"
+      style={{ 
+        backgroundColor: 'var(--kc-surface)', 
+        borderColor: 'var(--kc-border)' 
+      }}
+    >
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-2">
+        <div 
+          className="w-10 h-10 rounded-lg flex items-center justify-center"
+          style={{ backgroundColor: 'var(--kc-accent-green)' }}
+        >
+          <Plug className="w-5 h-5 text-black" />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold">Configurar OpenClaw</h3>
+          <p className="text-xs" style={{ color: 'var(--kc-text-muted)' }}>
+            Conecta tu gateway de OpenClaw
+          </p>
+        </div>
       </div>
-      
-      <p className="text-sm text-text-muted">
-        Configure OpenClaw at server level for KanClaw (stored in ~/.kanclaw/config/openclaw.json).
-      </p>
 
-      {/* Status */}
-      <div className="flex items-center gap-3 p-3 rounded border border-border bg-surface">
+      {/* Status Indicator */}
+      <div 
+        className="flex items-center gap-3 p-3 rounded-lg mb-5"
+        style={{ backgroundColor: 'var(--kc-surface2)' }}
+      >
         {status === 'connected' ? (
           <>
-            <Wifi className="w-4 h-4 text-green-500" />
-            <span className="text-sm text-green-500">Connected</span>
+            <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(51, 255, 51, 0.2)' }}>
+              <Wifi className="w-4 h-4" style={{ color: 'var(--kc-accent-green)' }} />
+            </div>
+            <div>
+              <p className="text-sm font-medium" style={{ color: 'var(--kc-accent-green)' }}>Conectado</p>
+              <p className="text-xs" style={{ color: 'var(--kc-text-muted)' }}>Gateway activo</p>
+            </div>
           </>
         ) : status === 'disconnected' ? (
           <>
-            <WifiOff className="w-4 h-4 text-red-500" />
-            <span className="text-sm text-red-500">Disconnected</span>
+            <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(255, 51, 51, 0.2)' }}>
+              <WifiOff className="w-4 h-4" style={{ color: '#ff3333' }} />
+            </div>
+            <div>
+              <p className="text-sm font-medium" style={{ color: '#ff3333' }}>Desconectado</p>
+              <p className="text-xs" style={{ color: 'var(--kc-text-muted)' }}>Revisa la configuración</p>
+            </div>
           </>
         ) : (
           <>
-            <div className="w-2 h-2 rounded-full bg-gray-400" />
-            <span className="text-sm text-text-muted">Not tested</span>
+            <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--kc-surface)' }}>
+              <Wifi className="w-4 h-4" style={{ color: 'var(--kc-text-muted)' }} />
+            </div>
+            <div>
+              <p className="text-sm font-medium">Sin probar</p>
+              <p className="text-xs" style={{ color: 'var(--kc-text-muted)' }}>Configura y prueba la conexión</p>
+            </div>
           </>
         )}
         <button 
           onClick={handleTest}
           disabled={testing}
-          className="ml-auto text-xs text-text-muted hover:text-text-primary"
+          className="ml-auto px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
+          style={{ borderColor: 'var(--kc-border)', color: 'var(--kc-text-primary)' }}
         >
-          {testing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Test'}
+          {testing ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Probar'}
         </button>
       </div>
 
       {/* HTTP URL */}
-      <div className="space-y-2">
-        <label className="text-sm text-text-secondary">HTTP Endpoint</label>
-        <Input 
+      <div className="space-y-2 mb-4">
+        <label className="text-sm font-medium flex items-center gap-2">
+          <Key className="w-4 h-4" style={{ color: 'var(--kc-text-muted)' }} />
+          HTTP Endpoint
+        </label>
+        <input 
+          type="url"
           value={httpUrl}
           onChange={(e) => setHttpUrl(e.target.value)}
           placeholder="http://127.0.0.1:18789"
-          className="bg-surface border-border"
+          className="w-full px-4 py-3 rounded-lg border text-sm"
+          style={{ 
+            backgroundColor: 'var(--kc-surface2)', 
+            borderColor: 'var(--kc-border)',
+            color: 'var(--kc-text-primary)'
+          }}
         />
       </div>
 
       {/* WebSocket URL */}
-      <div className="space-y-2">
-        <label className="text-sm text-text-secondary">WebSocket Endpoint</label>
-        <Input 
+      <div className="space-y-2 mb-4">
+        <label className="text-sm font-medium flex items-center gap-2">
+          <Settings className="w-4 h-4" style={{ color: 'var(--kc-text-muted)' }} />
+          WebSocket Endpoint
+        </label>
+        <input 
+          type="url"
           value={wsUrl}
           onChange={(e) => setWsUrl(e.target.value)}
           placeholder="ws://127.0.0.1:18789/events"
-          className="bg-surface border-border"
+          className="w-full px-4 py-3 rounded-lg border text-sm"
+          style={{ 
+            backgroundColor: 'var(--kc-surface2)', 
+            borderColor: 'var(--kc-border)',
+            color: 'var(--kc-text-primary)'
+          }}
         />
       </div>
 
       {/* Bearer Token */}
-      <div className="space-y-2">
-        <label className="text-sm text-text-secondary">Bearer Token (optional)</label>
+      <div className="space-y-2 mb-5">
+        <label className="text-sm font-medium flex items-center gap-2">
+          <Key className="w-4 h-4" style={{ color: 'var(--kc-text-muted)' }} />
+          Bearer Token
+        </label>
         <div className="relative">
-          <Input 
+          <input 
             type={showToken ? "text" : "password"}
             value={bearerToken}
             onChange={(e) => setBearerToken(e.target.value)}
-            placeholder="Your bearer token"
-            className="bg-surface border-border pr-10"
+            placeholder="Tu token de API"
+            className="w-full px-4 py-3 rounded-lg border text-sm pr-12"
+            style={{ 
+              backgroundColor: 'var(--kc-surface2)', 
+              borderColor: 'var(--kc-border)',
+              color: 'var(--kc-text-primary)'
+            }}
           />
           <button
             type="button"
             onClick={() => setShowToken(!showToken)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
+            className="absolute right-3 top-1/2 -translate-y-1/2"
+            style={{ color: 'var(--kc-text-muted)' }}
           >
             {showToken ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
@@ -144,14 +201,32 @@ export function OpenClawConfig({ onSave }: OpenClawConfigProps) {
       </div>
 
       {/* Save Button */}
-      <Button 
+      <button 
         onClick={handleSave} 
         disabled={loading}
-        className="w-full"
+        className="w-full py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all"
+        style={{ 
+          backgroundColor: saved ? 'var(--kc-accent-green)' : 'var(--kc-accent-green)',
+          color: 'black'
+        }}
       >
-        {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-        {saved ? 'Guardado. Recarga dashboard para ver estado.' : 'Guardar configuración'}
-      </Button>
+        {loading ? (
+          <>
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Guardando...
+          </>
+        ) : saved ? (
+          <>
+            <Check className="w-4 h-4" />
+            ¡Guardado! Recarga para aplicar
+          </>
+        ) : (
+          <>
+            <Settings className="w-4 h-4" />
+            Guardar configuración
+          </>
+        )}
+      </button>
     </div>
   );
 }
