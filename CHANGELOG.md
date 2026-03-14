@@ -4,6 +4,26 @@ All notable changes to **KanClaw** will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.3.2] - 2026-03-14
+
+### Added
+- **Toast Notifications** - ToastProvider with success/error/warning/info toasts
+- **Offline Indicator** - Banner showing online/offline status
+- **Global Search** - Search projects and agents with Ctrl+K
+- **Skeleton Loaders** - CardSkeleton, StatsSkeleton, ActivitySkeleton, etc.
+- **Markdown Preview** - Preview markdown files in editor
+- **Export Project** - Export project data as JSON
+- **Run Timeline** - Visual timeline of agent runs with status icons
+- **Keyboard Shortcuts Modal** - Improved styling with kanclaw-panel
+
+### Changed
+- ExportProject button integrated in project workspace header
+- RunTimeline integrated in Memory Hub (runs tab)
+- Keyboard shortcuts modal improved with premium styling
+
+### Fixed
+- Project delete API call now uses slug correctly
+
 ## [0.3.1] - 2026-03-14
 
 ### Added
