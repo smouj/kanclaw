@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
-  <!-- Background circle -->
-  <circle cx="256" cy="256" r="240" fill="#10b981"/>
-  <!-- Claw shape -->
-  <path d="M256 120 L320 200 L400 160 L360 260 L420 320 L340 360 L320 440 L256 400 L192 440 L172 360 L92 320 L152 260 L112 160 L192 200 L256 120Z" fill="white"/>
-  <circle cx="256" cy="280" r="40" fill="#10b981"/>
-</svg>
