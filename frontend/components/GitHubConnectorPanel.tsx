@@ -41,12 +41,12 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
     const data = await response.json();
     setLoading(false);
     if (!response.ok) {
-      toast.error(data.error || t('connectors.github') + ' error');
+      toast.error(data.error || t('connectors.connectError'));
       return;
     }
     setStatus({ connected: true, mode: 'PAT', username: data.username });
     setToken('');
-    toast.success(t('connectors.github') + ' OK');
+    toast.success(t('connectors.connectedOk'));
   }
 
   async function loadRepositories() {
@@ -55,7 +55,7 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
     const data = await response.json();
     setLoading(false);
     if (!response.ok) {
-      toast.error(data.error || t('connectors.loadRepos') + ' error');
+      toast.error(data.error || t('connectors.loadError'));
       return;
     }
     setRepositories(data);
@@ -70,13 +70,13 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
       const data = await response.json();
       setLoading(false);
       if (!response.ok) {
-        toast.error(data.error || t('connectors.repoBrowser') + ' error');
+        toast.error(data.error || t('connectors.previewError'));
         return;
       }
       setPreview(data);
     } catch (error) {
       setLoading(false);
-      toast.error(t('connectors.repoBrowser') + ' error');
+      toast.error(t('connectors.previewError'));
     }
   }
 
@@ -98,7 +98,7 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
     const data = await response.json();
     setLoading(false);
     if (!response.ok) {
-      toast.error(data.error || t('connectors.connectImport') + ' error');
+      toast.error(data.error || t('connectors.importError'));
       return;
     }
     toast.success(mode === 'create' ? t('connectors.importCreated') : t('connectors.importAttached'));

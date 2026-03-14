@@ -116,6 +116,12 @@ const dictionary: Dict = {
   'connectors.localConnected': { es: 'Carpeta local conectada.', en: 'Local folder connected.', fr: 'Dossier local connecté.' },
   'connectors.importCreated': { es: 'Repositorio importado como proyecto.', en: 'Repository imported as project.', fr: 'Dépôt importé comme projet.' },
   'connectors.importAttached': { es: 'Repositorio vinculado al proyecto.', en: 'Repository attached to project.', fr: 'Dépôt lié au projet.' },
+  'connectors.connectedOk': { es: 'GitHub conectado.', en: 'GitHub connected.', fr: 'GitHub connecté.' },
+  'connectors.connectError': { es: 'No se pudo conectar GitHub.', en: 'Could not connect GitHub.', fr: 'Impossible de connecter GitHub.' },
+  'connectors.loadError': { es: 'No se pudieron cargar los repositorios.', en: 'Could not load repositories.', fr: 'Impossible de charger les dépôts.' },
+  'connectors.previewError': { es: 'No se pudo inspeccionar el repositorio.', en: 'Could not inspect repository.', fr: 'Impossible d\'inspecter le dépôt.' },
+  'connectors.importError': { es: 'No se pudo importar el repositorio.', en: 'Could not import repository.', fr: 'Impossible d\'importer le dépôt.' },
+
 
   'overview.delegations': { es: 'Delegaciones', en: 'Delegations', fr: 'Délégations' },
   'overview.imports': { es: 'Importaciones', en: 'Imports', fr: 'Importations' },
