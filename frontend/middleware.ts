@@ -1,7 +1,33 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+const AUTH_TOKEN = process.env.KANCLAW_AUTH_TOKEN;
+
 export function middleware(request: NextRequest) {
+  // Skip auth check in development
+  if (process.env.NODE_ENV === 'development') {
+    return addSecurityHeaders(request);
+  }
+
+  // Check auth token for production
+  if (AUTH_TOKEN) {
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.replace('Bearer ', '');
+    
+    if (token !== AUTH_TOKEN) {
+      return new NextResponse('Unauthorized', {
+        status: 401,
+        headers: {
+          'WWW-Authenticate': 'Bearer',
+        },
+      });
+    }
+  }
+
+  return addSecurityHeaders(request);
+}
+
+function addSecurityHeaders(request: NextRequest) {
   const response = NextResponse.next();
 
   // Security Headers
