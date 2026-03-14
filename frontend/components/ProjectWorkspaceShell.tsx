@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
-import { ArrowLeft, Bot, BrainCircuit, Cable, ChevronDown, ChevronRight, Command as CommandIcon, FolderTree, LayoutGrid, MessageSquareText, RefreshCcw, Sparkles } from 'lucide-react';
+import { ArrowLeft, Bot, BrainCircuit, Cable, Camera, CheckCircle2, ChevronDown, ChevronRight, Command as CommandIcon, FolderTree, LayoutGrid, MessageSquare, MessageSquareText, RefreshCcw, Sparkles, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import type { Agent, Project, Task } from '@prisma/client';
@@ -390,14 +390,14 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                   {/* Main Stats Grid */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
-                      { label: 'Conversaciones', value: model.threads.length, icon: '💬', color: 'blue' },
-                      { label: 'Tareas', value: model.project.tasks.length, icon: '✅', color: 'emerald' },
-                      { label: 'Ejecuciones', value: model.runs.length, icon: '⚡', color: 'amber' },
-                      { label: 'Snapshots', value: model.snapshots.length, icon: '📸', color: 'purple' },
+                      { label: 'Conversaciones', value: model.threads.length, icon: MessageSquare, color: 'blue' },
+                      { label: 'Tareas', value: model.project.tasks.length, icon: CheckCircle2, color: 'emerald' },
+                      { label: 'Ejecuciones', value: model.runs.length, icon: Zap, color: 'amber' },
+                      { label: 'Snapshots', value: model.snapshots.length, icon: Camera, color: 'purple' },
                     ].map((stat) => (
                       <div key={stat.label} className={`p-5 rounded-xl border bg-surface border-border`}>
                         <div className="flex items-center justify-between">
-                          <span className="text-2xl">{stat.icon}</span>
+                          {stat.icon && <stat.icon className="h-5 w-5" />}
                           <span className={`text-xs uppercase tracking-wider text-${stat.color}-500`}>{stat.label}</span>
                         </div>
                         <p className="mt-3 text-3xl font-bold">{stat.value}</p>

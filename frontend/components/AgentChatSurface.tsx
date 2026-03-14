@@ -282,7 +282,7 @@ function MessageBubble({
       <div
         className={`max-w-[75%] rounded-2xl px-4 py-3 ${
           isHuman
-            ? 'theme-dark:bg-white theme-dark:text-zinc-900 theme-light:bg-zinc-900 theme-light:text-white shadow-lg'
+            ? 'shadow-lg border border-subtle bg-transparent shadow-lg'
             : isSystem
             ? 'bg-amber-500/10 border border-amber-500/20 text-amber-200'
             : 'bg-gradient-to-br from-zinc-800 to-zinc-850 border border-subtle text-zinc-100 shadow-lg'
