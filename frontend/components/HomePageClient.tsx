@@ -111,26 +111,18 @@ export function HomePageClient({
           <section className="kanclaw-panel grid gap-6 p-5 lg:grid-cols-[1.08fr_0.92fr] lg:p-6">
             <div className="relative rounded-[2.4rem] border theme-surface-soft p-6">
               <div className="mb-8 flex items-center gap-4">
-                <div className="relative h-16 w-16 overflow-hidden rounded-xl border border-white/15 bg-white/[0.02] shadow-lg">
+                <div className="relative h-20 w-20 overflow-hidden rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'var(--kc-accent-green)' }}>
                   <Image
-                    src="/kanclaw-logo-light.png"
-                    alt="KanClaw official logo"
-                    fill
-                    sizes="64px"
-                    className="theme-show-light object-contain p-1"
-                    priority
-                  />
-                  <Image
-                    src="/kanclaw-logo-dark.png"
-                    alt="KanClaw official logo"
-                    fill
-                    sizes="64px"
-                    className="theme-show-dark object-contain p-1"
+                    src="/logo-green.svg"
+                    alt="KanClaw Logo"
+                    width={64}
+                    height={64}
+                    className="w-16 h-16"
                     priority
                   />
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.32em] text-zinc-500">Living Workspace OS</p>
+                  <p className="text-xs uppercase tracking-[0.32em]" style={{ color: 'var(--kc-text-muted)' }}>Living Workspace OS</p>
                   <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">KanClaw</h1>
                 </div>
               </div>
