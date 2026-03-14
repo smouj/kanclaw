@@ -85,7 +85,7 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
 }
 
 function MemoryList({ title, items, empty }: { title: string; items: Array<{ name: string; path: string; updatedAt: string }>; empty: string }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   return (
     <section className="rounded-[1.8rem] border border-border theme-surface-soft p-5">
       <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{title}</p>
@@ -95,7 +95,7 @@ function MemoryList({ title, items, empty }: { title: string; items: Array<{ nam
           <article key={item.path} className="rounded-[1.4rem] border border-border theme-surface-soft p-4" data-testid={`memory-file-${item.path.replace(/[^a-zA-Z0-9]+/g, '-')}`}>
             <p className="text-sm font-medium theme-text-strong">{item.name}</p>
             <p className="mt-1 text-xs text-text-muted">{item.path}</p>
-            <p className="mt-3 text-xs text-text-secondary">{t('common.updated')} {new Date(item.updatedAt).toLocaleString('es-ES')}</p>
+            <p className="mt-3 text-xs text-text-secondary">{t('common.updated')} {new Date(item.updatedAt).toLocaleString(locale)}</p>
           </article>
         ))}
       </div>
@@ -104,6 +104,7 @@ function MemoryList({ title, items, empty }: { title: string; items: Array<{ nam
 }
 
 function TimelineList({ title, items, empty }: { title: string; items: Array<{ id: string; title: string; subtitle: string; timestamp: string | Date }>; empty: string }) {
+  const { locale } = useI18n();
   return (
     <section className="rounded-[1.8rem] border border-border theme-surface-soft p-5">
       <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{title}</p>
@@ -113,7 +114,7 @@ function TimelineList({ title, items, empty }: { title: string; items: Array<{ i
           <article key={item.id} className="rounded-[1.4rem] border border-border theme-surface-soft p-4" data-testid={`timeline-item-${item.id}`}>
             <div className="flex items-center justify-between gap-3">
               <p className="text-sm font-medium theme-text-strong">{item.title}</p>
-              <time className="text-xs text-text-muted">{new Date(item.timestamp).toLocaleString('es-ES')}</time>
+              <time className="text-xs text-text-muted">{new Date(item.timestamp).toLocaleString(locale)}</time>
             </div>
             <p className="mt-2 text-sm leading-6 text-text-secondary">{item.subtitle}</p>
           </article>
@@ -124,10 +125,11 @@ function TimelineList({ title, items, empty }: { title: string; items: Array<{ i
 }
 
 function PreviewCard({ title, value }: { title: string; value: string }) {
+  const { t } = useI18n();
   return (
     <div className="rounded-[1.4rem] border border-border theme-surface-soft p-4">
       <p className="text-xs uppercase tracking-[0.24em] text-text-muted">{title}</p>
-      <pre className="mt-3 whitespace-pre-wrap text-xs leading-6 text-text-secondary">{value || 'Sin contenido todavía.'}</pre>
+      <pre className="mt-3 whitespace-pre-wrap text-xs leading-6 text-text-secondary">{value || t('memory.noContentYet')}</pre>
     </div>
   );
 }

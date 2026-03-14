@@ -72,6 +72,7 @@ const dictionary: Dict = {
   'memory.emptyArtifacts': { es: 'Todavía no hay artefactos generados.', en: 'No generated artifacts yet.', fr: 'Aucun artefact généré.' },
   'memory.emptyRuns': { es: 'No hay runs recientes.', en: 'No recent runs.', fr: 'Aucune exécution récente.' },
   'memory.emptySnapshots': { es: 'No se han creado snapshots todavía.', en: 'No snapshots created yet.', fr: 'Aucune capture créée pour le moment.' },
+  'memory.noContentYet': { es: 'Sin contenido todavía.', en: 'No content yet.', fr: 'Pas encore de contenu.' },
 
 
   'files.search': { es: 'Buscar archivos...', en: 'Search files...', fr: 'Rechercher des fichiers...' },
@@ -122,6 +123,8 @@ const dictionary: Dict = {
   'overview.memoryActive': { es: 'Activa', en: 'Active', fr: 'Active' },
   'overview.memoryEmpty': { es: 'Vacía', en: 'Empty', fr: 'Vide' },
   'overview.knowledgeFilesCount': { es: 'archivos de conocimiento', en: 'knowledge files', fr: 'fichiers de connaissance' },
+  'overview.projectWorkspace': { es: 'Workspace del proyecto', en: 'Project workspace', fr: 'Espace de travail du projet' },
+  'overview.noRole': { es: 'Sin rol', en: 'No role', fr: 'Sans rôle' },
 
   'sidebar.agents': { es: 'Agentes', en: 'Agents', fr: 'Agents' },
   'sidebar.signals': { es: 'Señales', en: 'Signals', fr: 'Signaux' },
@@ -176,11 +179,18 @@ const dictionary: Dict = {
 
 interface LanguageContextValue {
   lang: Lang;
+  locale: string;
   setLang: (lang: Lang) => void;
   t: (key: string, fallback?: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
+
+const locales: Record<Lang, string> = {
+  es: 'es-ES',
+  en: 'en-US',
+  fr: 'fr-FR',
+};
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>('es');
@@ -205,7 +215,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     return item[lang] || fallback || key;
   }, [lang]);
 
-  const value = useMemo(() => ({ lang, setLang, t }), [lang, t]);
+  const value = useMemo(() => ({ lang, locale: locales[lang], setLang, t }), [lang, t]);
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }

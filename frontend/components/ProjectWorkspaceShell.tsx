@@ -134,7 +134,7 @@ function AnimatedTab({
 
 export function ProjectWorkspaceShell({ project, health, githubStatus, files, model }: ProjectWorkspaceShellProps) {
   const router = useRouter();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [activeView, setActiveView] = useState<ViewKey>('chat');
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [selectedThreadId, setSelectedThreadId] = useState(model.threads[0]?.id || '');
@@ -281,7 +281,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
           </button>
           <div>
             <h1 className="text-lg font-semibold leading-tight">{project.name}</h1>
-            <p className="text-xs text-text-muted">{project.description || 'Project workspace'}</p>
+            <p className="text-xs text-text-muted">{project.description || t('overview.projectWorkspace')}</p>
           </div>
         </div>
         
@@ -444,7 +444,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                             <div className="h-3 w-3 rounded-full bg-emerald-500" />
                             <span className="text-sm font-medium">{agent.name}</span>
                           </div>
-                          <span className="text-xs text-text-muted">{agent.role || 'Sin rol'}</span>
+                          <span className="text-xs text-text-muted">{agent.role || t('overview.noRole')}</span>
                         </div>
                       ))}
                     </div>
@@ -487,7 +487,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                               <span className="text-sm">{log.action}</span>
                             </div>
                             <span className="text-xs text-text-muted">
-                              {new Date(log.timestamp).toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                              {new Date(log.timestamp).toLocaleString(locale, { hour: '2-digit', minute: '2-digit' })}
                             </span>
                           </div>
                         ))

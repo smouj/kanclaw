@@ -45,12 +45,12 @@ function parseMetadata(value: unknown) {
   return value as Record<string, unknown>;
 }
 
-function formatTime(date: string | Date) {
-  return new Date(date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+function formatTime(date: string | Date, locale = 'es-ES') {
+  return new Date(date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
 }
 
-function formatDay(date: string | Date) {
-  return new Date(date).toLocaleDateString('es-ES');
+function formatDay(date: string | Date, locale = 'es-ES') {
+  return new Date(date).toLocaleDateString(locale);
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -216,7 +216,7 @@ export function AgentChatSurface({
   preferredTargetAgentExternal?: string;
   onThreadChange?: (threadId: string) => void;
 }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [threads, setThreads] = useState(initialThreads);
   const [selectedThreadId, setSelectedThreadId] = useState(selectedThreadIdExternal || initialThreads[0]?.id || '');
   const [selectedMessageId, setSelectedMessageId] = useState('');
@@ -284,7 +284,7 @@ export function AgentChatSurface({
     const groups: Array<{ day: string; messages: ThreadShape['messages'] }> = [];
     let currentDay = '';
     selectedThread.messages.forEach((msg) => {
-      const day = formatDay(msg.createdAt);
+      const day = formatDay(msg.createdAt, locale);
       if (day !== currentDay) {
         currentDay = day;
         groups.push({ day, messages: [] });
@@ -292,7 +292,7 @@ export function AgentChatSurface({
       groups[groups.length - 1].messages.push(msg);
     });
     return groups;
-  }, [selectedThread]);
+  }, [selectedThread, locale]);
 
   const stats = useMemo(() => {
     if (!selectedThread) return { total: 0, human: 0, agent: 0 };
@@ -509,7 +509,7 @@ export function AgentChatSurface({
                           >
                             <div className="mb-1 flex items-center justify-between gap-3 text-[10px] uppercase tracking-wider text-text-muted">
                               <span>{isHuman ? t('chat.you') : message.actor}</span>
-                              <span>{formatTime(message.createdAt)}</span>
+                              <span>{formatTime(message.createdAt, locale)}</span>
                             </div>
                             <div className="space-y-1 text-sm leading-relaxed">{renderMarkdown(message.content, t)}</div>
                           </button>
@@ -616,7 +616,7 @@ export function AgentChatSurface({
             <div className="border border-border bg-surface p-3 text-xs text-text-muted">
               <p className="text-[11px] font-semibold text-text-primary">{t('chat.selectedMessage')}</p>
               <p className="mt-1">{selectedMessage.role === 'human' ? t('chat.you') : selectedMessage.actor}</p>
-              <p>{new Date(selectedMessage.createdAt).toLocaleString('es-ES')}</p>
+              <p>{new Date(selectedMessage.createdAt).toLocaleString(locale)}</p>
               {selectedMessageMetadata && 'runId' in selectedMessageMetadata ? (
                 <p className="mt-2 break-all">Run: {String((selectedMessageMetadata as any).runId)}</p>
               ) : null}
