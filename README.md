@@ -24,7 +24,7 @@
 
 ## Latest Release
 
-- **v0.3.0** — Custom React hooks library, open-source ready setup
+- **v0.3.2** — Toast notifications, Offline indicator, Global search, Skeleton loaders, Run timeline
 - [Release Notes](./RELEASE_NOTES_v0.3.0.md)
 - [Changelog](./CHANGELOG.md)
 

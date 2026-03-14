@@ -31,7 +31,7 @@ Create a `.env.local` file:
 OPENCLAW_TOKEN=your_token_here
 
 # Optional
-NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_API_URL=http://localhost:3020
 ```
 
 ## Running Tests

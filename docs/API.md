@@ -22,8 +22,8 @@ Returns the health status of the application.
     "agents": []
   },
   "config": {
-    "httpBase": "http://localhost:3001",
-    "wsBase": "ws://localhost:3001/events",
+    "httpBase": "http://localhost:18789",
+    "wsBase": "ws://localhost:18789/events",
     "hasToken": true
   }
 }
@@ -169,7 +169,7 @@ Common status codes:
 For real-time updates, connect to:
 
 ```
-ws://localhost:3001/events
+ws://localhost:18789/events
 ```
 
 Events are published for:

@@ -14,3 +14,7 @@ out/
 
 # OS files
 .DS_Store
+
+# Development scripts
+screenshot*.js
+test-results/
