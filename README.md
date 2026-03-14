@@ -33,8 +33,8 @@
 
 ## 📦 Latest release
 
-- **v0.2.1** — Post-release QA hardening (a11y/focus/aria/keyboard, responsive polish, final consistency pass)
-- Notes: [RELEASE_NOTES_v0.2.1.md](./RELEASE_NOTES_v0.2.1.md)
+- **v0.2.6** — Keyboard navigation system (Ctrl+1-5 views, Ctrl+B sidebar, Ctrl+T theme)
+- Notes: [RELEASE_NOTES_v0.2.6.md](./RELEASE_NOTES_v0.2.6.md)
 - Changelog: [CHANGELOG.md](./CHANGELOG.md)
 
 ---
