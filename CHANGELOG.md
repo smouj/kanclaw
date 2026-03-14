@@ -4,6 +4,14 @@ All notable changes to **KanClaw** will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.2.8] - 2026-03-14
+
+### Added
+- Unit tests infrastructure:
+  - Vitest configuration
+  - Logger unit tests (4 tests passing)
+  - Test scripts: `test`, `test:watch`, `test:coverage`
+
 ## [0.2.7] - 2026-03-14
 
 ### Added
