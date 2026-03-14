@@ -33,8 +33,8 @@
 
 ## 📦 Latest release
 
-- **v0.2.6** — Keyboard navigation system (Ctrl+1-5 views, Ctrl+B sidebar, Ctrl+T theme)
-- Notes: [RELEASE_NOTES_v0.2.6.md](./RELEASE_NOTES_v0.2.6.md)
+- **v0.3.0** — Custom React hooks library (useFetch, useDebounce, useLocalStorage, useOnline, and more)
+- Notes: [RELEASE_NOTES_v0.3.0.md](./RELEASE_NOTES_v0.3.0.md)
 - Changelog: [CHANGELOG.md](./CHANGELOG.md)
 
 ---
