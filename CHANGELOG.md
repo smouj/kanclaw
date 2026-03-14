@@ -4,6 +4,25 @@ All notable changes to **KanClaw** will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.2.1] - 2026-03-14
+
+### Added
+- Post-release QA hardening pass with:
+  - accessibility improvements (focus-visible, aria labels/pressed/expanded, keyboard close on overlays),
+  - responsive behavior refinement by breakpoint,
+  - locale-aware time formatting in project views.
+- Mobile thread selector for chat when left thread rail is hidden on small screens.
+
+### Changed
+- Project shell header spacing and wrapping improved for smaller widths.
+- Sidebar/panel toggles now include better accessibility semantics and keyboard-visible focus states.
+- Chat selected-message highlight and hover contrast normalized for dark/light consistency.
+- Right stats rail in chat now hidden on small screens to preserve readable message width.
+
+### Fixed
+- Removed remaining contrast/focus inconsistencies in primary project views.
+- Unified residual connector/chat strings and status messaging for i18n consistency.
+
 ## [0.2.0] - 2026-03-14
 
 ### Added

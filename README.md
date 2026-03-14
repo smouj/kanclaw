@@ -33,8 +33,8 @@
 
 ## 📦 Latest release
 
-- **v0.2.0** — Premium workspace pass (UI cohesion, i18n ES/EN/FR base, OpenClaw hardening, design-token audit)
-- Notes: [RELEASE_NOTES_v0.2.0.md](./RELEASE_NOTES_v0.2.0.md)
+- **v0.2.1** — Post-release QA hardening (a11y/focus/aria/keyboard, responsive polish, final consistency pass)
+- Notes: [RELEASE_NOTES_v0.2.1.md](./RELEASE_NOTES_v0.2.1.md)
 - Changelog: [CHANGELOG.md](./CHANGELOG.md)
 
 ---

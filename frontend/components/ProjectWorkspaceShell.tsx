@@ -285,8 +285,8 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
       <CommandPalette open={paletteOpen} setOpen={setPaletteOpen} items={commands} />
 
       {/* Top Header */}
-      <header className="relative z-10 flex items-center justify-between h-14 px-4 border-b border-border bg-surface/90 backdrop-blur">
-        <div className="flex items-center gap-3">
+      <header className="relative z-10 flex min-h-14 items-center justify-between px-3 py-2 sm:px-4 border-b border-border bg-surface/90 backdrop-blur">
+        <div className="flex min-w-0 items-center gap-3">
           <button
             onClick={() => router.push('/')}
             className="flex items-center justify-center w-8 h-8 rounded border border-border bg-surface2 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50 transition-colors"
@@ -296,12 +296,12 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-lg font-semibold leading-tight">{project.name}</h1>
-            <p className="text-xs text-text-muted">{project.description || t('overview.projectWorkspace')}</p>
+            <h1 className="text-lg font-semibold leading-tight truncate max-w-[40vw] sm:max-w-none">{project.name}</h1>
+            <p className="text-xs text-text-muted truncate max-w-[50vw] sm:max-w-none">{project.description || t('overview.projectWorkspace')}</p>
           </div>
         </div>
-        
-        <div className="flex items-center gap-2">
+
+        <div className="flex items-center justify-end gap-2 flex-wrap">
           <button
             onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
             className="flex items-center justify-center w-8 h-8 rounded border border-border bg-surface2 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50 transition-colors"
@@ -337,11 +337,21 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
 
       {/* Main Layout */}
       <div className="relative z-10 flex h-[calc(100vh-3.5rem)]">
+        {/* Mobile sidebar backdrop */}
+        {leftSidebarOpen ? (
+          <button
+            className="fixed inset-0 z-20 bg-black/35 lg:hidden"
+            onClick={() => setLeftSidebarOpen(false)}
+            aria-label="Close sidebar"
+            type="button"
+          />
+        ) : null}
+
         {/* Left Sidebar */}
-        <aside 
-          className={`flex flex-col border-r border-border bg-surface/90 backdrop-blur transition-all duration-300 ${
+        <aside
+          className={`z-30 flex flex-col border-r border-border bg-surface/95 backdrop-blur transition-all duration-300 ${
             leftSidebarOpen ? 'w-64' : 'w-0 overflow-hidden'
-          }`}
+          } ${leftSidebarOpen ? 'fixed inset-y-0 left-0 lg:relative lg:inset-auto' : 'relative'}`}
         >
           <div className="flex-1 overflow-y-auto p-3 space-y-3">
             {/* Navigation Tabs */}
@@ -350,11 +360,13 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                 <button
                   key={item.key}
                   onClick={() => setActiveView(item.key)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded transition-all duration-200 ${
-                    activeView === item.key 
-                      ? 'bg-accent-green/10 text-accent-green border-l-2 border-accent-green' 
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50 transition-all duration-200 ${
+                    activeView === item.key
+                      ? 'bg-accent-green/10 text-accent-green border-l-2 border-accent-green'
                       : 'text-text-muted hover:text-text-primary hover:bg-surface2'
                   }`}
+                  type="button"
+                  aria-pressed={activeView === item.key}
                 >
                   <item.icon className="w-4 h-4" />
                   {t(item.labelKey)}
@@ -374,7 +386,8 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                       setSelectedThreadId(thread?.id || teamThreadId);
                       setPreferredTargetAgent(agent.name);
                     }}
-                    className="w-full flex items-center gap-2 px-2 py-1.5 text-xs rounded hover:bg-surface2 transition-colors"
+                    className="w-full flex items-center gap-2 px-2 py-1.5 text-xs rounded hover:bg-surface2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50 transition-colors"
+                    type="button"
                   >
                     <Bot className="w-3 h-3" />
                     {agent.name}

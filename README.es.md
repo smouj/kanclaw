@@ -22,8 +22,8 @@
 
 ## 📦 Última versión
 
-- **v0.2.0** — pasada premium del workspace (cohesión visual, base i18n ES/EN/FR, hardening OpenClaw, auditoría de tokens de diseño)
-- Notas: [RELEASE_NOTES_v0.2.0.md](./RELEASE_NOTES_v0.2.0.md)
+- **v0.2.1** — hardening post-release QA (accesibilidad/focus/aria/teclado, pulido responsive, pasada final de consistencia)
+- Notas: [RELEASE_NOTES_v0.2.1.md](./RELEASE_NOTES_v0.2.1.md)
 - Changelog: [CHANGELOG.md](./CHANGELOG.md)
 
 ---

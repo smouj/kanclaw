@@ -386,7 +386,7 @@ export function AgentChatSurface({
   return (
     <div className="flex h-full min-h-0 bg-surface text-text-primary">
       {/* Left threads */}
-      <aside className="w-72 flex-shrink-0 border-r border-border bg-surface2/60">
+      <aside className="hidden md:block w-72 flex-shrink-0 border-r border-border bg-surface2/60">
         <div className="border-b border-border p-4">
           <div className="flex items-center gap-2">
             <span className={`h-2 w-2 rounded-full ${openClawConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
@@ -425,18 +425,41 @@ export function AgentChatSurface({
       {/* Main */}
       <section className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between border-b border-border bg-surface/70 px-5 py-3">
-          <div>
-            <h3 className="text-base font-semibold">{selectedThread?.title || t('chat.selectThread')}</h3>
-            <p className="text-xs text-text-muted">
+          <div className="min-w-0">
+            <h3 className="text-base font-semibold truncate">{selectedThread?.title || t('chat.selectThread')}</h3>
+            <p className="text-xs text-text-muted truncate">
               {selectedThread?.messages.length || 0} {t('chat.messages')} · {selectedThread?.scope === 'TEAM' ? t('chat.teamRoom') : t('chat.agentRoom')}
             </p>
+            <div className="mt-2 md:hidden">
+              <select
+                value={selectedThreadId}
+                onChange={(e) => {
+                  const nextId = e.target.value;
+                  setSelectedThreadId(nextId);
+                  const nextThread = threads.find((t) => t.id === nextId);
+                  if (nextThread?.agent?.name) setTargetAgentName(nextThread.agent.name);
+                  onThreadChange?.(nextId);
+                }}
+                className="w-full border border-border bg-surface2 px-2 py-1.5 text-xs text-text-primary"
+                aria-label="Select conversation thread"
+              >
+                {threads.map((thread) => (
+                  <option key={thread.id} value={thread.id}>
+                    {thread.title}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {selectedThread?.scope === 'TEAM' ? (
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowAgentSelector((prev) => !prev)}
-                className="flex items-center gap-2 border border-border bg-surface2 px-3 py-2 text-sm text-text-primary hover:bg-surface"
+                className="flex items-center gap-2 border border-border bg-surface2 px-3 py-2 text-sm text-text-primary hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50"
+                aria-label="Toggle team agent selector"
+                aria-expanded={showAgentSelector}
+                type="button"
               >
                 <Bot className="h-4 w-4" />
                 {targetAgentName}
@@ -462,11 +485,13 @@ export function AgentChatSurface({
                     setTargetAgentName(agent.name);
                     setShowAgentSelector(false);
                   }}
-                  className={`border px-3 py-1.5 text-sm transition-colors ${
+                  className={`border px-3 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50 transition-colors ${
                     targetAgentName === agent.name
                       ? 'border-text-primary bg-text-primary text-background'
                       : 'border-border bg-surface text-text-secondary hover:text-text-primary'
                   }`}
+                  aria-pressed={targetAgentName === agent.name}
+                  type="button"
                 >
                   {agent.name}
                 </button>
@@ -505,7 +530,7 @@ export function AgentChatSurface({
                                 : isHuman
                                 ? 'border-border bg-surface2 text-text-primary'
                                 : 'border-border bg-surface text-text-primary'
-                            } ${selected ? 'ring-2 ring-white/20' : 'hover:border-white/20 hover:-translate-y-0.5'} `}
+                            } ${selected ? 'ring-2 ring-text-primary/25' : 'hover:border-border hover:-translate-y-0.5'} `}
                           >
                             <div className="mb-1 flex items-center justify-between gap-3 text-[10px] uppercase tracking-wider text-text-muted">
                               <span>{isHuman ? t('chat.you') : message.actor}</span>
@@ -592,7 +617,7 @@ export function AgentChatSurface({
         </footer>
       </section>
 
-      <aside className="w-60 flex-shrink-0 border-l border-border bg-surface2/50">
+      <aside className="hidden lg:block w-60 flex-shrink-0 border-l border-border bg-surface2/50">
         <div className="border-b border-border p-4">
           <h3 className="text-sm font-medium">{t('chat.stats')}</h3>
         </div>
