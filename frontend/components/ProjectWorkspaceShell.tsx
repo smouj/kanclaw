@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, Bot, BrainCircuit, Cable, Camera, CheckCircle2, ChevronDown, ChevronRight, Command as CommandIcon, FolderTree, LayoutGrid, MessageSquare, MessageSquareText, RefreshCcw, Sparkles, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -147,6 +147,24 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
   const [busy, setBusy] = useState(false);
   const [leftSidebarOpen, setLeftSidebarOpen] = useState(true);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
+
+  useEffect(() => {
+    const key = `kanclaw:layout:${project.slug}`;
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { leftSidebarOpen?: boolean; rightPanelOpen?: boolean };
+      if (typeof parsed.leftSidebarOpen === 'boolean') setLeftSidebarOpen(parsed.leftSidebarOpen);
+      if (typeof parsed.rightPanelOpen === 'boolean') setRightPanelOpen(parsed.rightPanelOpen);
+    } catch {
+      // ignore malformed layout preferences
+    }
+  }, [project.slug]);
+
+  useEffect(() => {
+    const key = `kanclaw:layout:${project.slug}`;
+    localStorage.setItem(key, JSON.stringify({ leftSidebarOpen, rightPanelOpen }));
+  }, [project.slug, leftSidebarOpen, rightPanelOpen]);
 
   const teamThreadId = model.threads.find((thread) => thread.scope === 'TEAM')?.id || model.threads[0]?.id || '';
 
