@@ -8,6 +8,7 @@ import type { Agent, Project, Task } from '@prisma/client';
 import { AgentChatSurface } from '@/components/AgentChatSurface';
 import { AmbientCanvas } from '@/components/AmbientCanvas';
 import { CommandPalette, type CommandItem } from '@/components/CommandPalette';
+import { ExportProject } from '@/components/ExportProject';
 import { FileExplorer } from '@/components/FileExplorer';
 import { GitHubConnectorPanel } from '@/components/GitHubConnectorPanel';
 import { KanbanBoard } from '@/components/KanbanBoard';
@@ -324,6 +325,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
           </button>
           <ThemeToggle />
           <LanguageSelector />
+          <ExportProject project={project} />
           <Button variant="outline" size="sm" onClick={() => router.refresh()}>
             <RefreshCcw className="w-4 h-4 mr-1" />
             <span className="hidden sm:inline">{t('common.refresh')}</span>

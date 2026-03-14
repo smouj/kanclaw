@@ -12,7 +12,7 @@ interface Run {
     agent?: string;
     duration?: string;
     error?: string;
-  };
+  } | unknown;
 }
 
 interface RunTimelineProps {
@@ -78,19 +78,19 @@ export function RunTimeline({ runs, limit = 10 }: RunTimelineProps) {
             <div className="flex-1 overflow-hidden">
               <p className="truncate text-sm font-medium">{run.title}</p>
               <div className="mt-1 flex items-center gap-2 text-xs text-zinc-500">
-                {run.metadata?.agent && (
+                {typeof run.metadata === 'object' && run.metadata !== null && 'agent' in run.metadata && (
                   <span className="rounded-full border border-white/10 px-1.5 py-0.5">
-                    {run.metadata.agent}
+                    {(run.metadata as { agent?: string }).agent}
                   </span>
                 )}
-                {run.metadata?.duration && (
-                  <span>{run.metadata.duration}</span>
+                {typeof run.metadata === 'object' && run.metadata !== null && 'duration' in run.metadata && (
+                  <span>{(run.metadata as { duration?: string }).duration}</span>
                 )}
                 <span>·</span>
                 <span>{formatDate(run.createdAt)}</span>
               </div>
-              {run.metadata?.error && (
-                <p className="mt-1 truncate text-xs text-red-400">{run.metadata.error}</p>
+              {typeof run.metadata === 'object' && run.metadata !== null && 'error' in run.metadata && (
+                <p className="mt-1 truncate text-xs text-red-400">{(run.metadata as { error?: string }).error}</p>
               )}
             </div>
             

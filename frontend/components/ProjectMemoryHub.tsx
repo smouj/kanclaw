@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useI18n } from '@/components/LanguageProvider';
+import { RunTimeline } from '@/components/RunTimeline';
 
 interface MemoryHubProps {
   projectMemory: string;
@@ -77,7 +78,7 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
         </div>
       ) : null}
 
-      {activeTab === 'runs' ? <TimelineList title={t('memory.runs')} items={props.runs.map((run) => ({ id: run.id, title: run.title, subtitle: run.status, timestamp: run.createdAt }))} empty={t('memory.emptyRuns')} /> : null}
+      {activeTab === 'runs' ? <RunTimeline runs={props.runs} limit={15} /> : null}
       {activeTab === 'delegations' ? <TimelineList title={t('overview.delegations')} items={props.delegations.map((log) => ({ id: log.id, title: `${log.actor} · ${log.action}`, subtitle: typeof log.details === 'string' ? log.details : JSON.stringify(log.details), timestamp: log.timestamp }))} empty={t('overview.noActivity')} /> : null}
       {activeTab === 'snapshots' ? <TimelineList title={t('memory.snapshots')} items={props.snapshots.map((snapshot) => ({ id: snapshot.id, title: snapshot.title, subtitle: snapshot.summary, timestamp: snapshot.createdAt }))} empty={t('memory.emptySnapshots')} /> : null}
     </div>
