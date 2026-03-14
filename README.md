@@ -1,6 +1,6 @@
 <div align="center">
 
-![KanClaw Logo](./frontend/public/kanclaw-logo-light.png)
+![KanClaw Banner](./assets/social/github-social-preview.png)
 
 # KanClaw
 

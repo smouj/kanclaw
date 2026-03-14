@@ -4,6 +4,24 @@ All notable changes to **KanClaw** will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.3.1] - 2026-03-14
+
+### Added
+- Project delete functionality with confirmation dialog
+- Visual delete button on project cards (appears on hover)
+- ConfirmDialog component with loading state
+
+### Changed
+- Homepage project cards: add kanclaw-panel styling for consistency
+- Memory page: use kanclaw-panel instead of theme-surface-soft
+- Config panel: remove green accent, use black/silver premium style
+- All panels now use consistent .kanclaw-panel class
+
+### Fixed
+- Official logo updates: logo-white.png and logo-black.png (transparent background)
+- Favicon now uses white logo
+- Social banner updated with correct logo URL
+
 ## [0.3.0] - 2026-03-14
 
 ### Added
