@@ -1,14 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Settings, Shield, Zap, Check, AlertCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { Settings, Shield, Zap, Check, AlertCircle, ArrowRight, Loader2 } from 'lucide-react';
 
 interface ConfigFormData {
   openclawUrl: string;
   openclawToken: string;
   authToken: string;
-  demoMode: boolean;
 }
 
 export default function SetupPage() {
@@ -22,7 +21,6 @@ export default function SetupPage() {
     openclawUrl: typeof window !== 'undefined' ? localStorage.getItem('openclaw_url') || '' : '',
     openclawToken: typeof window !== 'undefined' ? localStorage.getItem('openclaw_token') || '' : '',
     authToken: typeof window !== 'undefined' ? localStorage.getItem('kanclaw_auth_token') || '' : '',
-    demoMode: typeof window !== 'undefined' ? localStorage.getItem('demo_mode') === 'true' : false,
   });
 
   const handleSave = async () => {
@@ -30,106 +28,153 @@ export default function SetupPage() {
     localStorage.setItem('openclaw_url', formData.openclawUrl);
     localStorage.setItem('openclaw_token', formData.openclawToken);
     localStorage.setItem('kanclaw_auth_token', formData.authToken);
-    localStorage.setItem('demo_mode', formData.demoMode.toString());
+    localStorage.removeItem('demo_mode');
+    
+    // Simulate save delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     setSaving(false);
     setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    
+    // Redirect to home after short delay
+    setTimeout(() => {
+      router.push('/');
+    }, 1000);
   };
 
   const testConnection = async () => {
+    if (!formData.openclawUrl) return;
+    
     setTesting(true);
     setTestResult(null);
     try {
       const response = await fetch(`${formData.openclawUrl}/api/health`, {
-        headers: {
-          'Authorization': `Bearer ${formData.openclawToken}`,
-        },
+        headers: formData.openclawToken 
+          ? { 'Authorization': `Bearer ${formData.openclawToken}` }
+          : {},
       });
       if (response.ok) {
-        setTestResult({ success: true, message: 'Connection successful!' });
+        setTestResult({ success: true, message: '¡Conexión exitosa!' });
       } else {
         setTestResult({ success: false, message: `Error: ${response.status}` });
       }
     } catch {
-      setTestResult({ success: false, message: 'Could not connect. Check URL.' });
+      setTestResult({ success: false, message: 'No se pudo conectar. Verifica la URL.' });
     }
     setTesting(false);
   };
 
   const enterDemo = () => {
     localStorage.setItem('demo_mode', 'true');
+    localStorage.removeItem('openclaw_url');
+    localStorage.removeItem('openclaw_token');
+    localStorage.removeItem('kanclaw_auth_token');
     router.push('/');
   };
 
-  return (
-    <div className="min-h-screen bg-background text-foreground p-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
-          <Settings className="w-8 h-8 text-accent-green" />
-          <h1 className="text-3xl font-bold">KanClaw Setup</h1>
-        </div>
+  const isConfigured = formData.openclawUrl && formData.openclawToken;
 
+  return (
+    <div className="min-h-screen bg-background text-foreground" style={{ backgroundColor: 'var(--kc-bg)', color: 'var(--kc-text-primary)' }}>
+      {/* Header */}
+      <header className="flex items-center gap-3 px-6 py-4 border-b" style={{ borderColor: 'var(--kc-border)', backgroundColor: 'var(--kc-surface)' }}>
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--kc-accent-green)' }}>
+          <span className="text-black font-bold text-lg">K</span>
+        </div>
+        <h1 className="text-xl font-semibold">KanClaw</h1>
+      </header>
+
+      <div className="max-w-xl mx-auto px-6 py-12">
         {/* Demo Mode */}
-        <div className="card mb-6 p-6 border border-border rounded-lg bg-surface">
+        <div className="rounded-xl border p-6 mb-8" style={{ borderColor: 'var(--kc-border)', backgroundColor: 'var(--kc-surface)' }}>
           <div className="flex items-center gap-3 mb-4">
-            <Zap className="w-6 h-6 text-yellow-500" />
-            <h2 className="text-xl font-semibold">Try Demo Mode</h2>
+            <Zap className="w-6 h-6" style={{ color: 'var(--kc-accent-green)' }} />
+            <h2 className="text-xl font-semibold">Modo Demo</h2>
           </div>
-          <p className="text-text-muted mb-4">
-            Explore KanClaw with sample data - no configuration needed!
+          <p className="mb-6" style={{ color: 'var(--kc-text-muted)' }}>
+            Explora KanClaw con datos de ejemplo - ¡sin configuración necesaria!
           </p>
           <button
             onClick={enterDemo}
-            className="btn btn-primary"
+            className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all"
+            style={{ backgroundColor: 'var(--kc-accent-green)', color: 'black' }}
           >
-            Enter Demo Mode
+            <Zap className="w-5 h-5" />
+            Entrar en Modo Demo
+            <ArrowRight className="w-5 h-5" />
           </button>
         </div>
 
+        <div className="flex items-center gap-4 my-8">
+          <div className="flex-1 h-px" style={{ backgroundColor: 'var(--kc-border)' }} />
+          <span className="text-sm" style={{ color: 'var(--kc-text-muted)' }}>o</span>
+          <div className="flex-1 h-px" style={{ backgroundColor: 'var(--kc-border)' }} />
+        </div>
+
         {/* OpenClaw Configuration */}
-        <div className="card mb-6 p-6 border border-border rounded-lg bg-surface">
-          <div className="flex items-center gap-3 mb-4">
-            <Shield className="w-6 h-6 text-accent-green" />
-            <h2 className="text-xl font-semibold">OpenClaw Configuration</h2>
+        <div className="rounded-xl border p-6" style={{ borderColor: 'var(--kc-border)', backgroundColor: 'var(--kc-surface)' }}>
+          <div className="flex items-center gap-3 mb-6">
+            <Shield className="w-6 h-6" style={{ color: 'var(--kc-accent-green)' }} />
+            <h2 className="text-xl font-semibold">Configurar OpenClaw</h2>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
               <label className="block text-sm font-medium mb-2">
-                OpenClaw URL
+                URL de OpenClaw
               </label>
               <input
                 type="url"
                 value={formData.openclawUrl}
                 onChange={(e) => setFormData({ ...formData, openclawUrl: e.target.value })}
                 placeholder="http://localhost:3001"
-                className="w-full px-4 py-2 rounded border border-border bg-surface2 text-foreground"
+                className="w-full px-4 py-3 rounded-lg border text-foreground"
+                style={{ 
+                  backgroundColor: 'var(--kc-surface2)', 
+                  borderColor: 'var(--kc-border)',
+                  color: 'var(--kc-text-primary)'
+                }}
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium mb-2">
-                OpenClaw Token
+                Token de OpenClaw
               </label>
               <input
                 type="password"
                 value={formData.openclawToken}
                 onChange={(e) => setFormData({ ...formData, openclawToken: e.target.value })}
-                placeholder="Your OpenClaw API token"
-                className="w-full px-4 py-2 rounded border border-border bg-surface2 text-foreground"
+                placeholder="Tu token de API"
+                className="w-full px-4 py-3 rounded-lg border text-foreground"
+                style={{ 
+                  backgroundColor: 'var(--kc-surface2)', 
+                  borderColor: 'var(--kc-border)',
+                  color: 'var(--kc-text-primary)'
+                }}
               />
             </div>
 
             <button
               onClick={testConnection}
               disabled={testing || !formData.openclawUrl}
-              className="btn btn-secondary"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all disabled:opacity-50"
+              style={{ borderColor: 'var(--kc-border)', color: 'var(--kc-text-primary)' }}
             >
-              {testing ? 'Testing...' : 'Test Connection'}
+              {testing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+              {testing ? 'Probando...' : 'Probar Conexión'}
             </button>
 
             {testResult && (
-              <div className={`flex items-center gap-2 p-3 rounded ${testResult.success ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+              <div className={`flex items-center gap-2 p-3 rounded-lg text-sm ${
+                testResult.success 
+                  ? '' 
+                  : ''
+              }`}
+              style={{ 
+                backgroundColor: testResult.success ? 'rgba(51, 255, 51, 0.1)' : 'rgba(255, 51, 51, 0.1)',
+                color: testResult.success ? 'var(--kc-accent-green)' : '#ff3333'
+              }}>
                 {testResult.success ? <Check className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
                 {testResult.message}
               </div>
@@ -137,23 +182,28 @@ export default function SetupPage() {
           </div>
         </div>
 
-        {/* Optional Auth */}
-        <div className="card mb-6 p-6 border border-border rounded-lg bg-surface">
-          <h2 className="text-xl font-semibold mb-4">Optional: Protect with Auth</h2>
-          <p className="text-text-muted mb-4">
-            Set a token to require authentication when accessing KanClaw.
+        {/* Auth Token (Optional) */}
+        <div className="rounded-xl border p-6 mt-6" style={{ borderColor: 'var(--kc-border)', backgroundColor: 'var(--kc-surface)' }}>
+          <h3 className="text-lg font-semibold mb-2">Protección con Auth (opcional)</h3>
+          <p className="mb-4 text-sm" style={{ color: 'var(--kc-text-muted)' }}>
+            Establece un token para proteger el acceso a KanClaw.
           </p>
 
           <div>
             <label className="block text-sm font-medium mb-2">
-              Auth Token (optional)
+              Token de autenticación
             </label>
             <input
               type="password"
               value={formData.authToken}
               onChange={(e) => setFormData({ ...formData, authToken: e.target.value })}
-              placeholder="Leave empty for public access"
-              className="w-full px-4 py-2 rounded border border-border bg-surface2 text-foreground"
+              placeholder="Dejar vacío para acceso público"
+              className="w-full px-4 py-3 rounded-lg border text-foreground"
+              style={{ 
+                backgroundColor: 'var(--kc-surface2)', 
+                borderColor: 'var(--kc-border)',
+                color: 'var(--kc-text-primary)'
+              }}
             />
           </div>
         </div>
@@ -161,10 +211,27 @@ export default function SetupPage() {
         {/* Save Button */}
         <button
           onClick={handleSave}
-          disabled={saving}
-          className="btn btn-primary w-full"
+          disabled={saving || !isConfigured}
+          className="flex items-center justify-center gap-2 w-full mt-8 px-6 py-4 rounded-xl font-semibold text-lg transition-all disabled:opacity-50"
+          style={{ backgroundColor: 'var(--kc-accent-green)', color: 'black' }}
         >
-          {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Configuration'}
+          {saving ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Guardando...
+            </>
+          ) : saved ? (
+            <>
+              <Check className="w-5 h-5" />
+              ¡Guardado! Redirecting...
+            </>
+          ) : (
+            <>
+              <Settings className="w-5 h-5" />
+              Guardar y Continuar
+              <ArrowRight className="w-5 h-5" />
+            </>
+          )}
         </button>
       </div>
     </div>
