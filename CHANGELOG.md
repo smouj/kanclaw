@@ -4,6 +4,22 @@ All notable changes to **KanClaw** will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.3.0] - 2026-03-14
+
+### Added
+- Custom React hooks library:
+  - `useFetch` - Data fetching with loading/error states
+  - `useDebounce` - Debounce any value
+  - `useLocalStorage` - Persistent storage with SSR support
+  - `useInterval` - Interval timer
+  - `useMediaQuery` - Responsive breakpoints
+  - `useWindowSize` - Window dimensions
+  - `useClickOutside` - Click outside detection
+  - `useOnline` - Network connectivity detection
+
+### Changed
+- Build passes with minor warnings
+
 ## [0.2.9] - 2026-03-14
 
 ### Added
