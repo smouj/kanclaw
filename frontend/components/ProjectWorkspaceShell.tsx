@@ -16,6 +16,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { LanguageSelector } from '@/components/LanguageSelector';
+import { useI18n } from '@/components/LanguageProvider';
 
 type ViewKey = 'overview' | 'chat' | 'board' | 'memory' | 'files' | 'connectors';
 
@@ -50,13 +52,13 @@ interface WorkspaceNodePreview {
   children?: WorkspaceNodePreview[];
 }
 
-const viewMeta: Array<{ key: ViewKey; label: string; icon: typeof LayoutGrid }> = [
-  { key: 'overview', label: 'Overview', icon: LayoutGrid },
-  { key: 'chat', label: 'Chat', icon: MessageSquareText },
-  { key: 'board', label: 'Board', icon: FolderTree },
-  { key: 'memory', label: 'Memory', icon: BrainCircuit },
-  { key: 'files', label: 'Files', icon: FolderTree },
-  { key: 'connectors', label: 'Connectors', icon: Cable },
+const viewMeta: Array<{ key: ViewKey; labelKey: string; icon: typeof LayoutGrid }> = [
+  { key: 'overview', labelKey: 'nav.overview', icon: LayoutGrid },
+  { key: 'chat', labelKey: 'nav.chat', icon: MessageSquareText },
+  { key: 'board', labelKey: 'nav.board', icon: FolderTree },
+  { key: 'memory', labelKey: 'nav.memory', icon: BrainCircuit },
+  { key: 'files', labelKey: 'nav.files', icon: FolderTree },
+  { key: 'connectors', labelKey: 'nav.connectors', icon: Cable },
 ];
 
 function SignalRow({ label, value }: { label: string; value: string }) {
@@ -132,6 +134,7 @@ function AnimatedTab({
 
 export function ProjectWorkspaceShell({ project, health, githubStatus, files, model }: ProjectWorkspaceShellProps) {
   const router = useRouter();
+  const { t } = useI18n();
   const [activeView, setActiveView] = useState<ViewKey>('chat');
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [selectedThreadId, setSelectedThreadId] = useState(model.threads[0]?.id || '');
@@ -273,13 +276,14 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
             <ChevronRight className={`w-4 h-4 transition-transform ${leftSidebarOpen ? 'rotate-180' : ''}`} />
           </button>
           <ThemeToggle />
+          <LanguageSelector />
           <Button variant="outline" size="sm" onClick={() => router.refresh()}>
             <RefreshCcw className="w-4 h-4 mr-1" />
-            <span className="hidden sm:inline">Refresh</span>
+            <span className="hidden sm:inline">{t('common.refresh')}</span>
           </Button>
           <Button size="sm" onClick={() => void createSnapshot()} disabled={busy}>
             <Sparkles className="w-4 h-4 mr-1" />
-            <span className="hidden sm:inline">Snapshot</span>
+            <span className="hidden sm:inline">{t('common.snapshot')}</span>
           </Button>
         </div>
       </header>
@@ -306,7 +310,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                   }`}
                 >
                   <item.icon className="w-4 h-4" />
-                  {item.label}
+                  {t(item.labelKey)}
                 </button>
               ))}
             </nav>
@@ -377,7 +381,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                 active={activeView === item.key}
                 onClick={() => setActiveView(item.key)}
                 icon={item.icon}
-                label={item.label}
+                label={t(item.labelKey)}
               />
             ))}
           </div>
@@ -390,15 +394,15 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                   {/* Main Stats Grid */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
-                      { label: 'Conversaciones', value: model.threads.length, icon: MessageSquare, color: 'blue' },
-                      { label: 'Tareas', value: model.project.tasks.length, icon: CheckCircle2, color: 'emerald' },
-                      { label: 'Ejecuciones', value: model.runs.length, icon: Zap, color: 'amber' },
-                      { label: 'Snapshots', value: model.snapshots.length, icon: Camera, color: 'purple' },
+                      { label: t('overview.conversations'), value: model.threads.length, icon: MessageSquare, colorClass: 'text-blue-400' },
+                      { label: t('overview.tasks'), value: model.project.tasks.length, icon: CheckCircle2, colorClass: 'text-emerald-400' },
+                      { label: t('overview.runs'), value: model.runs.length, icon: Zap, colorClass: 'text-amber-400' },
+                      { label: t('overview.snapshots'), value: model.snapshots.length, icon: Camera, colorClass: 'text-purple-400' },
                     ].map((stat) => (
-                      <div key={stat.label} className={`p-5 rounded-xl border bg-surface border-border`}>
+                      <div key={stat.label} className="p-5 rounded-xl border bg-surface border-border">
                         <div className="flex items-center justify-between">
-                          {stat.icon && <stat.icon className="h-5 w-5" />}
-                          <span className={`text-xs uppercase tracking-wider text-${stat.color}-500`}>{stat.label}</span>
+                          {stat.icon && <stat.icon className={`h-5 w-5 ${stat.colorClass}`} />}
+                          <span className={`text-xs uppercase tracking-wider ${stat.colorClass}`}>{stat.label}</span>
                         </div>
                         <p className="mt-3 text-3xl font-bold">{stat.value}</p>
                       </div>
@@ -407,7 +411,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
 
                   {/* Agents Status */}
                   <div className="rounded-xl border border-border bg-surface p-5">
-                    <h3 className="text-sm font-medium mb-4">Agentes del proyecto</h3>
+                    <h3 className="text-sm font-medium mb-4">{t('overview.agents')}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {project.agents.map((agent) => (
                         <div key={agent.id} className="flex items-center justify-between p-3 rounded-lg bg-surface2 border border-border">
@@ -446,10 +450,10 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
 
                   {/* Recent Activity */}
                   <div className="rounded-xl border border-border bg-surface p-5">
-                    <h3 className="text-sm font-medium mb-4">Actividad reciente</h3>
+                    <h3 className="text-sm font-medium mb-4">{t('overview.activity')}</h3>
                     <div className="space-y-2">
                       {model.logs.length === 0 ? (
-                        <p className="text-sm text-zinc-500">Sin actividad registrada</p>
+                        <p className="text-sm text-zinc-500">{t('overview.noActivity')}</p>
                       ) : (
                         model.logs.slice(0, 8).map((log) => (
                           <div key={log.id} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
@@ -519,7 +523,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
               onClick={() => setRightPanelOpen(!rightPanelOpen)}
               className="flex items-center justify-between w-full"
             >
-              <span className="text-sm font-medium">Quick Actions</span>
+              <span className="text-sm font-medium">{t('common.quickActions')}</span>
               <ChevronRight className={`w-4 h-4 transition-transform ${rightPanelOpen ? '' : '-rotate-180'}`} />
             </button>
           </div>

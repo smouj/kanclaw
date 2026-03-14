@@ -17,6 +17,7 @@ import { AmbientCanvas } from '@/components/AmbientCanvas';
 import { OpenClawConfig } from '@/components/OpenClawConfig';
 import { ProjectCreateForm } from '@/components/ProjectCreateForm';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { LanguageSelector } from '@/components/LanguageSelector';
 
 interface Project {
   id: string;
@@ -66,7 +67,10 @@ export function HomePageClient({
         <div className="space-y-4">
           {/* Header */}
           <div className="flex items-center justify-between gap-3">
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <LanguageSelector />
+            </div>
             <div className="flex items-center gap-2">
               <a
                 href="http://76.13.37.123:18789/"
