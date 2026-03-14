@@ -5,6 +5,8 @@ import { Toaster } from 'sonner';
 import { LanguageProvider } from '@/components/LanguageProvider';
 import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
 import { DemoProvider } from '@/components/DemoProvider';
+import { ToastProvider } from '@/components/ToastProvider';
+import { OfflineIndicator } from '@/components/OfflineIndicator';
 
 export const metadata: Metadata = {
   title: {
@@ -50,11 +52,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="es" suppressHydrationWarning>
       <body>
         <DemoProvider>
-          <LanguageProvider>
-            <ServiceWorkerRegistration />
-            {children}
-            <Toaster theme="system" richColors position="top-right" />
-          </LanguageProvider>
+          <ToastProvider>
+            <LanguageProvider>
+              <ServiceWorkerRegistration />
+              <OfflineIndicator />
+              {children}
+              <Toaster theme="system" richColors position="top-right" />
+            </LanguageProvider>
+          </ToastProvider>
         </DemoProvider>
       </body>
     </html>

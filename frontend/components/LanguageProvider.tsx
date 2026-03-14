@@ -13,6 +13,7 @@ const dictionary: Dict = {
   'nav.memory': { es: 'Memoria', en: 'Memory', fr: 'Mémoire' },
   'nav.files': { es: 'Archivos', en: 'Files', fr: 'Fichiers' },
   'nav.connectors': { es: 'Connectores', en: 'Connectors', fr: 'Connecteurs' },
+  'search.placeholder': { es: 'Buscar proyectos, agentes, tareas...', en: 'Search projects, agents, tasks...', fr: 'Rechercher projets, agents, tâches...' },
 
   'chat.connected': { es: 'Conectado', en: 'Connected', fr: 'Connecté' },
   'chat.disconnected': { es: 'Desconectado', en: 'Disconnected', fr: 'Déconnecté' },
