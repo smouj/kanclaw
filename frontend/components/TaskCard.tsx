@@ -68,7 +68,7 @@ export function TaskCard({ projectSlug, task, agents, subtasks, onSubtaskCreated
   }
 
   return (
-    <article className="rounded-3xl border border-white/8 bg-white/[0.03] p-4 transition" data-testid={`task-card-${task.id}`}>
+    <article className="kanclaw-panel rounded-3xl p-4 transition" data-testid={`task-card-${task.id}`}>
       <button
         type="button"
         draggable
@@ -119,7 +119,7 @@ export function TaskCard({ projectSlug, task, agents, subtasks, onSubtaskCreated
 
           {subtasks.length === 0 ? <p className="text-xs text-zinc-500">No hay subtareas todavía.</p> : null}
           {subtasks.map((subtask) => (
-            <div key={subtask.id} className="rounded-2xl border border-white/6 theme-surface-soft p-3" data-testid={`subtask-item-${subtask.id}`}>
+            <div key={subtask.id} className="kanclaw-panel rounded-2xl p-3" data-testid={`subtask-item-${subtask.id}`}>
               <p className="text-sm text-zinc-100">{subtask.title}</p>
               <p className="mt-1 text-xs text-zinc-500">{subtask.status}</p>
             </div>

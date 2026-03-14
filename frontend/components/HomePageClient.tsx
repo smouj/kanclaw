@@ -12,8 +12,13 @@ import {
   PlugZap,
   Settings,
   Workflow,
+  Trash2,
+  X,
+  Loader2,
+  AlertTriangle,
 } from 'lucide-react';
 import { AmbientCanvas } from '@/components/AmbientCanvas';
+import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { OpenClawConfig } from '@/components/OpenClawConfig';
 import { ProjectCreateForm } from '@/components/ProjectCreateForm';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -56,6 +61,23 @@ export function HomePageClient({
   workspaceInfo,
 }: HomePageClientProps) {
   const [showOpenClawConfig, setShowOpenClawConfig] = useState(false);
+  const [deleteProject, setDeleteProject] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [projectsList, setProjectsList] = useState(projects);
+
+  async function handleDeleteProject(projectId: string) {
+    setDeleting(true);
+    try {
+      const response = await fetch(`/api/projects/${projectId}`, { method: 'DELETE' });
+      if (response.ok) {
+        setProjectsList((prev) => prev.filter((p) => p.id !== projectId));
+      }
+    } catch (e) {
+      console.error('Failed to delete project');
+    }
+    setDeleting(false);
+    setDeleteProject(null);
+  }
 
   const workspaceFoldersPreview = useMemo(() => workspaceInfo.projectFolders.slice(0, 6), [workspaceInfo.projectFolders]);
 
@@ -165,7 +187,7 @@ export function HomePageClient({
                 </div>
               </div>
 
-              {projects.length === 0 ? (
+              {projectsList.length === 0 ? (
                 <div className="flex min-h-64 flex-col justify-center rounded-[1.8rem] border border-dashed border-white/10 theme-surface-soft p-6">
                   <p className="text-xl font-medium">No projects yet</p>
                   <p className="mt-2 max-w-xl text-sm text-zinc-500">
@@ -174,27 +196,36 @@ export function HomePageClient({
                 </div>
               ) : (
                 <div className="grid gap-4 lg:grid-cols-2">
-                  {projects.map((project) => (
-                    <Link
+                  {projectsList.map((project) => (
+                    <div
                       key={project.id}
-                      href={`/project/${project.slug}`}
-                      className="group min-h-52 rounded-[1.9rem] border border-white/8 bg-white/[0.03] p-5 transition duration-300 hover:-translate-y-1 hover:border-white/15 hover:bg-white/[0.06]"
+                      className="group relative min-h-52 rounded-[1.9rem] border border-white/8 bg-white/[0.03] p-5 transition duration-300 hover:-translate-y-1 hover:border-white/15 hover:bg-white/[0.06]"
                     >
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="rounded-full border border-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-zinc-500">
-                          {project.slug}
-                        </span>
-                        <span className="text-xs text-zinc-500">{project.agents.length} agents</span>
-                      </div>
-                      <h3 className="mt-6 text-2xl font-semibold">{project.name}</h3>
-                      <p className="mt-3 text-sm leading-6 text-zinc-400">{project.description || 'No description yet.'}</p>
-                      <div className="mt-8 flex items-center justify-between border-t border-white/5 pt-4 text-sm text-zinc-500">
-                        <span>
-                          {project.tasks.length} tasks · {project.runs.length} runs
-                        </span>
-                        <span className="group-hover:text-zinc-100">Open workspace</span>
-                      </div>
-                    </Link>
+                      {/* Delete button */}
+                      <button
+                        onClick={(e) => { e.preventDefault(); setDeleteProject(project.id); }}
+                        className="absolute right-4 top-4 rounded-full border border-white/10 bg-white/[0.02] p-2 text-zinc-500 opacity-0 transition hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-400 group-hover:opacity-100"
+                        title="Delete project"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                      <Link href={`/project/${project.slug}`}>
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="rounded-full border border-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-zinc-500">
+                            {project.slug}
+                          </span>
+                          <span className="text-xs text-zinc-500">{project.agents.length} agents</span>
+                        </div>
+                        <h3 className="mt-6 text-2xl font-semibold">{project.name}</h3>
+                        <p className="mt-3 text-sm leading-6 text-zinc-400">{project.description || 'No description yet.'}</p>
+                        <div className="mt-8 flex items-center justify-between border-t border-white/5 pt-4 text-sm text-zinc-500">
+                          <span>
+                            {project.tasks.length} tasks · {project.runs.length} runs
+                          </span>
+                          <span className="group-hover:text-zinc-100">Open workspace</span>
+                        </div>
+                      </Link>
+                    </div>
                   ))}
                 </div>
               )}
@@ -292,6 +323,19 @@ export function HomePageClient({
           </section>
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={deleteProject !== null}
+        title="Eliminar proyecto"
+        message={`¿Estás seguro de que quieres eliminar este proyecto? Esta acción no se puede deshacer y borrará todos los datos asociados (tareas, agentes, ejecuciones).`}
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+        onConfirm={() => deleteProject && handleDeleteProject(deleteProject)}
+        onCancel={() => setDeleteProject(null)}
+        loading={deleting}
+        variant="danger"
+      />
     </main>
   );
 }
