@@ -4,6 +4,15 @@ All notable changes to **KanClaw** will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.2.5] - 2026-03-14
+
+### Added
+- Quick wins:
+  - Enhanced metadata (Open Graph, Twitter cards, keywords)
+  - SVG favicon
+  - Toast utility component with predefined messages
+  - `Toast.tsx` for consistent notifications across app
+
 ## [0.2.4] - 2026-03-14
 
 ### Added

@@ -6,9 +6,27 @@ import { LanguageProvider } from '@/components/LanguageProvider';
 import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
 
 export const metadata: Metadata = {
-  title: 'KanClaw',
-  description: 'Living Workspace OS for AI agent teams',
+  title: {
+    default: 'KanClaw - Workspace OS for AI Agent Teams',
+    template: '%s | KanClaw',
+  },
+  description: 'Living Workspace OS for AI agent teams - manage projects, conversations, and AI workflows',
+  keywords: ['AI', 'agents', 'workspace', 'productivity', 'development', 'automation'],
+  authors: [{ name: 'KanClaw Team' }],
   manifest: '/manifest.json',
+  openGraph: {
+    type: 'website',
+    locale: 'es_ES',
+    url: 'https://kanclaw.io',
+    siteName: 'KanClaw',
+    title: 'KanClaw - Workspace OS for AI Agent Teams',
+    description: 'Living Workspace OS for AI agent teams',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'KanClaw',
+    description: 'Workspace OS for AI Agent Teams',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -16,6 +34,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: '/favicon.svg', sizes: 'any', type: 'image/svg+xml' },
       { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
       { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
     ],
