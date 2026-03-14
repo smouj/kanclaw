@@ -4,6 +4,13 @@ import type { NextRequest } from 'next/server';
 const AUTH_TOKEN = process.env.KANCLAW_AUTH_TOKEN;
 
 export function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+
+  // Allow /setup without auth (so users can configure the app)
+  if (path === '/setup' || path.startsWith('/setup')) {
+    return addSecurityHeaders(request);
+  }
+
   // Require auth if KANCLAW_AUTH_TOKEN is set
   if (AUTH_TOKEN) {
     const authHeader = request.headers.get('authorization');
