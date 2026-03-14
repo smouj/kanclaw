@@ -4,6 +4,21 @@ All notable changes to **KanClaw** will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.2.4] - 2026-03-14
+
+### Added
+- E2E tests with Playwright:
+  - Homepage loads test
+  - Project page loads test
+  - Navigation tabs test
+  - Theme toggle test
+  - Language selector test
+  - API health check test
+- Scripts: `test:e2e`, `test:e2e:ui`
+
+### Changed
+- All 6 E2E tests passing
+
 ## [0.2.3] - 2026-03-14
 
 ### Added
