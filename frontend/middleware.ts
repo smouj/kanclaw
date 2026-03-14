@@ -2,14 +2,15 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const AUTH_TOKEN = process.env.KANCLAW_AUTH_TOKEN;
+const IS_PUBLIC = process.env.KANCLAW_PUBLIC === 'true';
 
 export function middleware(request: NextRequest) {
-  // Skip auth check in development
-  if (process.env.NODE_ENV === 'development') {
+  // Skip auth if KANCLAW_PUBLIC=true
+  if (IS_PUBLIC) {
     return addSecurityHeaders(request);
   }
 
-  // Check auth token for production
+  // Require auth if KANCLAW_AUTH_TOKEN is set
   if (AUTH_TOKEN) {
     const authHeader = request.headers.get('authorization');
     const token = authHeader?.replace('Bearer ', '');
