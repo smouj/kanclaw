@@ -1,0 +1,12 @@
+# Code Owners
+
+# Default owner for everything
+* @smouj
+
+# Frontend
+/frontend/ @smouj
+
+# Documentation
+/docs/ @smouj
+README.md @smouj
+*.md @smouj
