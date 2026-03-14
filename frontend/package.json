@@ -17,7 +17,10 @@
     "seed": "tsx prisma/seed.ts",
     "smoke:api": "node scripts/e2e-smoke-api.mjs",
     "audit:policy": "node scripts/audit-policy.mjs",
-    "audit:design": "node scripts/design-token-audit.mjs"
+    "audit:design": "node scripts/design-token-audit.mjs",
+    "qa:capture": "node scripts/qa-capture-views.mjs",
+    "qa:a11y": "node scripts/qa-a11y-runtime.mjs",
+    "qa:postrelease": "npm run qa:a11y && npm run qa:capture"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

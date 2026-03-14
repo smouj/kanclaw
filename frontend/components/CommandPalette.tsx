@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 import { Command } from 'cmdk';
 import { useI18n } from '@/components/LanguageProvider';
 
@@ -11,14 +11,14 @@ export interface CommandItem {
   onSelect: () => void;
 }
 
-export function CommandPalette({ open, setOpen, items }: { open: boolean; setOpen: (open: boolean) => void; items: CommandItem[] }) {
+export function CommandPalette({ open, setOpen, items }: { open: boolean; setOpen: Dispatch<SetStateAction<boolean>>; items: CommandItem[] }) {
   const { t } = useI18n();
 
   useEffect(() => {
     const listener = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
-        setOpen(!open);
+        setOpen(true);
       }
       if (event.key === 'Escape' && open) {
         event.preventDefault();
