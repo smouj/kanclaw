@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import {
   Bot,
   Check,
+  CheckCheck,
   Copy,
   CornerDownLeft,
   FileImage,
@@ -15,12 +16,15 @@ import {
   Loader2,
   MessageSquare,
   MoreVertical,
+  Pencil,
   Quote,
   RefreshCcw,
   Send,
   Sparkles,
   Strikethrough,
   Table,
+  ThumbsDown,
+  ThumbsUp,
   Trash2,
   Type,
   X,
@@ -417,12 +421,16 @@ export function AgentChatSurface({
       ''
   );
   const [loading, setLoading] = useState(false);
+  const [thinking, setThinking] = useState(false);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState('');
   const [contextLoading, setContextLoading] = useState(false);
   const [contextResults, setContextResults] = useState<ContextItem[]>([]);
   const [selectedContext, setSelectedContext] = useState<ContextItem[]>([]);
   const [showAgentSelector, setShowAgentSelector] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [lastMessageCount, setLastMessageCount] = useState(0);
 
   useEffect(() => {
     setThreads(initialThreads);
@@ -556,6 +564,7 @@ export function AgentChatSurface({
   async function handleSend() {
     if (!selectedThread || !content.trim()) return;
     setLoading(true);
+    setThinking(true);
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -569,6 +578,7 @@ export function AgentChatSurface({
     });
     const data = await res.json();
     setLoading(false);
+    setThinking(false);
     if (!res.ok) {
       toast.error(data.error || 'Error al enviar');
       const refresh = await fetch(`/api/chat?projectSlug=${projectSlug}`);
@@ -580,7 +590,28 @@ export function AgentChatSurface({
     );
     setContent('');
     setSelectedContext([]);
+    setLastMessageCount(data.thread.messages.length);
   }
+
+  // Auto-scroll to new messages
+  useEffect(() => {
+    if (selectedThread && selectedThread.messages.length > lastMessageCount) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      setLastMessageCount(selectedThread.messages.length);
+    }
+  }, [selectedThread?.messages.length, lastMessageCount]);
+
+  // Thinking indicator component
+  const ThinkingIndicator = () => (
+    <div className="flex items-center gap-3 px-4 py-3">
+      <div className="flex gap-1">
+        <span className="h-2 w-2 animate-bounce rounded-full bg-zinc-400" style={{ animationDelay: '0ms' }} />
+        <span className="h-2 w-2 animate-bounce rounded-full bg-zinc-400" style={{ animationDelay: '150ms' }} />
+        <span className="h-2 w-2 animate-bounce rounded-full bg-zinc-400" style={{ animationDelay: '300ms' }} />
+      </div>
+      <span className="text-xs text-zinc-500">El agente está pensando...</span>
+    </div>
+  );
 
   return (
     <div className="flex h-full w-full bg-zinc-950">
@@ -705,6 +736,7 @@ export function AgentChatSurface({
                   </div>
                 </div>
               ))}
+              {thinking && <ThinkingIndicator />}
               <div ref={messagesEndRef} />
             </div>
           )}
