@@ -1,35 +1,28 @@
 <div align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./frontend/public/kanclaw-logo-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="./frontend/public/kanclaw-logo-light.png">
-    <img src="./frontend/public/kanclaw-logo-light.png" alt="KanClaw official logo" width="340" />
-  </picture>
+
+![KanClaw Logo](./frontend/public/kanclaw-logo-light.png)
 
 # KanClaw
 
 ### Premium Local-First Workspace OS for AI Agent Teams
 
-<p>
-  <a href="https://github.com/smouj/kanclaw/stargazers"><img src="https://img.shields.io/github/stars/smouj/kanclaw?style=for-the-badge" alt="stars" /></a>
-  <a href="https://github.com/smouj/kanclaw/network/members"><img src="https://img.shields.io/github/forks/smouj/kanclaw?style=for-the-badge" alt="forks" /></a>
-  <a href="https://github.com/smouj/kanclaw/issues"><img src="https://img.shields.io/github/issues/smouj/kanclaw?style=for-the-badge" alt="issues" /></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=for-the-badge" alt="license" /></a>
-</p>
+[![GitHub stars](https://img.shields.io/github/stars/smouj/kanclaw?style=for-the-badge)](https://github.com/smouj/kanclaw/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/smouj/kanclaw?style=for-the-badge)](https://github.com/smouj/kanclaw/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/smouj/kanclaw?style=for-the-badge)](https://github.com/smouj/kanclaw/issues)
+[![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-<p>
-  <img src="https://img.shields.io/badge/Next.js-14-000?logo=next.js" alt="Next.js" />
-  <img src="https://img.shields.io/badge/React-18-149eca?logo=react&logoColor=white" alt="React" />
-  <img src="https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Tailwind-3-06b6d4?logo=tailwindcss&logoColor=white" alt="Tailwind" />
-  <img src="https://img.shields.io/badge/PWA-Ready-5-22c55e?logo=pwa" alt="PWA" />
-  <img src="https://img.shields.io/badge/License-MIT-22c55e?logo=opensourceinitiative" alt="License" />
-</p>
+[![Next.js](https://img.shields.io/badge/Next.js-14-000000?style=flat&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-18-149eca?style=flat&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-06b6d4?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
 
 [Español](./README.es.md) · [Issues](https://github.com/smouj/kanclaw/issues) · [Discussions](https://github.com/smouj/kanclaw/discussions)
 
+</div>
+
 ---
 
-## 📦 Latest Release
+## Latest Release
 
 - **v0.3.0** — Custom React hooks library, open-source ready setup
 - [Release Notes](./RELEASE_NOTES_v0.3.0.md)
@@ -37,7 +30,7 @@
 
 ---
 
-## 🧭 Who is this for?
+## Who is this for?
 
 - **Founders** shipping product features with AI copilots
 - **Indie hackers** who need speed without losing traceability
@@ -47,26 +40,26 @@
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [Why KanClaw](#-why-kanclaw)
-- [Quick Start](#-quick-start)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Development](#-development)
-- [Deployment](#-deployment)
-- [Contributing](#-contributing)
-- [License](#-license)
+- [Why KanClaw](#why-kanclaw)
+- [Quick Start](#quick-start)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Development](#development)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-## 🚀 Why KanClaw
+## Why KanClaw
 
 KanClaw is a **local-first workspace OS** where **humans + AI agents** collaborate with persistent context, structured memory, and production-ready team workflows.
 
 | Problem | KanClaw Solution |
-|---------|-----------------|
+|---------|------------------|
 | Context gets lost between sessions | Persistent Memory Hub |
 | AI delegation is opaque | Real run tracking with provenance |
 | Tooling is fragmented | Unified interface |
@@ -74,7 +67,7 @@ KanClaw is a **local-first workspace OS** where **humans + AI agents** collabora
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
 ### Try Demo Mode
 
@@ -96,8 +89,6 @@ npm run dev
 
 Visit http://localhost:3000
 
----
-
 ### Configuration
 
 KanClaw requires an [OpenClaw](https://github.com/openclaw) gateway to connect to AI agents.
@@ -108,7 +99,7 @@ KanClaw requires an [OpenClaw](https://github.com/openclaw) gateway to connect t
 
 #### Environment Variables (Optional)
 
-```env
+```bash
 # OpenClaw connection
 OPENCLAW_TOKEN=your_openclaw_token
 OPENCLAW_HTTP=http://localhost:3001
@@ -120,22 +111,22 @@ KANCLAW_AUTH_TOKEN=your_secure_token
 
 ---
 
-## ✨ Features
+## Features
 
-- **🎯 Multi-Agent Collaboration** - Work with multiple AI agents in team rooms
-- **💬 Real-time Chat** - Interact with agents through a unified interface
-- **🧠 Memory Hub** - Persistent knowledge, decisions, and run history
-- **📁 File Management** - Browse and edit project files
-- **⌨️ Keyboard Shortcuts** - Power user navigation (Ctrl+K, Ctrl+1-5)
-- **🌓 Dark/Light Theme** - System preference support
-- **🌐 i18n** - English, Spanish, French
-- **📱 PWA Ready** - Install as native app
-- **🔐 Security** - Optional authentication, CSP headers, rate limiting
-- **📊 Observability** - Logging, error boundaries, performance tracking
+- **Multi-Agent Collaboration** - Work with multiple AI agents in team rooms
+- **Real-time Chat** - Interact with agents through a unified interface
+- **Memory Hub** - Persistent knowledge, decisions, and run history
+- **File Management** - Browse and edit project files
+- **Keyboard Shortcuts** - Power user navigation (Ctrl+K, Ctrl+1-5)
+- **Dark/Light Theme** - System preference support
+- **i18n** - English, Spanish, French
+- **PWA Ready** - Install as native app
+- **Security** - Optional authentication, CSP headers, rate limiting
+- **Observability** - Logging, error boundaries, performance tracking
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|------------|
@@ -149,7 +140,7 @@ KANCLAW_AUTH_TOKEN=your_secure_token
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 kanclaw/
@@ -169,7 +160,7 @@ kanclaw/
 
 ---
 
-## 🔧 Development
+## Development
 
 ```bash
 # Install dependencies
@@ -194,7 +185,7 @@ npm run analyze
 
 ---
 
-## 🚢 Deployment
+## Deployment
 
 ### Docker (Recommended)
 
@@ -231,7 +222,7 @@ npm start
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please read our [Contributing Guidelines](./CONTRIBUTING.md) first.
 
@@ -243,13 +234,13 @@ Contributions are welcome! Please read our [Contributing Guidelines](./CONTRIBUT
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the [MIT License](./LICENSE).
 
 ---
 
-## 🔗 Links
+## Links
 
 - [Website](https://kanclaw.io)
 - [GitHub](https://github.com/smouj/kanclaw)
