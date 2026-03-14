@@ -371,3 +371,31 @@ select:focus {
 .theme-light .premium-text { color: #09090b; }
 .theme-light .premium-text-secondary { color: #3f3f46; }
 .theme-light .premium-text-muted { color: #71717a; }
+
+/* Utility classes for setup page */
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: var(--kc-accent-green);
+  color: black;
+}
+
+.btn-primary:hover {
+  background-color: rgba(51, 255, 51, 0.9);
+}
+
+.btn-secondary {
+  border: 1px solid var(--kc-border);
+  background-color: var(--kc-surface2);
+  color: var(--kc-text-primary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--kc-surface);
+}

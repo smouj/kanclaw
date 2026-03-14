@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { Toaster } from 'sonner';
 import { LanguageProvider } from '@/components/LanguageProvider';
 import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration';
+import { DemoProvider } from '@/components/DemoProvider';
 
 export const metadata: Metadata = {
   title: {
@@ -48,11 +49,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es" suppressHydrationWarning>
       <body>
-        <LanguageProvider>
-          <ServiceWorkerRegistration />
-          {children}
-          <Toaster theme="system" richColors position="top-right" />
-        </LanguageProvider>
+        <DemoProvider>
+          <LanguageProvider>
+            <ServiceWorkerRegistration />
+            {children}
+            <Toaster theme="system" richColors position="top-right" />
+          </LanguageProvider>
+        </DemoProvider>
       </body>
     </html>
   );
