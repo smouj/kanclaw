@@ -4,6 +4,15 @@ All notable changes to **KanClaw** will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.2.6] - 2026-03-14
+
+### Added
+- Keyboard navigation system:
+  - `useKeyboardShortcuts` hook for global shortcuts
+  - `createShortcuts` factory for common shortcuts
+  - `KeyboardShortcutsHelp` component (Ctrl+K shows palette)
+  - Shortcuts: Ctrl+1-5 (views), Ctrl+B (sidebar), Ctrl+T (theme), Ctrl+. (panel)
+
 ## [0.2.5] - 2026-03-14
 
 ### Added
