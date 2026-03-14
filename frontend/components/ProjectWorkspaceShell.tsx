@@ -419,7 +419,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                             <div className="h-3 w-3 rounded-full bg-emerald-500" />
                             <span className="text-sm font-medium">{agent.name}</span>
                           </div>
-                          <span className="text-xs text-zinc-500">{agent.role || 'Sin rol'}</span>
+                          <span className="text-xs text-text-muted">{agent.role || 'Sin rol'}</span>
                         </div>
                       ))}
                     </div>
@@ -428,23 +428,23 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                   {/* Quick Info Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="rounded-xl border border-border bg-surface p-5">
-                      <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Delegaciones</h3>
+                      <h3 className="text-xs uppercase tracking-wider text-text-muted mb-3">Delegaciones</h3>
                       <p className="text-2xl font-bold">{model.delegations.length}</p>
                       {model.delegations.slice(0, 2).map((d) => (
-                        <p key={d.id} className="mt-2 text-xs text-zinc-500 truncate">{d.action}</p>
+                        <p key={d.id} className="mt-2 text-xs text-text-muted truncate">{d.action}</p>
                       ))}
                     </div>
                     <div className="rounded-xl border border-border bg-surface p-5">
-                      <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Importaciones</h3>
+                      <h3 className="text-xs uppercase tracking-wider text-text-muted mb-3">Importaciones</h3>
                       <p className="text-2xl font-bold">{model.imports.length}</p>
                       {model.imports.slice(0, 2).map((imp) => (
-                        <p key={imp.id} className="mt-2 text-xs text-zinc-500 truncate">{imp.provider}: {imp.label}</p>
+                        <p key={imp.id} className="mt-2 text-xs text-text-muted truncate">{imp.provider}: {imp.label}</p>
                       ))}
                     </div>
                     <div className="rounded-xl border border-border bg-surface p-5">
-                      <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-3">Memoria</h3>
+                      <h3 className="text-xs uppercase tracking-wider text-text-muted mb-3">Memoria</h3>
                       <p className="text-2xl font-bold">{model.projectMemory.length > 0 ? 'Activa' : 'Vacía'}</p>
-                      <p className="mt-2 text-xs text-zinc-500">{model.knowledge.length} archivos de conocimiento</p>
+                      <p className="mt-2 text-xs text-text-muted">{model.knowledge.length} archivos de conocimiento</p>
                     </div>
                   </div>
 
@@ -453,15 +453,15 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                     <h3 className="text-sm font-medium mb-4">{t('overview.activity')}</h3>
                     <div className="space-y-2">
                       {model.logs.length === 0 ? (
-                        <p className="text-sm text-zinc-500">{t('overview.noActivity')}</p>
+                        <p className="text-sm text-text-muted">{t('overview.noActivity')}</p>
                       ) : (
                         model.logs.slice(0, 8).map((log) => (
                           <div key={log.id} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
                             <div className="flex items-center gap-3">
-                              <span className="text-xs text-zinc-500">{log.actor}</span>
+                              <span className="text-xs text-text-muted">{log.actor}</span>
                               <span className="text-sm">{log.action}</span>
                             </div>
-                            <span className="text-xs text-zinc-600">
+                            <span className="text-xs text-text-muted">
                               {new Date(log.timestamp).toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                             </span>
                           </div>

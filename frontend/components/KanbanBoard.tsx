@@ -40,8 +40,8 @@ function KanbanColumn({
   return (
     <section className="panel-muted flex min-h-[440px] flex-col p-4 transition" onDragOver={onDragOver} onDrop={onDrop} onMouseEnter={onMouseEnter} onMouseUp={onMouseUp}>
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-sm font-medium tracking-[0.22em] text-zinc-300">{status}</h3>
-        <span className="text-xs text-zinc-500">{count}</span>
+        <h3 className="text-sm font-medium tracking-[0.22em] text-text-secondary">{status}</h3>
+        <span className="text-xs text-text-muted">{count}</span>
       </div>
       <div
         id={status}
@@ -218,7 +218,7 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
             >
               <div className="flex h-full flex-col gap-3" data-status={status}>
                 {tasksByStatus[status].length === 0 ? (
-                  <div className="flex h-full min-h-40 items-center justify-center rounded-3xl border border-dashed border-white/10 theme-surface-soft px-6 text-center text-sm text-zinc-500" data-testid={`empty-tasks-${status.toLowerCase()}`}>
+                  <div className="flex h-full min-h-40 items-center justify-center rounded-3xl border border-dashed border-border theme-surface-soft px-6 text-center text-sm text-text-muted" data-testid={`empty-tasks-${status.toLowerCase()}`}>
                     No hay tareas en {status}.
                   </div>
                 ) : (

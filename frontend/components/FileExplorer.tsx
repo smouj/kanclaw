@@ -48,7 +48,7 @@ function TreeBranch({
         className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm transition ${
           isSelected
             ? 'bg-accent-green/20 text-accent-green'
-            : 'text-zinc-300 hover:bg-white/5'
+            : 'text-text-secondary hover:bg-surface2'
         }`}
         style={{ paddingLeft: `${depth * 12 + 12}px` }}
         onClick={() => onSelect(node)}
@@ -64,15 +64,15 @@ function TreeBranch({
       <button
         type="button"
         className={`flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-sm transition ${
-          isSelected ? 'bg-white/10 text-zinc-100' : 'text-zinc-200 hover:bg-white/5'
+          isSelected ? 'bg-surface2 text-text-primary' : 'text-text-primary hover:bg-surface2'
         }`}
         style={{ paddingLeft: `${depth * 12 + 8}px` }}
         onClick={() => setOpen((v) => !v)}
       >
         {open ? (
-          <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 text-zinc-500" />
+          <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 text-text-muted" />
         ) : (
-          <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-zinc-500" />
+          <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-text-muted" />
         )}
         <Folder className="h-4 w-4 flex-shrink-0 text-yellow-500" />
         <span className="truncate">{node.name}</span>
@@ -100,7 +100,7 @@ function getFileIcon(filename: string) {
   if (ext === 'json') return <FileJson className="h-4 w-4 flex-shrink-0 text-yellow-400" />;
   if (['ts', 'tsx', 'js', 'jsx'].includes(ext || ''))
     return <FileType className="h-4 w-4 flex-shrink-0 text-blue-500" />;
-  return <FileCode2 className="h-4 w-4 flex-shrink-0 text-zinc-500" />;
+  return <FileCode2 className="h-4 w-4 flex-shrink-0 text-text-muted" />;
 }
 
 export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string; initialTree: TreeNode[] }) {
@@ -220,13 +220,13 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
       <div className="flex w-64 flex-shrink-0 flex-col border-r border-border bg-surface">
         {/* Search */}
         <div className="flex items-center gap-2 border-b border-border p-3">
-          <Search className="h-4 w-4 text-zinc-500" />
+          <Search className="h-4 w-4 text-text-muted" />
           <input
             type="text"
             placeholder="Buscar archivos..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 bg-transparent text-sm text-zinc-200 placeholder-zinc-500 outline-none"
+            className="flex-1 bg-transparent text-sm text-text-primary placeholder-zinc-500 outline-none"
           />
         </div>
 
@@ -235,7 +235,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
           <Button
             size="sm"
             variant="ghost"
-            className="w-full justify-start gap-2 text-zinc-400 hover:text-zinc-200"
+            className="w-full justify-start gap-2 text-text-secondary hover:text-text-primary"
             onClick={() => setShowNewFile(true)}
           >
             <Plus className="h-4 w-4" />
@@ -273,7 +273,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
             />
           ))}
           {filteredTree.length === 0 && (
-            <p className="p-3 text-sm text-zinc-500">
+            <p className="p-3 text-sm text-text-muted">
               {search ? 'No se encontraron archivos.' : 'No hay archivos aún.'}
             </p>
           )}
@@ -288,7 +288,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
             {selectedPath ? (
               <>
                 {getFileIcon(fileName)}
-                <span className="text-sm font-medium text-zinc-200">{fileName}</span>
+                <span className="text-sm font-medium text-text-primary">{fileName}</span>
                 {hasChanges && (
                   <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-xs text-amber-400">
                     Sin guardar
@@ -296,12 +296,12 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
                 )}
               </>
             ) : (
-              <span className="text-sm text-zinc-500">Selecciona un archivo</span>
+              <span className="text-sm text-text-muted">Selecciona un archivo</span>
             )}
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-zinc-500">{fileExt.toUpperCase()}</span>
+            <span className="text-xs text-text-muted">{fileExt.toUpperCase()}</span>
             <Button
               size="sm"
               disabled={!selectedPath || !hasChanges}
@@ -318,18 +318,18 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
         <div className="flex-1 overflow-hidden bg-surface2">
           {loading ? (
             <div className="flex h-full items-center justify-center">
-              <p className="text-zinc-500">Cargando archivo...</p>
+              <p className="text-text-muted">Cargando archivo...</p>
             </div>
           ) : selectedPath ? (
             <textarea
               value={content}
               onChange={(e) => handleContentChange(e.target.value)}
-              className="h-full w-full resize-none bg-transparent p-4 font-mono text-sm text-zinc-200 outline-none"
+              className="h-full w-full resize-none bg-transparent p-4 font-mono text-sm text-text-primary outline-none"
               spellCheck={false}
               placeholder="Escribe o pega contenido..."
             />
           ) : (
-            <div className="flex h-full flex-col items-center justify-center text-zinc-500">
+            <div className="flex h-full flex-col items-center justify-center text-text-muted">
               <FileCode2 className="mb-4 h-12 w-12 opacity-50" />
               <p className="text-lg font-medium">Selecciona un archivo para editar</p>
               <p className="mt-2 text-sm">

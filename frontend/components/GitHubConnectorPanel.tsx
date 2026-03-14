@@ -121,13 +121,13 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
 
   return (
     <div className="grid gap-4 xl:grid-cols-[0.76fr_1.24fr]">
-      <section className="rounded-[1.8rem] border border-white/8 bg-white/[0.025] p-5">
+      <section className="rounded-[1.8rem] border border-border bg-white/[0.025] p-5">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-zinc-500">GitHub connector</p>
+            <p className="text-xs uppercase tracking-[0.28em] text-text-muted">GitHub connector</p>
             <h3 className="mt-2 text-xl font-semibold theme-text-strong">Conectar e importar</h3>
           </div>
-          <span className={`rounded-full border px-3 py-1 text-xs ${status.connected ? 'border-white/15 theme-text-strong' : 'border-white/10 text-zinc-500'}`} data-testid="github-connector-status">
+          <span className={`rounded-full border px-3 py-1 text-xs ${status.connected ? 'border-white/15 theme-text-strong' : 'border-border text-text-muted'}`} data-testid="github-connector-status">
             {status.connected ? `PAT · ${status.username}` : 'No configurado'}
           </span>
         </div>
@@ -139,7 +139,7 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
         </div>
 
         <div className="mt-8 border-t border-white/6 pt-6">
-          <p className="text-xs uppercase tracking-[0.28em] text-zinc-500">Local folder import</p>
+          <p className="text-xs uppercase tracking-[0.28em] text-text-muted">Local folder import</p>
           <div className="mt-3 space-y-3">
             <Input value={localFolderPath} onChange={(event) => setLocalFolderPath(event.target.value)} placeholder="/Users/you/projects/repo-local" data-testid="local-folder-path-input" />
             <div className="flex flex-wrap gap-2">
@@ -150,34 +150,34 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
         </div>
       </section>
 
-      <section className="rounded-[1.8rem] border border-white/8 bg-white/[0.025] p-5">
-        <p className="text-xs uppercase tracking-[0.28em] text-zinc-500">Repository browser</p>
+      <section className="rounded-[1.8rem] border border-border bg-white/[0.025] p-5">
+        <p className="text-xs uppercase tracking-[0.28em] text-text-muted">Repository browser</p>
         <div className="mt-4 grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
           <div className="max-h-[520px] space-y-3 overflow-y-auto pr-1">
-            {repositories.length === 0 ? <p className="rounded-[1.4rem] border border-dashed border-white/10 theme-surface-soft p-4 text-sm text-zinc-500">Carga tus repositorios accesibles para empezar.</p> : null}
+            {repositories.length === 0 ? <p className="rounded-[1.4rem] border border-dashed border-border theme-surface-soft p-4 text-sm text-text-muted">Carga tus repositorios accesibles para empezar.</p> : null}
             {repositories.map((repo) => (
-              <button key={repo.id} type="button" onClick={() => loadPreview(repo)} className={`w-full rounded-[1.4rem] border p-4 text-left transition ${selectedRepo?.id === repo.id ? 'border-white/18 bg-white/[0.05]' : 'border-white/8 theme-surface-soft hover:border-white/15'}`} data-testid={`github-repo-item-${repo.fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
+              <button key={repo.id} type="button" onClick={() => loadPreview(repo)} className={`w-full rounded-[1.4rem] border p-4 text-left transition ${selectedRepo?.id === repo.id ? 'border-white/18 bg-white/[0.05]' : 'border-border theme-surface-soft hover:border-white/15'}`} data-testid={`github-repo-item-${repo.fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
                 <p className="text-sm font-medium theme-text-strong">{repo.fullName}</p>
-                <p className="mt-2 text-xs leading-5 text-zinc-500">{repo.description || 'Sin descripción'}</p>
+                <p className="mt-2 text-xs leading-5 text-text-muted">{repo.description || 'Sin descripción'}</p>
               </button>
             ))}
           </div>
 
-          <div className="rounded-[1.5rem] border border-white/8 theme-surface-soft p-4">
-            {!preview ? <p className="text-sm text-zinc-500">Selecciona un repositorio para inspeccionarlo e importarlo.</p> : null}
+          <div className="rounded-[1.5rem] border border-border theme-surface-soft p-4">
+            {!preview ? <p className="text-sm text-text-muted">Selecciona un repositorio para inspeccionarlo e importarlo.</p> : null}
             {preview ? (
               <div className="space-y-4" data-testid="github-repo-preview-panel">
                 <div>
                   <h4 className="text-lg font-semibold theme-text-strong">{String(preview.fullName)}</h4>
-                  <p className="mt-2 text-sm text-zinc-400">{String(preview.description || '')}</p>
+                  <p className="mt-2 text-sm text-text-secondary">{String(preview.description || '')}</p>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
                   <InfoCard label="Default branch" value={String(preview.defaultBranch || '')} />
                   <InfoCard label="Visibility" value={String(preview.visibility || '')} />
                 </div>
                 <div className="rounded-[1.3rem] border border-white/6 bg-white/[0.03] p-4">
-                  <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">README preview</p>
-                  <pre className="mt-3 whitespace-pre-wrap text-xs leading-6 text-zinc-300">{String(preview.readme || '').slice(0, 1400) || 'README no disponible.'}</pre>
+                  <p className="text-xs uppercase tracking-[0.24em] text-text-muted">README preview</p>
+                  <pre className="mt-3 whitespace-pre-wrap text-xs leading-6 text-text-secondary">{String(preview.readme || '').slice(0, 1400) || 'README no disponible.'}</pre>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button type="button" variant="outline" onClick={() => importRepository('attach')} disabled={loading} data-testid="github-import-attach-button">Vincular a este proyecto</Button>
@@ -194,8 +194,8 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
 
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[1.2rem] border border-white/7 bg-white/[0.03] p-4">
-      <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{label}</p>
+    <div className="rounded-[1.2rem] border border-border bg-white/[0.03] p-4">
+      <p className="text-xs uppercase tracking-[0.24em] text-text-muted">{label}</p>
       <p className="mt-3 text-sm theme-text-strong">{value}</p>
     </div>
   );

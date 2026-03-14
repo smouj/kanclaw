@@ -23,7 +23,7 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
     <div className="flex h-full flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2">
         {tabs.map((tab) => (
-          <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`rounded-full px-3 py-2 text-xs uppercase tracking-[0.24em] transition ${activeTab === tab ? 'bg-text-primary text-background' : 'border border-white/10 text-zinc-400 hover:border-white/20 hover:text-text-primary'}`} data-testid={`memory-tab-${tab}`}>
+          <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`rounded-full px-3 py-2 text-xs uppercase tracking-[0.24em] transition ${activeTab === tab ? 'bg-text-primary text-background' : 'border border-border text-text-secondary hover:border-border hover:text-text-primary'}`} data-testid={`memory-tab-${tab}`}>
             {tab}
           </button>
         ))}
@@ -31,9 +31,9 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
 
       {activeTab === 'overview' ? (
         <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-          <section className="rounded-[1.8rem] border border-white/8 theme-surface-soft p-5">
-            <p className="text-xs uppercase tracking-[0.28em] text-zinc-500">Project Memory</p>
-            <pre className="mt-4 whitespace-pre-wrap text-sm leading-7 text-zinc-300" data-testid="project-memory-content">{props.projectMemory}</pre>
+          <section className="rounded-[1.8rem] border border-border theme-surface-soft p-5">
+            <p className="text-xs uppercase tracking-[0.28em] text-text-muted">Project Memory</p>
+            <pre className="mt-4 whitespace-pre-wrap text-sm leading-7 text-text-secondary" data-testid="project-memory-content">{props.projectMemory}</pre>
           </section>
           <section className="grid gap-4">
             {[
@@ -44,8 +44,8 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
               ['Snapshots', props.snapshots.length],
               ['Imports', props.imports.length],
             ].map(([label, value]) => (
-              <div key={String(label)} className="rounded-[1.6rem] border border-white/8 theme-surface-soft p-4" data-testid={`memory-metric-${String(label).toLowerCase().replace(/\s+/g, '-')}`}>
-                <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{label}</p>
+              <div key={String(label)} className="rounded-[1.6rem] border border-border theme-surface-soft p-4" data-testid={`memory-metric-${String(label).toLowerCase().replace(/\s+/g, '-')}`}>
+                <p className="text-xs uppercase tracking-[0.24em] text-text-muted">{label}</p>
                 <p className="mt-3 text-2xl font-semibold theme-text-strong">{value}</p>
               </div>
             ))}
@@ -60,10 +60,10 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
       {activeTab === 'souls' ? (
         <div className="grid gap-4 xl:grid-cols-2">
           {props.agentSurfaces.map((agent) => (
-            <article key={agent.id} className="rounded-[1.8rem] border border-white/8 theme-surface-soft p-5" data-testid={`memory-agent-card-${agent.name.toLowerCase()}`}>
+            <article key={agent.id} className="rounded-[1.8rem] border border-border theme-surface-soft p-5" data-testid={`memory-agent-card-${agent.name.toLowerCase()}`}>
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-lg font-semibold theme-text-strong">{agent.name}</h3>
-                <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-400">{agent.role || 'Sin rol'}</span>
+                <span className="rounded-full border border-border px-3 py-1 text-xs text-text-secondary">{agent.role || 'Sin rol'}</span>
               </div>
               <div className="mt-4 grid gap-4 md:grid-cols-3">
                 <PreviewCard title="Soul" value={agent.soul} />
@@ -84,15 +84,15 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
 
 function MemoryList({ title, items, empty }: { title: string; items: Array<{ name: string; path: string; updatedAt: string }>; empty: string }) {
   return (
-    <section className="rounded-[1.8rem] border border-white/8 theme-surface-soft p-5">
-      <p className="text-xs uppercase tracking-[0.28em] text-zinc-500">{title}</p>
-      {items.length === 0 ? <p className="mt-6 text-sm text-zinc-500">{empty}</p> : null}
+    <section className="rounded-[1.8rem] border border-border theme-surface-soft p-5">
+      <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{title}</p>
+      {items.length === 0 ? <p className="mt-6 text-sm text-text-muted">{empty}</p> : null}
       <div className="mt-4 grid gap-3">
         {items.map((item) => (
-          <article key={item.path} className="rounded-[1.4rem] border border-white/7 theme-surface-soft p-4" data-testid={`memory-file-${item.path.replace(/[^a-zA-Z0-9]+/g, '-')}`}>
+          <article key={item.path} className="rounded-[1.4rem] border border-border theme-surface-soft p-4" data-testid={`memory-file-${item.path.replace(/[^a-zA-Z0-9]+/g, '-')}`}>
             <p className="text-sm font-medium theme-text-strong">{item.name}</p>
-            <p className="mt-1 text-xs text-zinc-500">{item.path}</p>
-            <p className="mt-3 text-xs text-zinc-400">Actualizado {new Date(item.updatedAt).toLocaleString('es-ES')}</p>
+            <p className="mt-1 text-xs text-text-muted">{item.path}</p>
+            <p className="mt-3 text-xs text-text-secondary">Actualizado {new Date(item.updatedAt).toLocaleString('es-ES')}</p>
           </article>
         ))}
       </div>
@@ -102,17 +102,17 @@ function MemoryList({ title, items, empty }: { title: string; items: Array<{ nam
 
 function TimelineList({ title, items, empty }: { title: string; items: Array<{ id: string; title: string; subtitle: string; timestamp: string | Date }>; empty: string }) {
   return (
-    <section className="rounded-[1.8rem] border border-white/8 theme-surface-soft p-5">
-      <p className="text-xs uppercase tracking-[0.28em] text-zinc-500">{title}</p>
-      {items.length === 0 ? <p className="mt-6 text-sm text-zinc-500">{empty}</p> : null}
+    <section className="rounded-[1.8rem] border border-border theme-surface-soft p-5">
+      <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{title}</p>
+      {items.length === 0 ? <p className="mt-6 text-sm text-text-muted">{empty}</p> : null}
       <div className="mt-4 space-y-3">
         {items.map((item) => (
-          <article key={item.id} className="rounded-[1.4rem] border border-white/7 theme-surface-soft p-4" data-testid={`timeline-item-${item.id}`}>
+          <article key={item.id} className="rounded-[1.4rem] border border-border theme-surface-soft p-4" data-testid={`timeline-item-${item.id}`}>
             <div className="flex items-center justify-between gap-3">
               <p className="text-sm font-medium theme-text-strong">{item.title}</p>
-              <time className="text-xs text-zinc-500">{new Date(item.timestamp).toLocaleString('es-ES')}</time>
+              <time className="text-xs text-text-muted">{new Date(item.timestamp).toLocaleString('es-ES')}</time>
             </div>
-            <p className="mt-2 text-sm leading-6 text-zinc-400">{item.subtitle}</p>
+            <p className="mt-2 text-sm leading-6 text-text-secondary">{item.subtitle}</p>
           </article>
         ))}
       </div>
@@ -122,9 +122,9 @@ function TimelineList({ title, items, empty }: { title: string; items: Array<{ i
 
 function PreviewCard({ title, value }: { title: string; value: string }) {
   return (
-    <div className="rounded-[1.4rem] border border-white/7 theme-surface-soft p-4">
-      <p className="text-xs uppercase tracking-[0.24em] text-zinc-500">{title}</p>
-      <pre className="mt-3 whitespace-pre-wrap text-xs leading-6 text-zinc-300">{value || 'Sin contenido todavía.'}</pre>
+    <div className="rounded-[1.4rem] border border-border theme-surface-soft p-4">
+      <p className="text-xs uppercase tracking-[0.24em] text-text-muted">{title}</p>
+      <pre className="mt-3 whitespace-pre-wrap text-xs leading-6 text-text-secondary">{value || 'Sin contenido todavía.'}</pre>
     </div>
   );
 }
