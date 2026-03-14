@@ -31,6 +31,14 @@
 
 ---
 
+## 📦 Latest release
+
+- **v0.2.0** — Premium workspace pass (UI cohesion, i18n ES/EN/FR base, OpenClaw hardening, design-token audit)
+- Notes: [RELEASE_NOTES_v0.2.0.md](./RELEASE_NOTES_v0.2.0.md)
+- Changelog: [CHANGELOG.md](./CHANGELOG.md)
+
+---
+
 ## 🧭 Who is this for?
 
 - **Founders** shipping product features with AI copilots

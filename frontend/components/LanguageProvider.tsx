@@ -181,6 +181,10 @@ const dictionary: Dict = {
   'common.quickActions': { es: 'Acciones rápidas', en: 'Quick actions', fr: 'Actions rapides' },
   'common.save': { es: 'Guardar', en: 'Save', fr: 'Enregistrer' },
   'common.updated': { es: 'Actualizado', en: 'Updated', fr: 'Mis à jour' },
+  'common.noResults': { es: 'No hay resultados.', en: 'No results.', fr: 'Aucun résultat.' },
+  'command.palette': { es: 'Paleta de comandos', en: 'Command palette', fr: 'Palette de commandes' },
+  'command.searchPlaceholder': { es: 'Buscar acciones, agentes, memoria, conectores...', en: 'Search actions, agents, memory, connectors...', fr: 'Rechercher actions, agents, mémoire, connecteurs...' },
+  'command.group': { es: 'Acciones de KanClaw', en: 'KanClaw actions', fr: 'Actions KanClaw' },
 };
 
 interface LanguageContextValue {

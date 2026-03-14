@@ -20,6 +20,14 @@
 
 ---
 
+## 📦 Última versión
+
+- **v0.2.0** — pasada premium del workspace (cohesión visual, base i18n ES/EN/FR, hardening OpenClaw, auditoría de tokens de diseño)
+- Notas: [RELEASE_NOTES_v0.2.0.md](./RELEASE_NOTES_v0.2.0.md)
+- Changelog: [CHANGELOG.md](./CHANGELOG.md)
+
+---
+
 ## Resumen
 
 KanClaw es un workspace operativo local-first donde humanos y agentes IA colaboran con contexto persistente, memoria estructurada, gestión de tareas e integración profunda con GitHub.

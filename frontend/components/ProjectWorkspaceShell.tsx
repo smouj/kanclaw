@@ -86,9 +86,12 @@ function CollapsiblePanel({
   
   return (
     <div className="border border-border bg-surface rounded overflow-hidden">
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-3 hover:bg-surface2 transition-colors"
+        className="w-full flex items-center justify-between p-3 hover:bg-surface2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50 transition-colors"
+        aria-expanded={isOpen}
+        aria-label={`Toggle ${title} panel`}
+        type="button"
       >
         <div className="flex items-center gap-2">
           {Icon && <Icon className="w-4 h-4 text-text-muted" />}
@@ -120,11 +123,14 @@ function AnimatedTab({
   return (
     <button
       onClick={onClick}
-      className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm transition-all duration-200 border-b-2 ${
-        active 
-          ? 'border-accent-green text-text-primary bg-surface' 
+      className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50 transition-all duration-200 border-b-2 ${
+        active
+          ? 'border-accent-green text-text-primary bg-surface'
           : 'border-transparent text-text-muted hover:text-text-primary hover:bg-surface2'
       }`}
+      type="button"
+      aria-pressed={active}
+      aria-label={label}
     >
       <Icon className="w-4 h-4" />
       <span className="hidden sm:inline">{label}</span>
@@ -152,10 +158,18 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
     const key = `kanclaw:layout:${project.slug}`;
     try {
       const raw = localStorage.getItem(key);
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as { leftSidebarOpen?: boolean; rightPanelOpen?: boolean };
-      if (typeof parsed.leftSidebarOpen === 'boolean') setLeftSidebarOpen(parsed.leftSidebarOpen);
-      if (typeof parsed.rightPanelOpen === 'boolean') setRightPanelOpen(parsed.rightPanelOpen);
+      if (raw) {
+        const parsed = JSON.parse(raw) as { leftSidebarOpen?: boolean; rightPanelOpen?: boolean };
+        if (typeof parsed.leftSidebarOpen === 'boolean') setLeftSidebarOpen(parsed.leftSidebarOpen);
+        if (typeof parsed.rightPanelOpen === 'boolean') setRightPanelOpen(parsed.rightPanelOpen);
+        return;
+      }
+
+      // sensible defaults by viewport when no saved layout exists
+      const isDesktop = window.matchMedia('(min-width: 1280px)').matches;
+      const isTablet = window.matchMedia('(min-width: 1024px)').matches;
+      setLeftSidebarOpen(isTablet);
+      setRightPanelOpen(isDesktop);
     } catch {
       // ignore malformed layout preferences
     }
@@ -275,7 +289,9 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push('/')}
-            className="flex items-center justify-center w-8 h-8 rounded border border-border bg-surface2 hover:bg-surface transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded border border-border bg-surface2 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50 transition-colors"
+            aria-label="Back to projects"
+            type="button"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
@@ -288,15 +304,21 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
         <div className="flex items-center gap-2">
           <button
             onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
-            className="flex items-center justify-center w-8 h-8 rounded border border-border bg-surface2 hover:bg-surface transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded border border-border bg-surface2 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50 transition-colors"
             title="Toggle left sidebar"
+            aria-label="Toggle left sidebar"
+            aria-expanded={leftSidebarOpen}
+            type="button"
           >
             <ChevronRight className={`w-4 h-4 transition-transform ${leftSidebarOpen ? 'rotate-180' : ''}`} />
           </button>
           <button
             onClick={() => setRightPanelOpen(!rightPanelOpen)}
-            className="flex items-center justify-center w-8 h-8 rounded border border-border bg-surface2 hover:bg-surface transition-colors"
+            className="hidden xl:flex items-center justify-center w-8 h-8 rounded border border-border bg-surface2 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50 transition-colors"
             title="Toggle right panel"
+            aria-label="Toggle right panel"
+            aria-expanded={rightPanelOpen}
+            type="button"
           >
             <ChevronRight className={`w-4 h-4 transition-transform ${rightPanelOpen ? '' : 'rotate-180'}`} />
           </button>
@@ -538,15 +560,18 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
         </main>
 
         {/* Right Panel - Collapsible */}
-        <aside 
-          className={`flex flex-col border-l border-border bg-surface/90 backdrop-blur transition-all duration-300 ${
+        <aside
+          className={`hidden xl:flex flex-col border-l border-border bg-surface/90 backdrop-blur transition-all duration-300 ${
             rightPanelOpen ? 'w-72' : 'w-0 overflow-hidden'
           }`}
         >
           <div className="p-3 border-b border-border">
             <button
               onClick={() => setRightPanelOpen(!rightPanelOpen)}
-              className="flex items-center justify-between w-full"
+              className="flex items-center justify-between w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50"
+              aria-label="Toggle right quick actions panel"
+              aria-expanded={rightPanelOpen}
+              type="button"
             >
               <span className="text-sm font-medium">{t('common.quickActions')}</span>
               <ChevronRight className={`w-4 h-4 transition-transform ${rightPanelOpen ? '' : '-rotate-180'}`} />

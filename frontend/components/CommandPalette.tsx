@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { Command } from 'cmdk';
+import { useI18n } from '@/components/LanguageProvider';
 
 export interface CommandItem {
   id: string;
@@ -11,11 +12,17 @@ export interface CommandItem {
 }
 
 export function CommandPalette({ open, setOpen, items }: { open: boolean; setOpen: (open: boolean) => void; items: CommandItem[] }) {
+  const { t } = useI18n();
+
   useEffect(() => {
     const listener = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         setOpen(!open);
+      }
+      if (event.key === 'Escape' && open) {
+        event.preventDefault();
+        setOpen(false);
       }
     };
     window.addEventListener('keydown', listener);
@@ -27,15 +34,22 @@ export function CommandPalette({ open, setOpen, items }: { open: boolean; setOpe
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/65 px-4 pt-[14vh] backdrop-blur-md" onClick={() => setOpen(false)} data-testid="command-palette-overlay">
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/65 px-4 pt-[14vh] backdrop-blur-md"
+      onClick={() => setOpen(false)}
+      data-testid="command-palette-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label={t('command.palette')}
+    >
       <div className="w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/10 bg-[#070707] shadow-[0_30px_120px_rgba(0,0,0,0.65)]" onClick={(event) => event.stopPropagation()}>
-        <Command label="KanClaw Command Palette" className="w-full" loop>
+        <Command label={t('command.palette')} className="w-full" loop>
           <div className="border-b border-white/6 px-5 py-4">
-            <Command.Input autoFocus placeholder="Buscar acciones, agentes, memoria, conectores..." className="w-full border-0 bg-transparent text-base text-white outline-none placeholder:text-zinc-600" data-testid="command-palette-input" />
+            <Command.Input autoFocus placeholder={t('command.searchPlaceholder')} className="w-full border-0 bg-transparent text-base text-white outline-none placeholder:text-zinc-600" data-testid="command-palette-input" />
           </div>
           <Command.List className="max-h-[440px] overflow-y-auto p-3">
-            <Command.Empty className="px-4 py-6 text-sm text-zinc-500">No hay resultados.</Command.Empty>
-            <Command.Group heading="Acciones de KanClaw" className="text-xs text-zinc-500">
+            <Command.Empty className="px-4 py-6 text-sm text-zinc-500">{t('common.noResults')}</Command.Empty>
+            <Command.Group heading={t('command.group')} className="text-xs text-zinc-500">
               {items.map((item) => (
                 <Command.Item
                   key={item.id}
