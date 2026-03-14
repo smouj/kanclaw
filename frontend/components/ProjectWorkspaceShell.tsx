@@ -395,14 +395,20 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                     {agent.name}
                   </button>
                 ))}
-                <div className="pt-2 border-t border-border">
+                <div className="pt-2 border-t border-border space-y-2">
                   <Input
                     value={agentName}
                     onChange={(e) => setAgentName(e.target.value)}
                     placeholder={t('sidebar.newAgentName')}
                     className="h-8 text-xs"
                   />
-                  <Button size="sm" onClick={createAgent} disabled={busy || !agentName} className="w-full mt-2 h-8">
+                  <Input
+                    value={agentRole}
+                    onChange={(e) => setAgentRole(e.target.value)}
+                    placeholder={t('sidebar.newAgentRole') || 'Role (e.g., Developer, Designer)'}
+                    className="h-8 text-xs"
+                  />
+                  <Button size="sm" onClick={createAgent} disabled={busy || !agentName} className="w-full mt-1 h-8">
                     {t('sidebar.addAgent')}
                   </Button>
                 </div>

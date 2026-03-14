@@ -152,4 +152,6 @@ model ProjectImport {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, provider]) // Only one GitHub import per project
 }

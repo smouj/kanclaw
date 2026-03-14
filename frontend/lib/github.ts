@@ -189,6 +189,18 @@ export async function importGitHubRepository(input: {
     throw new Error('Proyecto no encontrado para vincular la importación.');
   }
 
+  // Check if project already has a GitHub import (only 1 allowed)
+  const existingImport = await prisma.projectImport.findFirst({
+    where: {
+      projectId: project.id,
+      provider: 'github',
+    },
+  });
+
+  if (existingImport) {
+    throw new Error('Este proyecto ya tiene un repositorio GitHub vinculado. Solo se permite uno por proyecto.');
+  }
+
   await prisma.projectImport.create({
     data: {
       projectId: project.id,

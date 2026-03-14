@@ -49,6 +49,21 @@ export async function POST(request: Request) {
     // Generate OpenClaw agent ID (normalized from KanClaw agent name)
     const gatewayAgentId = normalizeAgentId(payload.name);
 
+    // Check if agent already exists in this project
+    const existingAgent = await prisma.agent.findFirst({
+      where: {
+        projectId: project.id,
+        name: payload.name,
+      },
+    });
+
+    if (existingAgent) {
+      return NextResponse.json({ 
+        error: 'Ya existe un agente con este nombre en el proyecto.',
+        agentId: existingAgent.id,
+      }, { status: 409 });
+    }
+
     const agent = await prisma.agent.create({
       data: {
         projectId: project.id,
