@@ -66,9 +66,12 @@ export function HomePageClient({
   const [projectsList, setProjectsList] = useState(projects);
 
   async function handleDeleteProject(projectId: string) {
+    const project = projectsList.find(p => p.id === projectId);
+    if (!project) return;
+    
     setDeleting(true);
     try {
-      const response = await fetch(`/api/projects/${projectId}`, { method: 'DELETE' });
+      const response = await fetch(`/api/projects?slug=${encodeURIComponent(project.slug)}`, { method: 'DELETE' });
       if (response.ok) {
         setProjectsList((prev) => prev.filter((p) => p.id !== projectId));
       }
