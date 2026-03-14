@@ -75,7 +75,7 @@
 
   <!-- brand block -->
   <rect x="112" y="110" width="74" height="74" rx="14" fill="rgba(255,255,255,0.045)" stroke="rgba(255,255,255,0.22)"/>
-  <image href="https://raw.githubusercontent.com/smouj/kanclaw/main/frontend/public/kanclaw-logo-dark.png" x="121" y="119" width="56" height="56"/>
+  <image href="https://raw.githubusercontent.com/smouj/kanclaw/main/frontend/public/logo-white.png" x="121" y="119" width="56" height="56"/>
 
   <text x="206" y="146" fill="#AEB5C3" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="17" letter-spacing="3">LIVING WORKSPACE OS</text>
   <text x="206" y="202" fill="#F4F6FA" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="68" font-weight="700">KanClaw</text>
