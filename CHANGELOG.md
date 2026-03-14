@@ -4,6 +4,18 @@ All notable changes to **KanClaw** will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.2.9] - 2026-03-14
+
+### Added
+- Bundle analyzer (`@next/bundle-analyzer`)
+- API response types (`lib/api-types.ts`)
+- PWA offline improvements (enhanced service worker with cache strategies)
+- CONTRIBUTING.md guidelines
+- API documentation (`docs/API.md`)
+
+### Changed
+- Build optimized with bundle analyzer integration
+
 ## [0.2.8] - 2026-03-14
 
 ### Added
