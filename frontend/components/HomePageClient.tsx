@@ -111,13 +111,13 @@ export function HomePageClient({
           <section className="kanclaw-panel grid gap-6 p-5 lg:grid-cols-[1.08fr_0.92fr] lg:p-6">
             <div className="relative rounded-[2.4rem] border theme-surface-soft p-6">
               <div className="mb-8 flex items-center gap-4">
-                <div className="relative h-20 w-20 overflow-hidden rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'var(--kc-surface)' }}>
+                <div className="relative h-20 w-20 flex items-center justify-center">
                   <Image
-                    src="/kanclaw-logo-light.png"
+                    src="/logo-white.png"
                     alt="KanClaw Logo"
                     width={64}
                     height={64}
-                    className="w-14 h-14 object-contain"
+                    className="w-16 h-16 object-contain"
                     priority
                   />
                 </div>
