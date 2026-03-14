@@ -113,6 +113,13 @@ KANCLAW_AUTH_TOKEN=your_secure_token
 
 ## Features
 
+- **Official KanClaw Team** - Pre-configured 6-agent team ready for any project
+  - **Strategist** - Planning, roadmap, task breakdown
+  - **Builder** - Implementation, code, technical delivery
+  - **Researcher** - Analysis, context, documentation
+  - **QA** - Validation, testing, quality assurance
+  - **RepoOps** - Structure, hygiene, releases
+  - **Memory Keeper** - Persistent context, decisions
 - **Multi-Agent Collaboration** - Work with multiple AI agents in team rooms
 - **Real-time Chat** - Interact with agents through a unified interface
 - **Memory Hub** - Persistent knowledge, decisions, and run history

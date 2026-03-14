@@ -74,6 +74,23 @@ Abrir: `http://localhost:3020`
 
 ---
 
+## Equipo Oficial KanClaw
+
+KanClaw incluye un equipo de 6 agentes oficiales preconfigurados:
+
+- **Strategist** - Estrategia, planificación, desglose de tareas
+- **Builder** - Implementación, código, entrega técnica
+- **Researcher** - Análisis, contexto, documentación
+- **QA** - Validación, pruebas, control de calidad
+- **RepoOps** - Estructura, hygiene, releases
+- **Memory Keeper** - Contexto persistente, decisiones
+
+Cada nuevo proyecto puede crearse con el equipo oficial ya configurado.
+
+---
+
+## Stack técnico
+
 ## Stack técnico
 
 - **Frontend:** Next.js 14 (App Router), React 18, TypeScript
