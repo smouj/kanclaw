@@ -33,7 +33,7 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
 
       {activeTab === 'overview' ? (
         <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-          <section className="rounded-[1.8rem] border border-border theme-surface-soft p-5">
+          <section className="kanclaw-panel rounded-[1.8rem] border border-border kanclaw-panel p-5">
             <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{t('memory.projectMemory')}</p>
             <pre className="mt-4 whitespace-pre-wrap text-sm leading-7 text-text-secondary" data-testid="project-memory-content">{props.projectMemory}</pre>
           </section>
@@ -46,7 +46,7 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
               [t('memory.snapshots'), props.snapshots.length],
               [t('memory.imports'), props.imports.length],
             ].map(([label, value]) => (
-              <div key={String(label)} className="rounded-[1.6rem] border border-border theme-surface-soft p-4" data-testid={`memory-metric-${String(label).toLowerCase().replace(/\s+/g, '-')}`}>
+              <div key={String(label)} className="kanclaw-panel rounded-[1.6rem] border border-border kanclaw-panel p-4" data-testid={`memory-metric-${String(label).toLowerCase().replace(/\s+/g, '-')}`}>
                 <p className="text-xs uppercase tracking-[0.24em] text-text-muted">{label}</p>
                 <p className="mt-3 text-2xl font-semibold theme-text-strong">{value}</p>
               </div>
@@ -62,10 +62,10 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
       {activeTab === 'souls' ? (
         <div className="grid gap-4 xl:grid-cols-2">
           {props.agentSurfaces.map((agent) => (
-            <article key={agent.id} className="rounded-[1.8rem] border border-border theme-surface-soft p-5" data-testid={`memory-agent-card-${agent.name.toLowerCase()}`}>
+            <article key={agent.id} className="kanclaw-panel rounded-[1.8rem] border border-border kanclaw-panel p-5" data-testid={`memory-agent-card-${agent.name.toLowerCase()}`}>
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-lg font-semibold theme-text-strong">{agent.name}</h3>
-                <span className="rounded-full border border-border px-3 py-1 text-xs text-text-secondary">{agent.role || '-'}</span>
+                <span className="kanclaw-panel rounded-full border border-border px-3 py-1 text-xs text-text-secondary">{agent.role || '-'}</span>
               </div>
               <div className="mt-4 grid gap-4 md:grid-cols-3">
                 <PreviewCard title="Soul" value={agent.soul} />
@@ -87,12 +87,12 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
 function MemoryList({ title, items, empty }: { title: string; items: Array<{ name: string; path: string; updatedAt: string }>; empty: string }) {
   const { t, locale } = useI18n();
   return (
-    <section className="rounded-[1.8rem] border border-border theme-surface-soft p-5">
+    <section className="kanclaw-panel rounded-[1.8rem] border border-border kanclaw-panel p-5">
       <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{title}</p>
       {items.length === 0 ? <p className="mt-6 text-sm text-text-muted">{empty}</p> : null}
       <div className="mt-4 grid gap-3">
         {items.map((item) => (
-          <article key={item.path} className="rounded-[1.4rem] border border-border theme-surface-soft p-4" data-testid={`memory-file-${item.path.replace(/[^a-zA-Z0-9]+/g, '-')}`}>
+          <article key={item.path} className="kanclaw-panel rounded-[1.4rem] border border-border kanclaw-panel p-4" data-testid={`memory-file-${item.path.replace(/[^a-zA-Z0-9]+/g, '-')}`}>
             <p className="text-sm font-medium theme-text-strong">{item.name}</p>
             <p className="mt-1 text-xs text-text-muted">{item.path}</p>
             <p className="mt-3 text-xs text-text-secondary">{t('common.updated')} {new Date(item.updatedAt).toLocaleString(locale)}</p>
@@ -106,12 +106,12 @@ function MemoryList({ title, items, empty }: { title: string; items: Array<{ nam
 function TimelineList({ title, items, empty }: { title: string; items: Array<{ id: string; title: string; subtitle: string; timestamp: string | Date }>; empty: string }) {
   const { locale } = useI18n();
   return (
-    <section className="rounded-[1.8rem] border border-border theme-surface-soft p-5">
+    <section className="kanclaw-panel rounded-[1.8rem] border border-border kanclaw-panel p-5">
       <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{title}</p>
       {items.length === 0 ? <p className="mt-6 text-sm text-text-muted">{empty}</p> : null}
       <div className="mt-4 space-y-3">
         {items.map((item) => (
-          <article key={item.id} className="rounded-[1.4rem] border border-border theme-surface-soft p-4" data-testid={`timeline-item-${item.id}`}>
+          <article key={item.id} className="kanclaw-panel rounded-[1.4rem] border border-border kanclaw-panel p-4" data-testid={`timeline-item-${item.id}`}>
             <div className="flex items-center justify-between gap-3">
               <p className="text-sm font-medium theme-text-strong">{item.title}</p>
               <time className="text-xs text-text-muted">{new Date(item.timestamp).toLocaleString(locale)}</time>
@@ -127,7 +127,7 @@ function TimelineList({ title, items, empty }: { title: string; items: Array<{ i
 function PreviewCard({ title, value }: { title: string; value: string }) {
   const { t } = useI18n();
   return (
-    <div className="rounded-[1.4rem] border border-border theme-surface-soft p-4">
+    <div className="kanclaw-panel rounded-[1.4rem] border border-border kanclaw-panel p-4">
       <p className="text-xs uppercase tracking-[0.24em] text-text-muted">{title}</p>
       <pre className="mt-3 whitespace-pre-wrap text-xs leading-6 text-text-secondary">{value || t('memory.noContentYet')}</pre>
     </div>

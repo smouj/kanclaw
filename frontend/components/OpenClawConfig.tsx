@@ -71,10 +71,10 @@ export function OpenClawConfig({ onSave }: OpenClawConfigProps) {
       {/* Header */}
       <div className="flex items-center gap-3 mb-2">
         <div 
-          className="w-10 h-10 rounded-lg flex items-center justify-center"
-          style={{ backgroundColor: 'var(--kc-accent-green)' }}
+          className="w-10 h-10 rounded-lg flex items-center justify-center border"
+          style={{ backgroundColor: 'var(--kc-surface2)', borderColor: 'var(--kc-border)' }}
         >
-          <Plug className="w-5 h-5 text-black" />
+          <Plug className="w-5 h-5" style={{ color: 'var(--kc-text-muted)' }} />
         </div>
         <div>
           <h3 className="text-lg font-semibold">Configurar OpenClaw</h3>
@@ -204,10 +204,11 @@ export function OpenClawConfig({ onSave }: OpenClawConfigProps) {
       <button 
         onClick={handleSave} 
         disabled={loading}
-        className="w-full py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all"
+        className="w-full py-3 rounded-lg font-medium flex items-center justify-center gap-2 border transition-all"
         style={{ 
-          backgroundColor: saved ? 'var(--kc-accent-green)' : 'var(--kc-accent-green)',
-          color: 'black'
+          backgroundColor: 'var(--kc-surface2)', 
+          borderColor: 'var(--kc-border)',
+          color: 'var(--kc-text-primary)'
         }}
       >
         {loading ? (
@@ -217,7 +218,7 @@ export function OpenClawConfig({ onSave }: OpenClawConfigProps) {
           </>
         ) : saved ? (
           <>
-            <Check className="w-4 h-4" />
+            <Check className="w-4 h-4" style={{ color: 'var(--kc-accent-green)' }} />
             ¡Guardado! Recarga para aplicar
           </>
         ) : (
