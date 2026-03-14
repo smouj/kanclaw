@@ -76,7 +76,7 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
       setPreview(data);
     } catch (error) {
       setLoading(false);
-      toast.error('Error al cargar el repositorio.');
+      toast.error(t('connectors.repoBrowser') + ' error');
     }
   }
 
@@ -101,7 +101,7 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
       toast.error(data.error || t('connectors.connectImport') + ' error');
       return;
     }
-    toast.success(mode === 'create' ? 'Repositorio importado como proyecto.' : 'Repositorio vinculado al proyecto.');
+    toast.success(mode === 'create' ? t('connectors.importCreated') : t('connectors.importAttached'));
     window.location.href = mode === 'create' ? `/project/${data.project.slug}` : `/project/${projectSlug}`;
   }
 
@@ -115,10 +115,10 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
     const data = await response.json();
     setLoading(false);
     if (!response.ok) {
-      toast.error(data.error || 'No se pudo importar la carpeta local.');
+      toast.error(data.error || t('connectors.localImportError'));
       return;
     }
-    toast.success('Carpeta local conectada.');
+    toast.success(t('connectors.localConnected'));
   }
 
   return (
@@ -160,13 +160,13 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
             {repositories.map((repo) => (
               <button key={repo.id} type="button" onClick={() => loadPreview(repo)} className={`w-full rounded-[1.4rem] border p-4 text-left transition ${selectedRepo?.id === repo.id ? 'border-border bg-surface2' : 'border-border theme-surface-soft hover:border-border'}`} data-testid={`github-repo-item-${repo.fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
                 <p className="text-sm font-medium theme-text-strong">{repo.fullName}</p>
-                <p className="mt-2 text-xs leading-5 text-text-muted">{repo.description || 'No description'}</p>
+                <p className="mt-2 text-xs leading-5 text-text-muted">{repo.description || t('connectors.noDescription')}</p>
               </button>
             ))}
           </div>
 
           <div className="rounded-[1.5rem] border border-border theme-surface-soft p-4">
-            {!preview ? <p className="text-sm text-text-muted">Select a repository to inspect and import.</p> : null}
+            {!preview ? <p className="text-sm text-text-muted">{t('connectors.selectRepo')}</p> : null}
             {preview ? (
               <div className="space-y-4" data-testid="github-repo-preview-panel">
                 <div>
@@ -174,12 +174,12 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
                   <p className="mt-2 text-sm text-text-secondary">{String(preview.description || '')}</p>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
-                  <InfoCard label="Default branch" value={String(preview.defaultBranch || '')} />
-                  <InfoCard label="Visibility" value={String(preview.visibility || '')} />
+                  <InfoCard label={t('connectors.defaultBranch')} value={String(preview.defaultBranch || '')} />
+                  <InfoCard label={t('connectors.visibility')} value={String(preview.visibility || '')} />
                 </div>
                 <div className="rounded-[1.3rem] border border-border bg-surface2 p-4">
-                  <p className="text-xs uppercase tracking-[0.24em] text-text-muted">README preview</p>
-                  <pre className="mt-3 whitespace-pre-wrap text-xs leading-6 text-text-secondary">{String(preview.readme || '').slice(0, 1400) || 'README unavailable.'}</pre>
+                  <p className="text-xs uppercase tracking-[0.24em] text-text-muted">{t('connectors.readmePreview')}</p>
+                  <pre className="mt-3 whitespace-pre-wrap text-xs leading-6 text-text-secondary">{String(preview.readme || '').slice(0, 1400) || t('connectors.readmeUnavailable')}</pre>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button type="button" variant="outline" onClick={() => importRepository('attach')} disabled={loading} data-testid="github-import-attach-button">{t('connectors.attachProject')}</Button>

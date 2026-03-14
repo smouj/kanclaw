@@ -271,9 +271,16 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
           <button
             onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
             className="flex items-center justify-center w-8 h-8 rounded border border-border bg-surface2 hover:bg-surface transition-colors"
-            title="Toggle sidebar"
+            title="Toggle left sidebar"
           >
             <ChevronRight className={`w-4 h-4 transition-transform ${leftSidebarOpen ? 'rotate-180' : ''}`} />
+          </button>
+          <button
+            onClick={() => setRightPanelOpen(!rightPanelOpen)}
+            className="flex items-center justify-center w-8 h-8 rounded border border-border bg-surface2 hover:bg-surface transition-colors"
+            title="Toggle right panel"
+          >
+            <ChevronRight className={`w-4 h-4 transition-transform ${rightPanelOpen ? '' : 'rotate-180'}`} />
           </button>
           <ThemeToggle />
           <LanguageSelector />
@@ -316,7 +323,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
             </nav>
 
             {/* Agents Section */}
-            <CollapsiblePanel title="Agents" icon={Bot} defaultOpen={true}>
+            <CollapsiblePanel title={t('sidebar.agents')} icon={Bot} defaultOpen={true}>
               <div className="space-y-2">
                 {project.agents.map((agent) => (
                   <button
@@ -337,18 +344,18 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                   <Input
                     value={agentName}
                     onChange={(e) => setAgentName(e.target.value)}
-                    placeholder="New agent name..."
+                    placeholder={t('sidebar.newAgentName')}
                     className="h-8 text-xs"
                   />
                   <Button size="sm" onClick={createAgent} disabled={busy || !agentName} className="w-full mt-2 h-8">
-                    Add Agent
+                    {t('sidebar.addAgent')}
                   </Button>
                 </div>
               </div>
             </CollapsiblePanel>
 
             {/* Signals */}
-            <CollapsiblePanel title="Signals" icon={BrainCircuit} defaultOpen={true}>
+            <CollapsiblePanel title={t('sidebar.signals')} icon={BrainCircuit} defaultOpen={true}>
               <div className="space-y-2 text-xs">
                 <SignalRow label="OpenClaw" value={health.connected ? 'Online' : 'Offline'} />
                 <SignalRow label="GitHub" value={githubStatus.connected ? 'Connected' : 'Not set'} />
@@ -365,7 +372,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
           >
             <span className="flex items-center gap-2">
               <CommandIcon className="w-4 h-4" />
-              Command
+              {t('sidebar.command')}
             </span>
             <kbd className="px-1.5 py-0.5 rounded bg-surface text-text-muted">⌘K</kbd>
           </button>
@@ -428,23 +435,23 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                   {/* Quick Info Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="rounded-xl border border-border bg-surface p-5">
-                      <h3 className="text-xs uppercase tracking-wider text-text-muted mb-3">Delegaciones</h3>
+                      <h3 className="text-xs uppercase tracking-wider text-text-muted mb-3">{t('overview.delegations')}</h3>
                       <p className="text-2xl font-bold">{model.delegations.length}</p>
                       {model.delegations.slice(0, 2).map((d) => (
                         <p key={d.id} className="mt-2 text-xs text-text-muted truncate">{d.action}</p>
                       ))}
                     </div>
                     <div className="rounded-xl border border-border bg-surface p-5">
-                      <h3 className="text-xs uppercase tracking-wider text-text-muted mb-3">Importaciones</h3>
+                      <h3 className="text-xs uppercase tracking-wider text-text-muted mb-3">{t('overview.imports')}</h3>
                       <p className="text-2xl font-bold">{model.imports.length}</p>
                       {model.imports.slice(0, 2).map((imp) => (
                         <p key={imp.id} className="mt-2 text-xs text-text-muted truncate">{imp.provider}: {imp.label}</p>
                       ))}
                     </div>
                     <div className="rounded-xl border border-border bg-surface p-5">
-                      <h3 className="text-xs uppercase tracking-wider text-text-muted mb-3">Memoria</h3>
-                      <p className="text-2xl font-bold">{model.projectMemory.length > 0 ? 'Activa' : 'Vacía'}</p>
-                      <p className="mt-2 text-xs text-text-muted">{model.knowledge.length} archivos de conocimiento</p>
+                      <h3 className="text-xs uppercase tracking-wider text-text-muted mb-3">{t('overview.memory')}</h3>
+                      <p className="text-2xl font-bold">{model.projectMemory.length > 0 ? t('overview.memoryActive') : t('overview.memoryEmpty')}</p>
+                      <p className="mt-2 text-xs text-text-muted">{model.knowledge.length} {t('overview.knowledgeFilesCount')}</p>
                     </div>
                   </div>
 
@@ -529,20 +536,20 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
           </div>
           
           <div className="flex-1 overflow-y-auto p-3 space-y-3">
-            <CollapsiblePanel title="Add Decision" icon={BrainCircuit} defaultOpen={false}>
+            <CollapsiblePanel title={t('actions.addDecision')} icon={BrainCircuit} defaultOpen={false}>
               <Textarea
                 value={decision}
                 onChange={(e) => setDecision(e.target.value)}
-                placeholder="Decision description..."
+                placeholder={t('actions.decisionPlaceholder')}
                 rows={3}
                 className="text-xs"
               />
               <Button size="sm" onClick={appendDecision} disabled={busy || !decision} className="w-full mt-2">
-                Save
+                {t('common.save')}
               </Button>
             </CollapsiblePanel>
 
-            <CollapsiblePanel title="Add Knowledge" icon={FolderTree} defaultOpen={false}>
+            <CollapsiblePanel title={t('actions.addKnowledge')} icon={FolderTree} defaultOpen={false}>
               <Input
                 value={knowledgePath}
                 onChange={(e) => setKnowledgePath(e.target.value)}
@@ -552,12 +559,12 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
               <Textarea
                 value={knowledgeContent}
                 onChange={(e) => setKnowledgeContent(e.target.value)}
-                placeholder="Knowledge content..."
+                placeholder={t('actions.knowledgePlaceholder')}
                 rows={3}
                 className="text-xs"
               />
               <Button size="sm" onClick={appendKnowledge} disabled={busy || !knowledgeContent} className="w-full mt-2">
-                Save
+                {t('common.save')}
               </Button>
             </CollapsiblePanel>
           </div>
