@@ -172,3 +172,22 @@ export async function readWorkspacePreview(slug: string, filePath: string, limit
   const content = await readProjectFile(slug, filePath).catch(() => '');
   return content.slice(0, limit);
 }
+
+export async function deleteProjectFolders(slug: string): Promise<{ deleted: boolean; error?: string }> {
+  const base = getProjectBasePath(slug);
+  
+  try {
+    await fs.access(base);
+  } catch {
+    // Project folder doesn't exist - nothing to delete
+    return { deleted: true };
+  }
+
+  try {
+    await fs.rm(base, { recursive: true, force: true });
+    return { deleted: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return { deleted: false, error: message };
+  }
+}

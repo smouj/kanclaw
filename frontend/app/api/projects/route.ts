@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
-import { createProjectFolders } from '@/utils/fs';
+import { createProjectFolders, deleteProjectFolders } from '@/utils/fs';
 import { generateUniqueProjectSlug } from '@/lib/slug';
 import { ensureProjectThreads } from '@/lib/project-os';
 
@@ -66,6 +66,13 @@ export async function DELETE(request: Request) {
     }
 
     await prisma.project.delete({ where: { id: project.id } });
+
+    // Also delete project files from filesystem
+    const fsResult = await deleteProjectFolders(slug);
+
+    if (!fsResult.deleted) {
+      return NextResponse.json({ ok: true, slug, warning: 'Project deleted from DB but filesystem cleanup failed: ' + fsResult.error });
+    }
 
     return NextResponse.json({ ok: true, slug });
   } catch (error) {

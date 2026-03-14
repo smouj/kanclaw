@@ -5,7 +5,10 @@
 
 import { prisma } from '@/lib/prisma';
 import { rm, readdir } from 'fs/promises';
+import os from 'os';
 import { join } from 'path';
+
+const ROOT_DIR = join(os.homedir(), '.kanclaw', 'workspace', 'projects');
 
 export async function cleanupOldRuns(daysOld = 30): Promise<number> {
   const cutoffDate = new Date();
@@ -57,18 +60,17 @@ export async function cleanupInactiveThreads(daysOld = 60): Promise<number> {
 }
 
 export async function cleanupOrphanedFiles(): Promise<number> {
-  // Clean files in .kanclaw folder that don't correspond to any project
-  const kanclawDir = join(process.cwd(), '.kanclaw');
+  // Clean files in .kanclaw workspace/projects folder that don't correspond to any project
   let cleaned = 0;
 
   try {
-    const entries = await readdir(kanclawDir, { withFileTypes: true });
+    const entries = await readdir(ROOT_DIR, { withFileTypes: true });
     const projects = await prisma.project.findMany({ select: { slug: true } });
     const projectSlugs = new Set(projects.map((p) => p.slug));
 
     for (const entry of entries) {
       if (entry.isDirectory() && !projectSlugs.has(entry.name)) {
-        const dirPath = join(kanclawDir, entry.name);
+        const dirPath = join(ROOT_DIR, entry.name);
         await rm(dirPath, { recursive: true, force: true });
         cleaned++;
       }

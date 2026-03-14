@@ -506,8 +506,13 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                       <h3 className="text-xs uppercase tracking-wider text-text-muted mb-3">{t('overview.imports')}</h3>
                       <p className="text-2xl font-bold">{model.imports.length}</p>
                       {model.imports.slice(0, 2).map((imp) => (
-                        <p key={imp.id} className="mt-2 text-xs text-text-muted truncate">{imp.provider}: {imp.label}</p>
+                        <p key={imp.id} className="mt-2 text-xs text-text-muted truncate" title="Contexto importado (solo lectura)">
+                          {imp.provider === 'github' ? '📦' : '📁'} {imp.label}
+                        </p>
                       ))}
+                      {model.imports.length > 0 && (
+                        <p className="mt-1 text-[10px] text-zinc-600">Contexto importado - solo lectura</p>
+                      )}
                     </div>
                     <div className="rounded-xl border border-border bg-surface p-5">
                       <h3 className="text-xs uppercase tracking-wider text-text-muted mb-3">{t('overview.memory')}</h3>
