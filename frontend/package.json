@@ -16,7 +16,8 @@
     "db:generate": "prisma generate",
     "seed": "tsx prisma/seed.ts",
     "smoke:api": "node scripts/e2e-smoke-api.mjs",
-    "audit:policy": "node scripts/audit-policy.mjs"
+    "audit:policy": "node scripts/audit-policy.mjs",
+    "audit:design": "node scripts/design-token-audit.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

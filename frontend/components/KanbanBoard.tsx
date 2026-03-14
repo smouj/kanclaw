@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TaskCard } from '@/components/TaskCard';
+import { useI18n } from '@/components/LanguageProvider';
 
 const columns = ['TODO', 'RUNNING', 'DONE'] as const;
 
@@ -50,7 +51,7 @@ function KanbanColumn({
         onDrop={onDrop}
         onMouseEnter={onMouseEnter}
         onMouseUp={onMouseUp}
-        className={`flex h-full flex-col gap-3 rounded-[1.75rem] transition ${isOver ? 'bg-white/[0.04]' : ''}`}
+        className={`flex h-full flex-col gap-3 rounded-[1.75rem] transition ${isOver ? 'bg-surface2' : ''}`}
         data-testid={`kanban-column-${status.toLowerCase()}`}
       >
         {children}
@@ -60,6 +61,7 @@ function KanbanColumn({
 }
 
 export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardProps) {
+  const { t } = useI18n();
   const [mounted, setMounted] = useState(false);
   const [tasks, setTasks] = useState(initialTasks);
   const [newTitle, setNewTitle] = useState('');
@@ -116,7 +118,7 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
 
     if (!response.ok) {
       setTasks((current) => current.map((task) => (task.id === taskId ? taskToMove : task)));
-      toast.error('No se pudo actualizar el estado.');
+      toast.error(t('board.updateError'));
       return;
     }
 
@@ -133,7 +135,7 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
     });
 
     if (!response.ok) {
-      toast.error('No se pudo crear la tarea.');
+      toast.error(t('board.createError'));
       return;
     }
 
@@ -164,8 +166,8 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
     return (
       <div className="flex h-full flex-col gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-muted">Execution board</p>
-          <h2 className="text-2xl font-semibold">Kanban</h2>
+          <p className="text-xs uppercase tracking-[0.3em] text-muted">{t('board.execution')}</p>
+          <h2 className="text-2xl font-semibold">{t('board.title')}</h2>
         </div>
         <div className="grid h-full gap-4 xl:grid-cols-3">
           {columns.map((status) => (
@@ -180,12 +182,12 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
     <div className="flex h-full flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-muted">Execution board</p>
-          <h2 className="text-2xl font-semibold">Kanban</h2>
+          <p className="text-xs uppercase tracking-[0.3em] text-muted">{t('board.execution')}</p>
+          <h2 className="text-2xl font-semibold">{t('board.title')}</h2>
         </div>
         <div className="flex w-full max-w-xl items-center gap-2">
-          <Input value={newTitle} onChange={(event) => setNewTitle(event.target.value)} placeholder="Crear tarea rápida" data-testid="kanban-create-task-input" />
-          <Button type="button" onClick={handleCreateTask} data-testid="kanban-create-task-button">Añadir</Button>
+          <Input value={newTitle} onChange={(event) => setNewTitle(event.target.value)} placeholder={t('board.createQuickTask')} data-testid="kanban-create-task-input" />
+          <Button type="button" onClick={handleCreateTask} data-testid="kanban-create-task-button">{t('board.add')}</Button>
         </div>
       </div>
 
@@ -219,7 +221,7 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
               <div className="flex h-full flex-col gap-3" data-status={status}>
                 {tasksByStatus[status].length === 0 ? (
                   <div className="flex h-full min-h-40 items-center justify-center rounded-3xl border border-dashed border-border theme-surface-soft px-6 text-center text-sm text-text-muted" data-testid={`empty-tasks-${status.toLowerCase()}`}>
-                    No hay tareas en {status}.
+                    {t('board.emptyIn')} {status}.
                   </div>
                 ) : (
                   tasksByStatus[status].map((task) => (

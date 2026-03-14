@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useI18n } from '@/components/LanguageProvider';
 
 interface MemoryHubProps {
   projectMemory: string;
@@ -17,6 +18,7 @@ interface MemoryHubProps {
 const tabs = ['overview', 'knowledge', 'decisions', 'artifacts', 'souls', 'runs', 'delegations', 'snapshots'] as const;
 
 export function ProjectMemoryHub(props: MemoryHubProps) {
+  const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>('overview');
 
   return (
@@ -32,17 +34,17 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
       {activeTab === 'overview' ? (
         <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
           <section className="rounded-[1.8rem] border border-border theme-surface-soft p-5">
-            <p className="text-xs uppercase tracking-[0.28em] text-text-muted">Project Memory</p>
+            <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{t('memory.projectMemory')}</p>
             <pre className="mt-4 whitespace-pre-wrap text-sm leading-7 text-text-secondary" data-testid="project-memory-content">{props.projectMemory}</pre>
           </section>
           <section className="grid gap-4">
             {[
-              ['Knowledge files', props.knowledge.length],
-              ['Decision files', props.decisions.length],
+              [t('memory.knowledgeFiles'), props.knowledge.length],
+              [t('memory.decisionFiles'), props.decisions.length],
               ['Artifacts', props.artifacts.length],
               ['Runs', props.runs.length],
               ['Snapshots', props.snapshots.length],
-              ['Imports', props.imports.length],
+              [t('memory.imports'), props.imports.length],
             ].map(([label, value]) => (
               <div key={String(label)} className="rounded-[1.6rem] border border-border theme-surface-soft p-4" data-testid={`memory-metric-${String(label).toLowerCase().replace(/\s+/g, '-')}`}>
                 <p className="text-xs uppercase tracking-[0.24em] text-text-muted">{label}</p>

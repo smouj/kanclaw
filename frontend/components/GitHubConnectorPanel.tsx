@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useI18n } from '@/components/LanguageProvider';
 
 interface GitHubConnectorPanelProps {
   initialStatus: { connected: boolean; mode: string; username: string | null };
@@ -21,6 +22,7 @@ interface RepositoryItem {
 }
 
 export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConnectorPanelProps) {
+  const { t } = useI18n();
   const [status, setStatus] = useState(initialStatus);
   const [token, setToken] = useState('');
   const [repositories, setRepositories] = useState<RepositoryItem[]>([]);
@@ -39,12 +41,12 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
     const data = await response.json();
     setLoading(false);
     if (!response.ok) {
-      toast.error(data.error || 'No se pudo conectar GitHub.');
+      toast.error(data.error || t('connectors.github') + ' error');
       return;
     }
     setStatus({ connected: true, mode: 'PAT', username: data.username });
     setToken('');
-    toast.success('GitHub conectado.');
+    toast.success(t('connectors.github') + ' OK');
   }
 
   async function loadRepositories() {
@@ -53,7 +55,7 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
     const data = await response.json();
     setLoading(false);
     if (!response.ok) {
-      toast.error(data.error || 'No se pudieron cargar los repositorios.');
+      toast.error(data.error || t('connectors.loadRepos') + ' error');
       return;
     }
     setRepositories(data);
@@ -68,7 +70,7 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
       const data = await response.json();
       setLoading(false);
       if (!response.ok) {
-        toast.error(data.error || 'No se pudo inspeccionar el repositorio.');
+        toast.error(data.error || t('connectors.repoBrowser') + ' error');
         return;
       }
       setPreview(data);
@@ -96,7 +98,7 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
     const data = await response.json();
     setLoading(false);
     if (!response.ok) {
-      toast.error(data.error || 'No se pudo importar el repositorio.');
+      toast.error(data.error || t('connectors.connectImport') + ' error');
       return;
     }
     toast.success(mode === 'create' ? 'Repositorio importado como proyecto.' : 'Repositorio vinculado al proyecto.');
@@ -121,50 +123,50 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
 
   return (
     <div className="grid gap-4 xl:grid-cols-[0.76fr_1.24fr]">
-      <section className="rounded-[1.8rem] border border-border bg-white/[0.025] p-5">
+      <section className="rounded-[1.8rem] border border-border bg-surface p-5">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-text-muted">GitHub connector</p>
-            <h3 className="mt-2 text-xl font-semibold theme-text-strong">Conectar e importar</h3>
+            <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{t('connectors.github')}</p>
+            <h3 className="mt-2 text-xl font-semibold theme-text-strong">{t('connectors.connectImport')}</h3>
           </div>
-          <span className={`rounded-full border px-3 py-1 text-xs ${status.connected ? 'border-white/15 theme-text-strong' : 'border-border text-text-muted'}`} data-testid="github-connector-status">
-            {status.connected ? `PAT · ${status.username}` : 'No configurado'}
+          <span className={`rounded-full border px-3 py-1 text-xs ${status.connected ? 'border-border theme-text-strong' : 'border-border text-text-muted'}`} data-testid="github-connector-status">
+            {status.connected ? `PAT · ${status.username}` : t('connectors.notConfigured')}
           </span>
         </div>
 
         <div className="mt-5 space-y-3">
-          <Input value={token} onChange={(event) => setToken(event.target.value)} placeholder="Pega tu GitHub PAT aquí" data-testid="github-token-input" />
-          <Button type="button" onClick={connectGitHub} disabled={!token || loading} data-testid="github-connect-button">Conectar GitHub</Button>
-          <Button type="button" variant="outline" onClick={loadRepositories} disabled={!status.connected || loading} data-testid="github-load-repositories-button">Cargar repositorios</Button>
+          <Input value={token} onChange={(event) => setToken(event.target.value)} placeholder="GitHub PAT" data-testid="github-token-input" />
+          <Button type="button" onClick={connectGitHub} disabled={!token || loading} data-testid="github-connect-button">{t('connectors.github')}</Button>
+          <Button type="button" variant="outline" onClick={loadRepositories} disabled={!status.connected || loading} data-testid="github-load-repositories-button">{t('connectors.loadRepos')}</Button>
         </div>
 
-        <div className="mt-8 border-t border-white/6 pt-6">
-          <p className="text-xs uppercase tracking-[0.28em] text-text-muted">Local folder import</p>
+        <div className="mt-8 border-t border-border pt-6">
+          <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{t('connectors.localImport')}</p>
           <div className="mt-3 space-y-3">
             <Input value={localFolderPath} onChange={(event) => setLocalFolderPath(event.target.value)} placeholder="/Users/you/projects/repo-local" data-testid="local-folder-path-input" />
             <div className="flex flex-wrap gap-2">
-              <Button type="button" variant="outline" onClick={() => importLocalFolder('attach')} disabled={!localFolderPath || loading} data-testid="local-folder-attach-button">Vincular al proyecto</Button>
-              <Button type="button" onClick={() => importLocalFolder('create')} disabled={!localFolderPath || loading} data-testid="local-folder-create-button">Importar como proyecto nuevo</Button>
+              <Button type="button" variant="outline" onClick={() => importLocalFolder('attach')} disabled={!localFolderPath || loading} data-testid="local-folder-attach-button">{t('connectors.attachProject')}</Button>
+              <Button type="button" onClick={() => importLocalFolder('create')} disabled={!localFolderPath || loading} data-testid="local-folder-create-button">{t('connectors.createProject')}</Button>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="rounded-[1.8rem] border border-border bg-white/[0.025] p-5">
-        <p className="text-xs uppercase tracking-[0.28em] text-text-muted">Repository browser</p>
+      <section className="rounded-[1.8rem] border border-border bg-surface p-5">
+        <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{t('connectors.repoBrowser')}</p>
         <div className="mt-4 grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
           <div className="max-h-[520px] space-y-3 overflow-y-auto pr-1">
-            {repositories.length === 0 ? <p className="rounded-[1.4rem] border border-dashed border-border theme-surface-soft p-4 text-sm text-text-muted">Carga tus repositorios accesibles para empezar.</p> : null}
+            {repositories.length === 0 ? <p className="rounded-[1.4rem] border border-dashed border-border theme-surface-soft p-4 text-sm text-text-muted">{t('connectors.loadRepos')}...</p> : null}
             {repositories.map((repo) => (
-              <button key={repo.id} type="button" onClick={() => loadPreview(repo)} className={`w-full rounded-[1.4rem] border p-4 text-left transition ${selectedRepo?.id === repo.id ? 'border-white/18 bg-white/[0.05]' : 'border-border theme-surface-soft hover:border-white/15'}`} data-testid={`github-repo-item-${repo.fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
+              <button key={repo.id} type="button" onClick={() => loadPreview(repo)} className={`w-full rounded-[1.4rem] border p-4 text-left transition ${selectedRepo?.id === repo.id ? 'border-border bg-surface2' : 'border-border theme-surface-soft hover:border-border'}`} data-testid={`github-repo-item-${repo.fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
                 <p className="text-sm font-medium theme-text-strong">{repo.fullName}</p>
-                <p className="mt-2 text-xs leading-5 text-text-muted">{repo.description || 'Sin descripción'}</p>
+                <p className="mt-2 text-xs leading-5 text-text-muted">{repo.description || 'No description'}</p>
               </button>
             ))}
           </div>
 
           <div className="rounded-[1.5rem] border border-border theme-surface-soft p-4">
-            {!preview ? <p className="text-sm text-text-muted">Selecciona un repositorio para inspeccionarlo e importarlo.</p> : null}
+            {!preview ? <p className="text-sm text-text-muted">Select a repository to inspect and import.</p> : null}
             {preview ? (
               <div className="space-y-4" data-testid="github-repo-preview-panel">
                 <div>
@@ -175,13 +177,13 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
                   <InfoCard label="Default branch" value={String(preview.defaultBranch || '')} />
                   <InfoCard label="Visibility" value={String(preview.visibility || '')} />
                 </div>
-                <div className="rounded-[1.3rem] border border-white/6 bg-white/[0.03] p-4">
+                <div className="rounded-[1.3rem] border border-border bg-surface2 p-4">
                   <p className="text-xs uppercase tracking-[0.24em] text-text-muted">README preview</p>
-                  <pre className="mt-3 whitespace-pre-wrap text-xs leading-6 text-text-secondary">{String(preview.readme || '').slice(0, 1400) || 'README no disponible.'}</pre>
+                  <pre className="mt-3 whitespace-pre-wrap text-xs leading-6 text-text-secondary">{String(preview.readme || '').slice(0, 1400) || 'README unavailable.'}</pre>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <Button type="button" variant="outline" onClick={() => importRepository('attach')} disabled={loading} data-testid="github-import-attach-button">Vincular a este proyecto</Button>
-                  <Button type="button" onClick={() => importRepository('create')} disabled={loading} data-testid="github-import-create-button">Importar como proyecto nuevo</Button>
+                  <Button type="button" variant="outline" onClick={() => importRepository('attach')} disabled={loading} data-testid="github-import-attach-button">{t('connectors.attachProject')}</Button>
+                  <Button type="button" onClick={() => importRepository('create')} disabled={loading} data-testid="github-import-create-button">{t('connectors.createProject')}</Button>
                 </div>
               </div>
             ) : null}
@@ -194,7 +196,7 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
 
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[1.2rem] border border-border bg-white/[0.03] p-4">
+    <div className="rounded-[1.2rem] border border-border bg-surface2 p-4">
       <p className="text-xs uppercase tracking-[0.24em] text-text-muted">{label}</p>
       <p className="mt-3 text-sm theme-text-strong">{value}</p>
     </div>

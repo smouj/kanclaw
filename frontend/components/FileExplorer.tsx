@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useI18n } from '@/components/LanguageProvider';
 
 interface TreeNode {
   name: string;
@@ -104,6 +105,7 @@ function getFileIcon(filename: string) {
 }
 
 export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string; initialTree: TreeNode[] }) {
+  const { t } = useI18n();
   const [tree, setTree] = useState(initialTree);
   const [selectedPath, setSelectedPath] = useState('');
   const [content, setContent] = useState('');
@@ -143,7 +145,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
 
   async function loadFile(path: string) {
     if (hasChanges) {
-      const confirm = window.confirm('Tienes cambios sin guardar. ¿Quieres descartar?');
+      const confirm = window.confirm(t('files.unsaved') + ': ¿descartar?');
       if (!confirm) return;
     }
 
@@ -155,7 +157,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
     setLoading(false);
 
     if (!response.ok) {
-      toast.error('No se pudo abrir el archivo.');
+      toast.error(t('files.loading'));
       return;
     }
 
@@ -175,17 +177,17 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
     setSaving(false);
 
     if (!response.ok) {
-      toast.error('No se pudo guardar el archivo.');
+      toast.error(t('common.save') + ' error');
       return;
     }
 
     setHasChanges(false);
-    toast.success('Archivo guardado.');
+    toast.success(t('common.save') + ' OK');
   }
 
   async function createFile() {
     if (!newFileName.trim()) {
-      toast.error('Introduce un nombre de archivo.');
+      toast.error(t('files.newFile') + ': nombre requerido');
       return;
     }
 
@@ -196,11 +198,11 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
     });
 
     if (!response.ok) {
-      toast.error('No se pudo crear el archivo.');
+      toast.error(t('files.newFile') + ' error');
       return;
     }
 
-    toast.success('Archivo creado.');
+    toast.success(t('files.newFile') + ' OK');
     setShowNewFile(false);
     setNewFileName('');
     window.location.reload();
@@ -223,7 +225,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
           <Search className="h-4 w-4 text-text-muted" />
           <input
             type="text"
-            placeholder="Buscar archivos..."
+            placeholder={t('files.search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="flex-1 bg-transparent text-sm text-text-primary placeholder-zinc-500 outline-none"
@@ -239,7 +241,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
             onClick={() => setShowNewFile(true)}
           >
             <Plus className="h-4 w-4" />
-            <span className="text-sm">Nuevo archivo</span>
+            <span className="text-sm">{t('files.newFile')}</span>
           </Button>
 
           {showNewFile && (
@@ -274,7 +276,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
           ))}
           {filteredTree.length === 0 && (
             <p className="p-3 text-sm text-text-muted">
-              {search ? 'No se encontraron archivos.' : 'No hay archivos aún.'}
+              {search ? t('files.noResults') : t('files.noFiles')}
             </p>
           )}
         </div>
@@ -296,7 +298,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
                 )}
               </>
             ) : (
-              <span className="text-sm text-text-muted">Selecciona un archivo</span>
+              <span className="text-sm text-text-muted">{t('files.selectFile')}</span>
             )}
           </div>
 
@@ -318,7 +320,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
         <div className="flex-1 overflow-hidden bg-surface2">
           {loading ? (
             <div className="flex h-full items-center justify-center">
-              <p className="text-text-muted">Cargando archivo...</p>
+              <p className="text-text-muted">{t('files.loading')}</p>
             </div>
           ) : selectedPath ? (
             <textarea
@@ -331,7 +333,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
           ) : (
             <div className="flex h-full flex-col items-center justify-center text-text-muted">
               <FileCode2 className="mb-4 h-12 w-12 opacity-50" />
-              <p className="text-lg font-medium">Selecciona un archivo para editar</p>
+              <p className="text-lg font-medium">{t('files.selectFile')} para editar</p>
               <p className="mt-2 text-sm">
                 O crea uno nuevo con el botón &quot;Nuevo archivo&quot;
               </p>

@@ -78,6 +78,9 @@ jobs:
       - name: Dependency audit policy
         run: npm run audit:policy
 
+      - name: Design token audit
+        run: npm run audit:design
+
       - name: Upload server log on failure
         if: failure()
         uses: actions/upload-artifact@v4
