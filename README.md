@@ -1,17 +1,86 @@
-# KanClaw 🦞
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./frontend/public/kanclaw-logo-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="./frontend/public/kanclaw-logo-light.png">
+    <img src="./frontend/public/kanclaw-logo-light.png" alt="KanClaw official logo" width="340" />
+  </picture>
 
-**Premium Local-First Workspace OS for AI Agent Teams**
+# KanClaw
 
-[English](./README.md) | [Español](./README.es.md)
+### Premium Local-First Workspace OS for AI Agent Teams
+
+<p>
+  <a href="https://github.com/smouj/kanclaw/stargazers"><img src="https://img.shields.io/github/stars/smouj/kanclaw?style=for-the-badge" alt="stars" /></a>
+  <a href="https://github.com/smouj/kanclaw/network/members"><img src="https://img.shields.io/github/forks/smouj/kanclaw?style=for-the-badge" alt="forks" /></a>
+  <a href="https://github.com/smouj/kanclaw/issues"><img src="https://img.shields.io/github/issues/smouj/kanclaw?style=for-the-badge" alt="issues" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=for-the-badge" alt="license" /></a>
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/Next.js-14-000?logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-18-149eca?logo=react&logoColor=white" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind-3-06b6d4?logo=tailwindcss&logoColor=white" alt="Tailwind" />
+  <img src="https://img.shields.io/badge/PWA-Ready-5-22c55e?logo=pwa" alt="PWA" />
+  <img src="https://img.shields.io/badge/License-MIT-22c55e?logo=opensourceinitiative" alt="License" />
+</p>
+
+[Español](./README.es.md) · [Issues](https://github.com/smouj/kanclaw/issues) · [Discussions](https://github.com/smouj/kanclaw/discussions)
+
+---
+
+## 📦 Latest Release
+
+- **v0.3.0** — Custom React hooks library, open-source ready setup
+- [Release Notes](./RELEASE_NOTES_v0.3.0.md)
+- [Changelog](./CHANGELOG.md)
+
+---
+
+## 🧭 Who is this for?
+
+- **Founders** shipping product features with AI copilots
+- **Indie hackers** who need speed without losing traceability
+- **Small teams** coordinating agent runs with persistent context
+
+> KanClaw helps you move fast with AI while keeping structure, auditability, and delivery quality.
+
+---
+
+## 📋 Table of Contents
+
+- [Why KanClaw](#-why-kanclaw)
+- [Quick Start](#-quick-start)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Development](#-development)
+- [Deployment](#-deployment)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+---
+
+## 🚀 Why KanClaw
+
+KanClaw is a **local-first workspace OS** where **humans + AI agents** collaborate with persistent context, structured memory, and production-ready team workflows.
+
+| Problem | KanClaw Solution |
+|---------|-----------------|
+| Context gets lost between sessions | Persistent Memory Hub |
+| AI delegation is opaque | Real run tracking with provenance |
+| Tooling is fragmented | Unified interface |
+| Generic UI fatigue | Premium cinematic UX |
 
 ---
 
 ## ⚡ Quick Start
 
-### Option 1: Try Demo Mode
-Visit `/setup` and click "Enter Demo Mode" to explore without configuration!
+### Try Demo Mode
 
-### Option 2: Local Development
+Visit `/setup` and click **"Enter Demo Mode"** to explore KanClaw without any configuration!
+
+### Local Development
 
 ```bash
 # Clone the repository
@@ -29,43 +98,103 @@ Visit http://localhost:3000
 
 ---
 
-## 🔧 Configuration
-
-### 1. OpenClaw Setup
+### Configuration
 
 KanClaw requires an [OpenClaw](https://github.com/openclaw) gateway to connect to AI agents.
 
-```bash
-# Start OpenClaw (see OpenClaw docs)
-# Default: http://localhost:3001
-```
+1. **OpenClaw Setup** - Start your OpenClaw instance (default: http://localhost:3001)
+2. **Configure** - Visit `/setup` to enter your OpenClaw URL and token
+3. **Or use Demo Mode** - Explore with sample data
 
-### 2. Environment Variables
-
-Create `.env.local`:
+#### Environment Variables (Optional)
 
 ```env
-# Required: OpenClaw connection
-OPENCLAW_TOKEN=your_openclaw_token_here
-
-# Optional: Your OpenClaw URL (default: http://localhost:3001)
+# OpenClaw connection
+OPENCLAW_TOKEN=your_openclaw_token
 OPENCLAW_HTTP=http://localhost:3001
 OPENCLAW_WS=ws://localhost:3001/events
 
-# Optional: Protect with authentication
+# Authentication (optional)
 KANCLAW_AUTH_TOKEN=your_secure_token
 ```
 
-### 3. Configure in App
+---
 
-Visit http://localhost:3000/setup to configure:
-- OpenClaw URL and token
-- Optional auth token
-- Or enter Demo Mode
+## ✨ Features
+
+- **🎯 Multi-Agent Collaboration** - Work with multiple AI agents in team rooms
+- **💬 Real-time Chat** - Interact with agents through a unified interface
+- **🧠 Memory Hub** - Persistent knowledge, decisions, and run history
+- **📁 File Management** - Browse and edit project files
+- **⌨️ Keyboard Shortcuts** - Power user navigation (Ctrl+K, Ctrl+1-5)
+- **🌓 Dark/Light Theme** - System preference support
+- **🌐 i18n** - English, Spanish, French
+- **📱 PWA Ready** - Install as native app
+- **🔐 Security** - Optional authentication, CSP headers, rate limiting
+- **📊 Observability** - Logging, error boundaries, performance tracking
 
 ---
 
-## 🚀 Deployment
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Framework | Next.js 14 (App Router) |
+| UI | React 18, TypeScript, Tailwind CSS |
+| State | React Context + Hooks |
+| Styling | Custom design system with CSS variables |
+| PWA | Service Worker, Manifest |
+| Testing | Vitest, Playwright |
+| Deployment | Node.js, Docker, Vercel |
+
+---
+
+## 📂 Project Structure
+
+```
+kanclaw/
+├── frontend/                 # Next.js application
+│   ├── app/                 # App Router pages
+│   ├── components/          # React components
+│   ├── lib/                 # Utilities and hooks
+│   ├── scripts/             # Build scripts
+│   ├── tests/               # Unit and E2E tests
+│   └── public/              # Static assets
+├── docs/                    # Documentation
+├── CONTRIBUTING.md          # Contributing guidelines
+├── LICENSE                  # MIT License
+├── CHANGELOG.md             # Version history
+└── README.md                # This file
+```
+
+---
+
+## 🔧 Development
+
+```bash
+# Install dependencies
+npm install
+
+# Development server
+npm run dev
+
+# Lint
+npm run lint
+
+# Build
+npm run build
+
+# Tests
+npm run test        # Unit tests
+npm run test:e2e    # E2E tests
+
+# Analyze bundle
+npm run analyze
+```
+
+---
+
+## 🚢 Deployment
 
 ### Docker (Recommended)
 
@@ -79,8 +208,6 @@ services:
     environment:
       - OPENCLAW_TOKEN=your_token
       - OPENCLAW_HTTP=http://host.docker.internal:3001
-    volumes:
-      - ./data:/app/data
 ```
 
 ```bash
@@ -104,65 +231,21 @@ npm start
 
 ---
 
-## 📋 Requirements
+## 🤝 Contributing
 
-- Node.js 18+
-- OpenClaw gateway (for AI agent features)
-- PostgreSQL (optional, for persistence)
+Contributions are welcome! Please read our [Contributing Guidelines](./CONTRIBUTING.md) first.
 
----
-
-## 🎯 Features
-
-- **Multi-Agent Collaboration** - Work with multiple AI agents
-- **Project Management** - Organize work into projects
-- **Real-time Chat** - Interact with agents
-- **File Management** - Browse and edit project files
-- **Knowledge Base** - Store and search knowledge
-- **Keyboard Shortcuts** - Power user navigation (Ctrl+K)
-- **Dark/Light Theme** - System preference support
-- **i18n** - English, Spanish, French
-- **PWA** - Install as native app
-
----
-
-## 🛠️ Development
-
-```bash
-# Install
-npm install
-
-# Development
-npm run dev
-
-# Tests
-npm run test        # Unit tests
-npm run test:e2e    # E2E tests
-
-# Lint & Build
-npm run lint
-npm run build
-```
-
----
-
-## 🔐 Security
-
-- Optional authentication via `KANCLAW_AUTH_TOKEN`
-- CSP headers enabled
-- Rate limiting on API endpoints
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and lint
+5. Submit a Pull Request
 
 ---
 
 ## 📄 License
 
-MIT License - See [LICENSE](./LICENSE)
-
----
-
-## 🤝 Contributing
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md)
+This project is licensed under the [MIT License](./LICENSE).
 
 ---
 
@@ -171,3 +254,12 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md)
 - [Website](https://kanclaw.io)
 - [GitHub](https://github.com/smouj/kanclaw)
 - [OpenClaw](https://github.com/openclaw)
+- [Report Issues](https://github.com/smouj/kanclaw/issues)
+
+---
+
+<div align="center">
+
+**Built with ❤️ by the KanClaw Team**
+
+</div>
