@@ -42,7 +42,7 @@ function KanbanColumn({
     <section className="panel-muted flex min-h-[440px] flex-col p-4 transition" onDragOver={onDragOver} onDrop={onDrop} onMouseEnter={onMouseEnter} onMouseUp={onMouseUp}>
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-sm font-medium tracking-[0.22em] text-text-secondary">{status}</h3>
-        <span className="text-xs text-text-text-muted">{count}</span>
+        <span className="text-xs text-text-muted">{count}</span>
       </div>
       <div
         id={status}
@@ -220,7 +220,7 @@ export function KanbanBoard({ projectSlug, initialTasks, agents }: KanbanBoardPr
             >
               <div className="flex h-full flex-col gap-3" data-status={status}>
                 {tasksByStatus[status].length === 0 ? (
-                  <div className="flex h-full min-h-40 items-center justify-center rounded-3xl border border-dashed border-border theme-surface-soft px-6 text-center text-sm text-text-text-muted" data-testid={`empty-tasks-${status.toLowerCase()}`}>
+                  <div className="flex h-full min-h-40 items-center justify-center rounded-3xl border border-dashed border-border theme-surface-soft px-6 text-center text-sm text-text-muted" data-testid={`empty-tasks-${status.toLowerCase()}`}>
                     {t('board.emptyIn')} {status}.
                   </div>
                 ) : (

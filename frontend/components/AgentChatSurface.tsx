@@ -62,7 +62,7 @@ function CopyButton({ text }: { text: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
-      toast.error('No se pudo copiar');
+      toast.error('Could not copy');
     }
   };
 
@@ -373,7 +373,7 @@ export function AgentChatSurface({
     setThinking(false);
 
     if (!response.ok) {
-      toast.error((data as any).error || 'No se pudo enviar el mensaje.');
+      toast.error((data as any).error || t('chat.sendError'));
       return;
     }
 
@@ -391,7 +391,7 @@ export function AgentChatSurface({
             <span className={`h-2 w-2 rounded-full ${openClawConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
             <span className="text-xs text-text-muted">{openClawConnected ? t('chat.connected') : t('chat.disconnected')}</span>
           </div>
-          <h3 className="mt-3 text-sm font-medium text-text-primary">Conversations</h3>
+          <h3 className="mt-3 text-sm font-medium text-text-primary">{t('chat.conversations')}</h3>
         </div>
         <div className="h-[calc(100%-80px)] overflow-y-auto p-2">
           {threads.map((thread) => {
@@ -414,7 +414,7 @@ export function AgentChatSurface({
                   <span className="truncate text-sm font-medium">{thread.title}</span>
                   <span className="text-[10px] uppercase tracking-wider text-text-muted">{thread.scope}</span>
                 </div>
-                <p className="mt-1 line-clamp-1 text-xs text-text-muted">{lastText || 'Sin mensajes'}</p>
+                <p className="mt-1 line-clamp-1 text-xs text-text-muted">{lastText || t('chat.noMessagesShort')}</p>
               </button>
             );
           })}
@@ -427,7 +427,7 @@ export function AgentChatSurface({
           <div>
             <h3 className="text-base font-semibold">{selectedThread?.title || t('chat.selectThread')}</h3>
             <p className="text-xs text-text-muted">
-              {selectedThread?.messages.length || 0} msgs · {selectedThread?.scope === 'TEAM' ? 'Team room' : 'Agent room'}
+              {selectedThread?.messages.length || 0} {t('chat.messages')} · {selectedThread?.scope === 'TEAM' ? t('chat.teamRoom') : t('chat.agentRoom')}
             </p>
           </div>
 
@@ -507,7 +507,7 @@ export function AgentChatSurface({
                             } ${selected ? 'ring-2 ring-white/20' : 'hover:border-white/20 hover:-translate-y-0.5'} `}
                           >
                             <div className="mb-1 flex items-center justify-between gap-3 text-[10px] uppercase tracking-wider text-text-muted">
-                              <span>{isHuman ? 'You' : message.actor}</span>
+                              <span>{isHuman ? t('chat.you') : message.actor}</span>
                               <span>{formatTime(message.createdAt)}</span>
                             </div>
                             <div className="space-y-1 text-sm leading-relaxed">{renderMarkdown(message.content)}</div>
@@ -575,7 +575,7 @@ export function AgentChatSurface({
                 }
               }}
               rows={4}
-              placeholder="Write your prompt... (Shift+Enter newline)"
+              placeholder={t('chat.writePrompt')}
               className="min-h-[110px] resize-none border-border bg-surface2 text-text-primary placeholder:text-text-muted"
             />
             <Button
@@ -593,28 +593,28 @@ export function AgentChatSurface({
 
       <aside className="w-60 flex-shrink-0 border-l border-border bg-surface2/50">
         <div className="border-b border-border p-4">
-          <h3 className="text-sm font-medium">Stats</h3>
+          <h3 className="text-sm font-medium">{t('chat.stats')}</h3>
         </div>
         <div className="space-y-3 p-4">
           <div className="grid grid-cols-2 gap-2">
             <div className="border border-border bg-surface p-3 text-center">
               <p className="text-lg font-semibold">{stats.total}</p>
-              <p className="text-[10px] text-text-muted">Total</p>
+              <p className="text-[10px] text-text-muted">{t('chat.total')}</p>
             </div>
             <div className="border border-border bg-surface p-3 text-center">
               <p className="text-lg font-semibold">{stats.human}</p>
-              <p className="text-[10px] text-text-muted">Human</p>
+              <p className="text-[10px] text-text-muted">{t('chat.human')}</p>
             </div>
           </div>
           <div className="border border-border bg-surface p-3 text-center">
             <p className="text-lg font-semibold text-emerald-400">{stats.agent}</p>
-            <p className="text-[10px] text-text-muted">Agent</p>
+            <p className="text-[10px] text-text-muted">{t('chat.agent')}</p>
           </div>
 
           {selectedMessage ? (
             <div className="border border-border bg-surface p-3 text-xs text-text-muted">
-              <p className="text-[11px] font-semibold text-text-primary">Selected message</p>
-              <p className="mt-1">{selectedMessage.role === 'human' ? 'You' : selectedMessage.actor}</p>
+              <p className="text-[11px] font-semibold text-text-primary">{t('chat.selectedMessage')}</p>
+              <p className="mt-1">{selectedMessage.role === 'human' ? t('chat.you') : selectedMessage.actor}</p>
               <p>{new Date(selectedMessage.createdAt).toLocaleString('es-ES')}</p>
               {selectedMessageMetadata && 'runId' in selectedMessageMetadata ? (
                 <p className="mt-2 break-all">Run: {String((selectedMessageMetadata as any).runId)}</p>

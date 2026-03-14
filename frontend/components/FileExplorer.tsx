@@ -145,7 +145,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
 
   async function loadFile(path: string) {
     if (hasChanges) {
-      const confirm = window.confirm(t('files.unsaved') + ': ¿descartar?');
+      const confirm = window.confirm(t('files.discardConfirm'));
       if (!confirm) return;
     }
 
@@ -157,7 +157,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
     setLoading(false);
 
     if (!response.ok) {
-      toast.error(t('files.loading'));
+      toast.error(t('files.openError'));
       return;
     }
 
@@ -177,17 +177,17 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
     setSaving(false);
 
     if (!response.ok) {
-      toast.error(t('common.save') + ' error');
+      toast.error(t('files.saveError'));
       return;
     }
 
     setHasChanges(false);
-    toast.success(t('common.save') + ' OK');
+    toast.success(t('files.savedOk'));
   }
 
   async function createFile() {
     if (!newFileName.trim()) {
-      toast.error(t('files.newFile') + ': nombre requerido');
+      toast.error(t('files.nameRequired'));
       return;
     }
 
@@ -198,11 +198,11 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
     });
 
     if (!response.ok) {
-      toast.error(t('files.newFile') + ' error');
+      toast.error(t('files.createError'));
       return;
     }
 
-    toast.success(t('files.newFile') + ' OK');
+    toast.success(t('files.createdOk'));
     setShowNewFile(false);
     setNewFileName('');
     window.location.reload();
@@ -254,7 +254,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
               />
               <div className="flex gap-2">
                 <Button size="sm" className="flex-1" onClick={createFile}>
-                  Crear
+                  {t('files.create')}
                 </Button>
                 <Button size="sm" variant="ghost" onClick={() => setShowNewFile(false)}>
                   <X className="h-4 w-4" />
@@ -293,7 +293,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
                 <span className="text-sm font-medium text-text-primary">{fileName}</span>
                 {hasChanges && (
                   <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-xs text-amber-400">
-                    Sin guardar
+                    {t('files.unsaved')}
                   </span>
                 )}
               </>
@@ -311,7 +311,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
               className="gap-2"
             >
               <Save className="h-4 w-4" />
-              {saving ? 'Guardando...' : 'Guardar'}
+              {saving ? t('files.saving') : t('common.save')}
             </Button>
           </div>
         </div>
@@ -328,14 +328,14 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
               onChange={(e) => handleContentChange(e.target.value)}
               className="h-full w-full resize-none bg-transparent p-4 font-mono text-sm text-text-primary outline-none"
               spellCheck={false}
-              placeholder="Escribe o pega contenido..."
+              placeholder={t('files.writePlaceholder')}
             />
           ) : (
             <div className="flex h-full flex-col items-center justify-center text-text-muted">
               <FileCode2 className="mb-4 h-12 w-12 opacity-50" />
-              <p className="text-lg font-medium">{t('files.selectFile')} para editar</p>
+              <p className="text-lg font-medium">{t('files.selectFileEdit')}</p>
               <p className="mt-2 text-sm">
-                O crea uno nuevo con el botón &quot;Nuevo archivo&quot;
+                {t('files.createHint')} «{t('files.newFile')}»
               </p>
             </div>
           )}

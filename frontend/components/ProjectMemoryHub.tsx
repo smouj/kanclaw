@@ -26,7 +26,7 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
       <div className="flex flex-wrap items-center gap-2">
         {tabs.map((tab) => (
           <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`rounded-full px-3 py-2 text-xs uppercase tracking-[0.24em] transition ${activeTab === tab ? 'bg-text-primary text-background' : 'border border-border text-text-secondary hover:border-border hover:text-text-primary'}`} data-testid={`memory-tab-${tab}`}>
-            {tab}
+            {t(`memory.${tab}`, tab)}
           </button>
         ))}
       </div>
@@ -41,9 +41,9 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
             {[
               [t('memory.knowledgeFiles'), props.knowledge.length],
               [t('memory.decisionFiles'), props.decisions.length],
-              ['Artifacts', props.artifacts.length],
-              ['Runs', props.runs.length],
-              ['Snapshots', props.snapshots.length],
+              [t('memory.artifacts'), props.artifacts.length],
+              [t('memory.runs'), props.runs.length],
+              [t('memory.snapshots'), props.snapshots.length],
               [t('memory.imports'), props.imports.length],
             ].map(([label, value]) => (
               <div key={String(label)} className="rounded-[1.6rem] border border-border theme-surface-soft p-4" data-testid={`memory-metric-${String(label).toLowerCase().replace(/\s+/g, '-')}`}>
@@ -55,9 +55,9 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
         </div>
       ) : null}
 
-      {activeTab === 'knowledge' ? <MemoryList title="Knowledge" items={props.knowledge} empty="Todavía no hay conocimiento persistido." /> : null}
-      {activeTab === 'decisions' ? <MemoryList title="Decisions" items={props.decisions} empty="Todavía no hay decisiones registradas." /> : null}
-      {activeTab === 'artifacts' ? <MemoryList title="Artifacts" items={props.artifacts} empty="Todavía no hay artefactos generados." /> : null}
+      {activeTab === 'knowledge' ? <MemoryList title={t('memory.knowledge')} items={props.knowledge} empty={t('memory.emptyKnowledge')} /> : null}
+      {activeTab === 'decisions' ? <MemoryList title={t('memory.decisions')} items={props.decisions} empty={t('memory.emptyDecisions')} /> : null}
+      {activeTab === 'artifacts' ? <MemoryList title={t('memory.artifacts')} items={props.artifacts} empty={t('memory.emptyArtifacts')} /> : null}
 
       {activeTab === 'souls' ? (
         <div className="grid gap-4 xl:grid-cols-2">
@@ -65,26 +65,27 @@ export function ProjectMemoryHub(props: MemoryHubProps) {
             <article key={agent.id} className="rounded-[1.8rem] border border-border theme-surface-soft p-5" data-testid={`memory-agent-card-${agent.name.toLowerCase()}`}>
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-lg font-semibold theme-text-strong">{agent.name}</h3>
-                <span className="rounded-full border border-border px-3 py-1 text-xs text-text-secondary">{agent.role || 'Sin rol'}</span>
+                <span className="rounded-full border border-border px-3 py-1 text-xs text-text-secondary">{agent.role || '-'}</span>
               </div>
               <div className="mt-4 grid gap-4 md:grid-cols-3">
                 <PreviewCard title="Soul" value={agent.soul} />
                 <PreviewCard title="Tools" value={agent.tools} />
-                <PreviewCard title="Memory" value={agent.memory} />
+                <PreviewCard title={t('memory.projectMemory')} value={agent.memory} />
               </div>
             </article>
           ))}
         </div>
       ) : null}
 
-      {activeTab === 'runs' ? <TimelineList title="Runs" items={props.runs.map((run) => ({ id: run.id, title: run.title, subtitle: run.status, timestamp: run.createdAt }))} empty="Aún no hay runs registrados." /> : null}
-      {activeTab === 'delegations' ? <TimelineList title="Delegations" items={props.delegations.map((log) => ({ id: log.id, title: `${log.actor} · ${log.action}`, subtitle: typeof log.details === 'string' ? log.details : JSON.stringify(log.details), timestamp: log.timestamp }))} empty="No hay delegaciones visibles todavía." /> : null}
-      {activeTab === 'snapshots' ? <TimelineList title="Snapshots" items={props.snapshots.map((snapshot) => ({ id: snapshot.id, title: snapshot.title, subtitle: snapshot.summary, timestamp: snapshot.createdAt }))} empty="No se han creado snapshots todavía." /> : null}
+      {activeTab === 'runs' ? <TimelineList title={t('memory.runs')} items={props.runs.map((run) => ({ id: run.id, title: run.title, subtitle: run.status, timestamp: run.createdAt }))} empty={t('memory.emptyRuns')} /> : null}
+      {activeTab === 'delegations' ? <TimelineList title={t('overview.delegations')} items={props.delegations.map((log) => ({ id: log.id, title: `${log.actor} · ${log.action}`, subtitle: typeof log.details === 'string' ? log.details : JSON.stringify(log.details), timestamp: log.timestamp }))} empty={t('overview.noActivity')} /> : null}
+      {activeTab === 'snapshots' ? <TimelineList title={t('memory.snapshots')} items={props.snapshots.map((snapshot) => ({ id: snapshot.id, title: snapshot.title, subtitle: snapshot.summary, timestamp: snapshot.createdAt }))} empty={t('memory.emptySnapshots')} /> : null}
     </div>
   );
 }
 
 function MemoryList({ title, items, empty }: { title: string; items: Array<{ name: string; path: string; updatedAt: string }>; empty: string }) {
+  const { t } = useI18n();
   return (
     <section className="rounded-[1.8rem] border border-border theme-surface-soft p-5">
       <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{title}</p>
@@ -94,7 +95,7 @@ function MemoryList({ title, items, empty }: { title: string; items: Array<{ nam
           <article key={item.path} className="rounded-[1.4rem] border border-border theme-surface-soft p-4" data-testid={`memory-file-${item.path.replace(/[^a-zA-Z0-9]+/g, '-')}`}>
             <p className="text-sm font-medium theme-text-strong">{item.name}</p>
             <p className="mt-1 text-xs text-text-muted">{item.path}</p>
-            <p className="mt-3 text-xs text-text-secondary">Actualizado {new Date(item.updatedAt).toLocaleString('es-ES')}</p>
+            <p className="mt-3 text-xs text-text-secondary">{t('common.updated')} {new Date(item.updatedAt).toLocaleString('es-ES')}</p>
           </article>
         ))}
       </div>

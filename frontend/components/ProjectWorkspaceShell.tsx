@@ -160,12 +160,12 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
     setBusy(false);
 
     if (!response.ok) {
-      toast.error('No se pudo crear el snapshot.');
+      toast.error(t('toast.snapshotError'));
       return;
     }
-    toast.success('Snapshot creado.');
+    toast.success(t('toast.snapshotCreated'));
     router.refresh();
-  }, [project.name, project.slug, router]);
+  }, [project.name, project.slug, router, t]);
 
   async function createAgent() {
     if (!agentName.trim()) return;
@@ -182,7 +182,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
     }
     setAgentName('');
     setAgentRole('');
-    toast.success('Agente creado.');
+    toast.success(t('toast.agentCreated'));
     router.refresh();
   }
 
@@ -221,23 +221,23 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
       return;
     }
     setKnowledgeContent('');
-    toast.success('Knowledge actualizado.');
+    toast.success(t('toast.knowledgeSaved'));
     router.refresh();
   }
 
   const commands = useMemo<CommandItem[]>(() => [
-    { id: 'overview', label: 'Abrir overview del proyecto', hint: 'Project OS summary', onSelect: () => setActiveView('overview') },
-    { id: 'chat-team', label: 'Hablar con el team room', hint: 'Chat compartido', onSelect: () => { setActiveView('chat'); setSelectedThreadId(teamThreadId); setPreferredTargetAgent(project.agents[0]?.name || ''); } },
-    { id: 'board', label: 'Abrir tablero Kanban', hint: 'Tareas y delegación', onSelect: () => setActiveView('board') },
-    { id: 'memory', label: 'Abrir Memory Hub', hint: 'Knowledge, decisions, runs', onSelect: () => setActiveView('memory') },
-    { id: 'files', label: 'Abrir filesystem', hint: 'Workspace real en disco', onSelect: () => setActiveView('files') },
-    { id: 'connectors', label: 'Abrir connectors', hint: 'GitHub y local folder', onSelect: () => setActiveView('connectors') },
-    { id: 'snapshot', label: 'Crear snapshot', hint: 'Estado exportable', onSelect: () => void createSnapshot() },
-    { id: 'reconnect-openclaw', label: 'Refrescar OpenClaw', hint: 'Releer shell', onSelect: () => router.refresh() },
+    { id: 'overview', label: t('command.overview'), hint: t('command.overviewHint'), onSelect: () => setActiveView('overview') },
+    { id: 'chat-team', label: t('command.teamRoom'), hint: t('command.teamRoomHint'), onSelect: () => { setActiveView('chat'); setSelectedThreadId(teamThreadId); setPreferredTargetAgent(project.agents[0]?.name || ''); } },
+    { id: 'board', label: t('command.board'), hint: t('command.boardHint'), onSelect: () => setActiveView('board') },
+    { id: 'memory', label: t('command.memory'), hint: t('command.memoryHint'), onSelect: () => setActiveView('memory') },
+    { id: 'files', label: t('command.files'), hint: t('command.filesHint'), onSelect: () => setActiveView('files') },
+    { id: 'connectors', label: t('command.connectors'), hint: t('command.connectorsHint'), onSelect: () => setActiveView('connectors') },
+    { id: 'snapshot', label: t('command.snapshot'), hint: t('command.snapshotHint'), onSelect: () => void createSnapshot() },
+    { id: 'reconnect-openclaw', label: t('command.reconnect'), hint: t('command.reconnectHint'), onSelect: () => router.refresh() },
     ...project.agents.map((agent) => ({
       id: `agent-${agent.id}`,
-      label: `Hablar con ${agent.name}`,
-      hint: agent.role || 'Agente del proyecto',
+      label: `${t('command.chatWith')} ${agent.name}`,
+      hint: agent.role || t('command.agentHint'),
       onSelect: () => {
         const thread = model.threads.find((item) => item.agentId === agent.id);
         setActiveView('chat');
@@ -245,7 +245,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
         setPreferredTargetAgent(agent.name);
       },
     })),
-  ], [createSnapshot, model.threads, project.agents, router, teamThreadId]);
+  ], [createSnapshot, model.threads, project.agents, router, teamThreadId, t]);
 
   return (
     <div className="relative h-screen overflow-hidden bg-background text-text-primary">
@@ -357,10 +357,10 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
             {/* Signals */}
             <CollapsiblePanel title={t('sidebar.signals')} icon={BrainCircuit} defaultOpen={true}>
               <div className="space-y-2 text-xs">
-                <SignalRow label="OpenClaw" value={health.connected ? 'Online' : 'Offline'} />
-                <SignalRow label="GitHub" value={githubStatus.connected ? 'Connected' : 'Not set'} />
-                <SignalRow label="Agents" value={String(project.agents.length)} />
-                <SignalRow label="Runs" value={String(model.runs.length)} />
+                <SignalRow label="OpenClaw" value={health.connected ? t('chat.connected') : t('chat.disconnected')} />
+                <SignalRow label="GitHub" value={githubStatus.connected ? t('chat.connected') : t('connectors.notConfigured')} />
+                <SignalRow label={t('sidebar.agentsCount')} value={String(project.agents.length)} />
+                <SignalRow label={t('sidebar.runsCount')} value={String(model.runs.length)} />
               </div>
             </CollapsiblePanel>
           </div>
