@@ -280,24 +280,30 @@ function MessageBubble({
       } flex`}
     >
       <div
-        className={`max-w-[75%] rounded-2xl px-4 py-3 ${
+        className={`max-w-[80%] rounded-2xl px-5 py-4 transition-all duration-200 hover:scale-[1.01] ${
           isHuman
-            ? 'shadow-lg border border-subtle bg-transparent shadow-lg'
-            : isSystem
-            ? 'bg-amber-500/10 border border-amber-500/20 text-amber-200'
-            : 'bg-gradient-to-br from-zinc-800 to-zinc-850 border border-subtle text-zinc-100 shadow-lg'
-        } ${
-          isSelected ? 'ring-2 ring-white/30' : ''
-        }`}
+            ? 'justify-end'
+            : 'justify-start'
+        } flex`}
       >
-        <div className="mb-1 flex items-center justify-between gap-4 text-[10px] uppercase tracking-wider opacity-60">
-          <span className="font-medium">
-            {isHuman ? 'Tú' : message.actor}
-          </span>
-          <span>{formatTime(message.createdAt)}</span>
-        </div>
-        <div className="text-sm leading-relaxed">
-          {parseMarkdown(message.content)}
+        <div
+          className={`w-full rounded-2xl px-5 py-4 ${
+            isHuman
+              ? 'bg-gradient-to-r from-zinc-800 to-zinc-900 border border-white/10 shadow-xl shadow-black/20'
+              : isSystem
+              ? 'bg-amber-500/10 border border-amber-500/30 text-amber-200'
+              : 'bg-gradient-to-r from-zinc-800 to-zinc-900 border border-white/10 shadow-xl shadow-black/20'
+          } ${isSelected ? 'ring-2 ring-white/30 scale-[1.02]' : ''}`}
+        >
+          <div className="mb-2 flex items-center justify-between gap-4">
+            <span className="text-xs font-medium uppercase tracking-wider opacity-70">
+              {isHuman ? '👤 Tú' : `🤖 ${message.actor}`}
+            </span>
+            <span className="text-[10px] opacity-50">{formatTime(message.createdAt)}</span>
+          </div>
+          <div className="text-sm leading-relaxed opacity-90">
+            {parseMarkdown(message.content)}
+          </div>
         </div>
       </div>
     </div>
@@ -603,13 +609,13 @@ export function AgentChatSurface({
 
   // Thinking indicator component
   const ThinkingIndicator = () => (
-    <div className="flex items-center gap-3 px-4 py-3">
+    <div className="flex items-center gap-3 px-4 py-4 animate-pulse">
       <div className="flex gap-1">
-        <span className="h-2 w-2 animate-bounce rounded-full bg-zinc-400" style={{ animationDelay: '0ms' }} />
-        <span className="h-2 w-2 animate-bounce rounded-full bg-zinc-400" style={{ animationDelay: '150ms' }} />
-        <span className="h-2 w-2 animate-bounce rounded-full bg-zinc-400" style={{ animationDelay: '300ms' }} />
+        <span className="h-2 w-2 animate-bounce rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400" style={{ animationDelay: '0ms' }} />
+        <span className="h-2 w-2 animate-bounce rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400" style={{ animationDelay: '150ms' }} />
+        <span className="h-2 w-2 animate-bounce rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400" style={{ animationDelay: '300ms' }} />
       </div>
-      <span className="text-xs text-500">El agente está pensando...</span>
+      <span className="text-xs font-medium text-emerald-400/80">Procesando respuesta...</span>
     </div>
   );
 
@@ -676,7 +682,7 @@ export function AgentChatSurface({
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setShowAgentSelector(!showAgentSelector)}
+              onClick={() => selectedThread?.scope === "TEAM" && setShowAgentSelector(!showAgentSelector)}
               className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${
                 showAgentSelector
                   ? 'bg-white text-900'
