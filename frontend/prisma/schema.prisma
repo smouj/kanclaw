@@ -32,6 +32,7 @@ model Agent {
   toolsPath     String?
   status        String       @default("idle")
   memorySummary String?
+  gatewayAgentId String?     // OpenClaw agent ID for this agent
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @default(now()) @updatedAt
   project       Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)

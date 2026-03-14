@@ -4,6 +4,15 @@ import { prisma } from '@/lib/prisma';
 import { ensureProjectThreads } from '@/lib/project-os';
 import { writeProjectFile } from '@/utils/fs';
 
+// Normalize string for use as agent ID (like OpenClaw)
+function normalizeAgentId(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 const agentSchema = z.object({
   projectSlug: z.string().min(1),
   name: z.string().min(1),
@@ -37,18 +46,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Proyecto no encontrado.' }, { status: 404 });
     }
 
+    // Generate OpenClaw agent ID (normalized from KanClaw agent name)
+    const gatewayAgentId = normalizeAgentId(payload.name);
+
     const agent = await prisma.agent.create({
       data: {
         projectId: project.id,
         name: payload.name,
         role: payload.role,
+        gatewayAgentId, // Store OpenClaw agent ID for this KanClaw agent
       },
     });
 
     await Promise.all([
-      writeProjectFile(project.slug, `agents/${agent.name}/SOUL.md`, `# ${agent.name} Soul\n`),
-      writeProjectFile(project.slug, `agents/${agent.name}/TOOLS.md`, `# ${agent.name} Tools\n`),
-      writeProjectFile(project.slug, `agents/${agent.name}/memory.md`, `# ${agent.name} Memory\n`),
+      writeProjectFile(project.slug, `agents/${agent.name}/SOUL.md`, `# ${agent.name} Soul\n\nRole: ${payload.role || 'AI Assistant'}\n\n## Purpose\nThis agent works on project "${project.name}" (${project.slug}).\n`),
+      writeProjectFile(project.slug, `agents/${agent.name}/TOOLS.md`, `# ${agent.name} Tools\n\n## Capabilities\n- File operations in project workspace\n- Shell command execution\n- Code analysis and generation\n`),
+      writeProjectFile(project.slug, `agents/${agent.name}/memory.md`, `# ${agent.name} Memory\n\nThis agent's memory for project "${project.slug}".\n`),
     ]);
 
     await ensureProjectThreads(project.id);
@@ -57,7 +70,7 @@ export async function POST(request: Request) {
         projectId: project.id,
         actor: 'Human',
         action: 'agent_created',
-        details: JSON.stringify({ agentName: agent.name }),
+        details: JSON.stringify({ agentName: agent.name, gatewayAgentId: agent.gatewayAgentId }),
       },
     });
 

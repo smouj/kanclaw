@@ -216,18 +216,21 @@ async function getAgentIndex(): Promise<AgentIndex> {
 }
 
 async function resolveGatewayAgentId(agentName: string) {
-  const index = await getAgentIndex();
+  // KanClaw agents are project-specific, use agentName directly
+  // This ensures the agent in OpenClaw uses the project's workspace context
   const normalized = normalizeKeySegment(agentName);
-
-  if (normalized && index.ids.has(normalized)) {
+  
+  if (normalized) {
     return normalized;
   }
 
+  const index = await getAgentIndex();
   const byName = normalized ? index.namesToId.get(normalized) : undefined;
   if (byName) {
     return byName;
   }
 
+  // Fallback to main only if no agent specified
   return index.defaultId || 'main';
 }
 
@@ -254,9 +257,13 @@ function buildKanClawWorkspaceSystemPrompt(payload: { projectSlug: string; agent
     `project_slug=${payload.projectSlug}`,
     `target_agent=${payload.agentName}`,
     `workspace_dir=${payload.workspaceDir}`,
+    `agent_workspace=${payload.workspaceDir}/agents/${payload.agentName}`,
+    'IMPORTANT: This agent is specific to project "' + payload.projectSlug + '".',
+    'You MUST use the agent_workspace directory for this agent\'s files (SOUL.md, TOOLS.md, memory.md).',
     'For file and shell tools, use this workspace directory by default (read/write/edit/exec workdir).',
     'Do not default to /home/smouj/.openclaw/workspace unless the user explicitly requests that path.',
     'If you need repository operations, start from workspace_dir and only move outside if the user requests it explicitly.',
+    'Always read the agent\'s SOUL.md and TOOLS.md from agent_workspace before responding.',
   ].join('\n');
 }
 

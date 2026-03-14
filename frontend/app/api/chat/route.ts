@@ -93,6 +93,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Agente no encontrado.' }, { status: 404 });
     }
 
+    // Use KanClaw agent's gatewayAgentId for OpenClaw, or fallback to agent name
+    const openClawAgentId = targetAgent.gatewayAgentId || targetAgent.name;
+
     await prisma.chatMessage.create({
       data: {
         threadId: thread.id,
@@ -125,7 +128,7 @@ export async function POST(request: Request) {
     try {
       response = await sendOpenClawTask({
         projectSlug: project.slug,
-        agentName: targetAgentName,
+        agentName: openClawAgentId,
         prompt: payload.content,
       });
     } catch {
