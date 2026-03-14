@@ -54,6 +54,7 @@ function formatDay(date: string | Date) {
 }
 
 function CopyButton({ text }: { text: string }) {
+  const { t } = useI18n();
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -62,7 +63,7 @@ function CopyButton({ text }: { text: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
-      toast.error('Could not copy');
+      toast.error(t('chat.copyError'));
     }
   };
 
@@ -73,12 +74,12 @@ function CopyButton({ text }: { text: string }) {
       type="button"
     >
       {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-      {copied ? 'OK' : 'Copy'}
+      {copied ? t('chat.copied') : t('chat.copy')}
     </button>
   );
 }
 
-function renderMarkdown(content: string) {
+function renderMarkdown(content: string, t: (key: string, fallback?: string) => string) {
   const lines = content.split('\n');
   const nodes: React.ReactNode[] = [];
   let inCode = false;
@@ -90,7 +91,7 @@ function renderMarkdown(content: string) {
     nodes.push(
       <div key={`code-${nodes.length}`} className="my-3 overflow-hidden rounded border border-border bg-surface2">
         <div className="flex items-center justify-between border-b border-border px-3 py-2">
-          <span className="text-xs text-text-muted">{codeLang || 'code'}</span>
+          <span className="text-xs text-text-muted">{codeLang || t('chat.code')}</span>
           <CopyButton text={code} />
         </div>
         <pre className="overflow-x-auto p-3 text-xs leading-6 text-text-primary">
@@ -510,7 +511,7 @@ export function AgentChatSurface({
                               <span>{isHuman ? t('chat.you') : message.actor}</span>
                               <span>{formatTime(message.createdAt)}</span>
                             </div>
-                            <div className="space-y-1 text-sm leading-relaxed">{renderMarkdown(message.content)}</div>
+                            <div className="space-y-1 text-sm leading-relaxed">{renderMarkdown(message.content, t)}</div>
                           </button>
                         </div>
                       );

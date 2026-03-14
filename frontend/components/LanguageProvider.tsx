@@ -36,6 +36,9 @@ const dictionary: Dict = {
   'chat.selectedMessage': { es: 'Mensaje seleccionado', en: 'Selected message', fr: 'Message sélectionné' },
   'chat.writePrompt': { es: 'Escribe tu prompt... (Shift+Enter nueva línea)', en: 'Write your prompt... (Shift+Enter newline)', fr: 'Écrivez votre prompt... (Shift+Entrée nouvelle ligne)' },
   'chat.copyError': { es: 'No se pudo copiar', en: 'Could not copy', fr: 'Impossible de copier' },
+  'chat.copy': { es: 'Copiar', en: 'Copy', fr: 'Copier' },
+  'chat.copied': { es: 'Copiado', en: 'Copied', fr: 'Copié' },
+  'chat.code': { es: 'código', en: 'code', fr: 'code' },
   'chat.sendError': { es: 'No se pudo enviar el mensaje.', en: 'Could not send message.', fr: 'Impossible d\'envoyer le message.' },
 
   'overview.conversations': { es: 'Conversaciones', en: 'Conversations', fr: 'Conversations' },
@@ -90,6 +93,7 @@ const dictionary: Dict = {
   'files.saving': { es: 'Guardando...', en: 'Saving...', fr: 'Enregistrement...' },
   'files.writePlaceholder': { es: 'Escribe o pega contenido...', en: 'Write or paste content...', fr: 'Écrire ou coller le contenu...' },
   'files.createHint': { es: 'O crea uno nuevo con el botón', en: 'Or create a new one with the button', fr: 'Ou créez-en un nouveau avec le bouton' },
+  'files.pathPlaceholder': { es: 'ruta/archivo.md', en: 'path/file.md', fr: 'chemin/fichier.md' },
 
   'connectors.github': { es: 'Conector GitHub', en: 'GitHub connector', fr: 'Connecteur GitHub' },
   'connectors.connectImport': { es: 'Conectar e importar', en: 'Connect and import', fr: 'Connecter et importer' },
@@ -103,6 +107,8 @@ const dictionary: Dict = {
   'connectors.selectRepo': { es: 'Selecciona un repositorio para inspeccionarlo e importarlo.', en: 'Select a repository to inspect and import.', fr: 'Sélectionnez un dépôt pour l\'inspecter et l\'importer.' },
   'connectors.readmePreview': { es: 'Vista previa README', en: 'README preview', fr: 'Aperçu README' },
   'connectors.readmeUnavailable': { es: 'README no disponible.', en: 'README unavailable.', fr: 'README indisponible.' },
+  'connectors.patPlaceholder': { es: 'GitHub PAT', en: 'GitHub PAT', fr: 'GitHub PAT' },
+  'connectors.localPathPlaceholder': { es: '/ruta/proyecto/local', en: '/path/to/local/project', fr: '/chemin/projet/local' },
   'connectors.defaultBranch': { es: 'Rama por defecto', en: 'Default branch', fr: 'Branche par défaut' },
   'connectors.visibility': { es: 'Visibilidad', en: 'Visibility', fr: 'Visibilité' },
   'connectors.localImportError': { es: 'No se pudo importar la carpeta local.', en: 'Could not import local folder.', fr: 'Impossible d\'importer le dossier local.' },
@@ -131,6 +137,7 @@ const dictionary: Dict = {
   'actions.addKnowledge': { es: 'Añadir conocimiento', en: 'Add knowledge', fr: 'Ajouter de la connaissance' },
   'actions.decisionPlaceholder': { es: 'Describe la decisión...', en: 'Decision description...', fr: 'Description de la décision...' },
   'actions.knowledgePlaceholder': { es: 'Contenido de conocimiento...', en: 'Knowledge content...', fr: 'Contenu de connaissance...' },
+  'actions.knowledgePathPlaceholder': { es: 'knowledge/notas.md', en: 'knowledge/notes.md', fr: 'knowledge/notes.md' },
 
   'toast.snapshotCreated': { es: 'Snapshot creado.', en: 'Snapshot created.', fr: 'Capture créée.' },
   'toast.snapshotError': { es: 'No se pudo crear el snapshot.', en: 'Could not create snapshot.', fr: 'Impossible de créer la capture.' },

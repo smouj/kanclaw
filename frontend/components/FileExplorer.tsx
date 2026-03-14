@@ -247,7 +247,7 @@ export function FileExplorer({ projectSlug, initialTree }: { projectSlug: string
           {showNewFile && (
             <div className="mt-2 space-y-2 rounded-lg border border-border bg-surface2 p-2">
               <Input
-                placeholder="ruta/archivo.md"
+                placeholder={t('files.pathPlaceholder')}
                 value={newFileName}
                 onChange={(e) => setNewFileName(e.target.value)}
                 className="text-sm"

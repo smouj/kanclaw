@@ -177,7 +177,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
     });
     setBusy(false);
     if (!response.ok) {
-      toast.error('No se pudo crear el agente.');
+      toast.error(t('toast.agentCreateError'));
       return;
     }
     setAgentName('');
@@ -203,11 +203,11 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
     const ok = await appendToFile('decisions/decision-log.md', `\n- ${decision}`);
     setBusy(false);
     if (!ok) {
-      toast.error('No se pudo guardar la decisión.');
+      toast.error(t('toast.decisionError'));
       return;
     }
     setDecision('');
-    toast.success('Decisión añadida.');
+    toast.success(t('toast.decisionSaved'));
     router.refresh();
   }
 
@@ -217,7 +217,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
     const ok = await appendToFile(knowledgePath, `\n${knowledgeContent}\n`);
     setBusy(false);
     if (!ok) {
-      toast.error('No se pudo guardar el conocimiento.');
+      toast.error(t('toast.knowledgeError'));
       return;
     }
     setKnowledgeContent('');
@@ -553,7 +553,7 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
               <Input
                 value={knowledgePath}
                 onChange={(e) => setKnowledgePath(e.target.value)}
-                placeholder="knowledge/notes.md"
+                placeholder={t('actions.knowledgePathPlaceholder')}
                 className="text-xs mb-2"
               />
               <Textarea

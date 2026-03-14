@@ -135,7 +135,7 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
         </div>
 
         <div className="mt-5 space-y-3">
-          <Input value={token} onChange={(event) => setToken(event.target.value)} placeholder="GitHub PAT" data-testid="github-token-input" />
+          <Input value={token} onChange={(event) => setToken(event.target.value)} placeholder={t('connectors.patPlaceholder')} data-testid="github-token-input" />
           <Button type="button" onClick={connectGitHub} disabled={!token || loading} data-testid="github-connect-button">{t('connectors.github')}</Button>
           <Button type="button" variant="outline" onClick={loadRepositories} disabled={!status.connected || loading} data-testid="github-load-repositories-button">{t('connectors.loadRepos')}</Button>
         </div>
@@ -143,7 +143,7 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
         <div className="mt-8 border-t border-border pt-6">
           <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{t('connectors.localImport')}</p>
           <div className="mt-3 space-y-3">
-            <Input value={localFolderPath} onChange={(event) => setLocalFolderPath(event.target.value)} placeholder="/Users/you/projects/repo-local" data-testid="local-folder-path-input" />
+            <Input value={localFolderPath} onChange={(event) => setLocalFolderPath(event.target.value)} placeholder={t('connectors.localPathPlaceholder')} data-testid="local-folder-path-input" />
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="outline" onClick={() => importLocalFolder('attach')} disabled={!localFolderPath || loading} data-testid="local-folder-attach-button">{t('connectors.attachProject')}</Button>
               <Button type="button" onClick={() => importLocalFolder('create')} disabled={!localFolderPath || loading} data-testid="local-folder-create-button">{t('connectors.createProject')}</Button>
