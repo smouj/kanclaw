@@ -4,6 +4,14 @@ All notable changes to **KanClaw** will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.2.7] - 2026-03-14
+
+### Added
+- Logging & observability system:
+  - `lib/logger.ts` - Logger singleton with levels (debug/info/warn/error)
+  - `lib/usePerformance.ts` - Performance tracking hook
+  - Integrated logger into ErrorBoundary for automatic error capture
+
 ## [0.2.6] - 2026-03-14
 
 ### Added
