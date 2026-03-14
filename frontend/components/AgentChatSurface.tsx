@@ -111,7 +111,7 @@ function parseMarkdown(text: string): React.ReactNode[] {
       elements.push(
         <ul key={`list-${elements.length}`} className="my-2 space-y-1 pl-6 list-disc">
           {currentList.map((item, i) => (
-            <li key={i} className="text-sm text-zinc-200">{item}</li>
+            <li key={i} className="text-sm text-200">{item}</li>
           ))}
         </ul>
       );
@@ -125,13 +125,13 @@ function parseMarkdown(text: string): React.ReactNode[] {
     if (line.startsWith('```')) {
       if (inCodeBlock) {
         elements.push(
-          <div key={`code-${elements.length}`} className="my-3 overflow-hidden rounded-lg border border-zinc-700 bg-zinc-900">
-            <div className="flex items-center justify-between border-b border-zinc-700 px-3 py-2">
-              <span className="text-xs text-zinc-500">{codeLanguage || 'code'}</span>
+          <div key={`code-${elements.length}`} className="my-3 overflow-hidden rounded-xl border border-subtle700 premium-surface">
+            <div className="flex items-center justify-between border-b border-subtle700 px-3 py-2">
+              <span className="text-xs text-500">{codeLanguage || 'code'}</span>
               <CopyButton text={codeContent} />
             </div>
             <pre className="overflow-x-auto p-4">
-              <code className="text-sm font-mono text-zinc-300">{codeContent}</code>
+              <code className="text-sm font-mono text-300">{codeContent}</code>
             </pre>
           </div>
         );
@@ -154,17 +154,17 @@ function parseMarkdown(text: string): React.ReactNode[] {
     // Headers
     if (line.startsWith('### ')) {
       flushList();
-      elements.push(<h3 key={`h3-${i}`} className="mt-4 mb-2 text-lg font-semibold text-zinc-100">{line.slice(4)}</h3>);
+      elements.push(<h3 key={`h3-${i}`} className="mt-4 mb-2 text-lg font-semibold text-100">{line.slice(4)}</h3>);
       continue;
     }
     if (line.startsWith('## ')) {
       flushList();
-      elements.push(<h2 key={`h2-${i}`} className="mt-5 mb-2 text-xl font-bold text-zinc-100">{line.slice(3)}</h2>);
+      elements.push(<h2 key={`h2-${i}`} className="mt-5 mb-2 text-xl font-bold text-100">{line.slice(3)}</h2>);
       continue;
     }
     if (line.startsWith('# ')) {
       flushList();
-      elements.push(<h1 key={`h1-${i}`} className="mt-5 mb-2 text-2xl font-bold text-zinc-100">{line.slice(2)}</h1>);
+      elements.push(<h1 key={`h1-${i}`} className="mt-5 mb-2 text-2xl font-bold text-100">{line.slice(2)}</h1>);
       continue;
     }
 
@@ -172,11 +172,11 @@ function parseMarkdown(text: string): React.ReactNode[] {
     if (line.includes('`')) {
       const parts = line.split(/(`[^`]+`)/);
       elements.push(
-        <p key={`p-${i}`} className="my-1 text-sm leading-relaxed text-zinc-200">
+        <p key={`p-${i}`} className="my-1 text-sm leading-relaxed text-200">
           {parts.map((part, j) => {
             if (part.startsWith('`') && part.endsWith('`')) {
               return (
-                <code key={j} className="rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-xs text-amber-300">
+                <code key={j} className="rounded premium-surface-2 px-1.5 py-0.5 font-mono text-xs text-amber-300">
                   {part.slice(1, -1)}
                 </code>
               );
@@ -185,7 +185,7 @@ function parseMarkdown(text: string): React.ReactNode[] {
             const boldParts = part.split(/(\*\*[^*]+\*\*)/);
             return boldParts.map((bp, k) => {
               if (bp.startsWith('**') && bp.endsWith('**')) {
-                return <strong key={k} className="font-bold text-zinc-100">{bp.slice(2, -2)}</strong>;
+                return <strong key={k} className="font-bold text-100">{bp.slice(2, -2)}</strong>;
               }
               return bp;
             });
@@ -209,7 +209,7 @@ function parseMarkdown(text: string): React.ReactNode[] {
     if (line.startsWith('> ')) {
       flushList();
       elements.push(
-        <blockquote key={`bq-${i}`} className="my-2 border-l-2 border-zinc-600 pl-4 italic text-zinc-400">
+        <blockquote key={`bq-${i}`} className="my-2 border-l-2 border-subtle600 pl-4 italic text-400">
           {line.slice(2)}
         </blockquote>
       );
@@ -219,7 +219,7 @@ function parseMarkdown(text: string): React.ReactNode[] {
     // Horizontal rule
     if (line.match(/^[-*_]{3,}$/)) {
       flushList();
-      elements.push(<hr key={`hr-${i}`} className="my-4 border-zinc-700" />);
+      elements.push(<hr key={`hr-${i}`} className="my-4 border-subtle700" />);
       continue;
     }
 
@@ -231,7 +231,7 @@ function parseMarkdown(text: string): React.ReactNode[] {
 
     // Regular paragraph
     flushList();
-    elements.push(<p key={`p-${i}`} className="my-1 text-sm leading-relaxed text-zinc-200">{line}</p>);
+    elements.push(<p key={`p-${i}`} className="my-1 text-sm leading-relaxed text-200">{line}</p>);
   }
 
   flushList();
@@ -251,7 +251,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={copy}
-      className="flex items-center gap-1 rounded px-2 py-1 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+      className="flex items-center gap-1 rounded px-2 py-1 text-xs text-400 hover:premium-surface-2 hover:text-200"
     >
       {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
       {copied ? 'Copied' : 'Copy'}
@@ -282,10 +282,10 @@ function MessageBubble({
       <div
         className={`max-w-[75%] rounded-2xl px-4 py-3 ${
           isHuman
-            ? 'bg-gradient-to-br from-zinc-100 to-zinc-200 text-zinc-900'
+            ? 'bg-gradient-to-br from-zinc-100 to-zinc-200 text-900'
             : isSystem
             ? 'bg-amber-500/10 border border-amber-500/20 text-amber-200'
-            : 'bg-gradient-to-br from-zinc-800 to-zinc-850 border border-zinc-700/50 text-zinc-100'
+            : 'bg-gradient-to-br from-zinc-800 to-zinc-850 border border-subtle700/50 text-100'
         } ${
           isSelected ? 'ring-2 ring-white/30' : ''
         } hover:shadow-lg`}
@@ -322,8 +322,8 @@ function AgentSelector({
           onClick={() => onChange(agent.name)}
           className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${
             selected === agent.name
-              ? 'bg-white text-zinc-900 shadow-lg shadow-white/20'
-              : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700 border border-zinc-700'
+              ? 'bg-white text-900 shadow-lg shadow-white/20'
+              : 'premium-surface-2 text-300 hover:premium-border border border-subtle700'
           }`}
         >
           <Bot className="h-4 w-4" />
@@ -337,11 +337,11 @@ function AgentSelector({
 // Markdown toolbar
 function MarkdownToolbar({ onInsert }: { onInsert: (syntax: string, wrap?: boolean) => void }) {
   return (
-    <div className="flex items-center gap-1 border-t border-zinc-700 px-3 py-2">
+    <div className="flex items-center gap-1 border-t border-subtle700 px-3 py-2">
       <button
         type="button"
         onClick={() => onInsert('**', true)}
-        className="rounded p-1.5 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300"
+        className="rounded p-1.5 text-500 hover:premium-surface-2 hover:text-300"
         title="Bold"
       >
         <span className="font-bold text-xs">B</span>
@@ -349,7 +349,7 @@ function MarkdownToolbar({ onInsert }: { onInsert: (syntax: string, wrap?: boole
       <button
         type="button"
         onClick={() => onInsert('*', true)}
-        className="rounded p-1.5 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300"
+        className="rounded p-1.5 text-500 hover:premium-surface-2 hover:text-300"
         title="Italic"
       >
         <span className="italic text-xs">I</span>
@@ -357,16 +357,16 @@ function MarkdownToolbar({ onInsert }: { onInsert: (syntax: string, wrap?: boole
       <button
         type="button"
         onClick={() => onInsert('`', true)}
-        className="rounded p-1.5 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300"
+        className="rounded p-1.5 text-500 hover:premium-surface-2 hover:text-300"
         title="Code"
       >
         <Type className="h-4 w-4" />
       </button>
-      <div className="mx-1 h-4 w-px bg-zinc-700" />
+      <div className="mx-1 h-4 w-px premium-border" />
       <button
         type="button"
         onClick={() => onInsert('```', true)}
-        className="rounded p-1.5 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300"
+        className="rounded p-1.5 text-500 hover:premium-surface-2 hover:text-300"
         title="Code Block"
       >
         <CornerDownLeft className="h-4 w-4" />
@@ -374,7 +374,7 @@ function MarkdownToolbar({ onInsert }: { onInsert: (syntax: string, wrap?: boole
       <button
         type="button"
         onClick={() => onInsert('\n- ')}
-        className="rounded p-1.5 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300"
+        className="rounded p-1.5 text-500 hover:premium-surface-2 hover:text-300"
         title="List"
       >
         <Link2 className="h-4 w-4 rotate-90" />
@@ -382,7 +382,7 @@ function MarkdownToolbar({ onInsert }: { onInsert: (syntax: string, wrap?: boole
       <button
         type="button"
         onClick={() => onInsert('\n> ')}
-        className="rounded p-1.5 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300"
+        className="rounded p-1.5 text-500 hover:premium-surface-2 hover:text-300"
         title="Quote"
       >
         <Quote className="h-4 w-4" />
@@ -609,26 +609,26 @@ export function AgentChatSurface({
         <span className="h-2 w-2 animate-bounce rounded-full bg-zinc-400" style={{ animationDelay: '150ms' }} />
         <span className="h-2 w-2 animate-bounce rounded-full bg-zinc-400" style={{ animationDelay: '300ms' }} />
       </div>
-      <span className="text-xs text-zinc-500">El agente está pensando...</span>
+      <span className="text-xs text-500">El agente está pensando...</span>
     </div>
   );
 
   return (
-    <div className="flex h-full w-full bg-zinc-950">
+    <div className="flex h-full w-full premium-bg">
       {/* Left - Thread List */}
-      <div className="w-64 flex-shrink-0 border-r border-zinc-800 bg-zinc-900/50">
-        <div className="border-b border-zinc-800 p-4">
+      <div className="w-64 flex-shrink-0 border-r border-subtle800 premium-surface/50">
+        <div className="border-b border-subtle800 p-4">
           <div className="flex items-center gap-2">
             <span
               className={`h-2 w-2 rounded-full ${
                 openClawConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
               }`}
             />
-            <span className="text-xs text-zinc-400">
+            <span className="text-xs text-400">
               {openClawConnected ? 'Conectado' : 'Desconectado'}
             </span>
           </div>
-          <h3 className="mt-3 text-sm font-medium text-zinc-200">Conversaciones</h3>
+          <h3 className="mt-3 text-sm font-medium text-200">Conversaciones</h3>
         </div>
         <div className="overflow-y-auto p-2">
           {threads.map((thread) => (
@@ -640,19 +640,19 @@ export function AgentChatSurface({
                 setSelectedContext([]);
                 onThreadChange?.(thread.id);
               }}
-              className={`mb-1 w-full rounded-xl p-3 text-left transition ${
+              className={`mb-1 w-full rounded-2xl p-3 text-left transition ${
                 selectedThreadId === thread.id
                   ? 'bg-white/10 border border-white/20'
                   : 'hover:bg-white/5 border border-transparent'
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-zinc-200 truncate">
+                <span className="text-sm font-medium text-200 truncate">
                   {thread.title}
                 </span>
-                <span className="text-[10px] text-zinc-600">{thread.scope}</span>
+                <span className="text-[10px] text-600">{thread.scope}</span>
               </div>
-              <p className="mt-1 line-clamp-1 text-xs text-zinc-500">
+              <p className="mt-1 line-clamp-1 text-xs text-500">
                 {thread.messages[thread.messages.length - 1]?.content.slice(0, 40) ||
                   'Sin mensajes'}
               </p>
@@ -664,12 +664,12 @@ export function AgentChatSurface({
       {/* Center - Messages */}
       <div className="flex flex-1 flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/30 px-6 py-3">
+        <div className="flex items-center justify-between border-b border-subtle800 premium-surface/30 px-6 py-3">
           <div>
-            <h3 className="text-base font-semibold text-zinc-100">
+            <h3 className="text-base font-semibold text-100">
               {selectedThread?.title || 'Selecciona un hilo'}
             </h3>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-500">
               {selectedThread?.messages.length || 0} mensajes ·{' '}
               {selectedThread?.scope === 'TEAM' ? 'Sala grupal' : 'Canal directo'}
             </p>
@@ -679,8 +679,8 @@ export function AgentChatSurface({
               onClick={() => setShowAgentSelector(!showAgentSelector)}
               className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${
                 showAgentSelector
-                  ? 'bg-white text-zinc-900'
-                  : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+                  ? 'bg-white text-900'
+                  : 'premium-surface-2 text-300 hover:premium-border'
               }`}
             >
               <Bot className="h-4 w-4" />
@@ -692,8 +692,8 @@ export function AgentChatSurface({
 
         {/* Agent Selector Dropdown */}
         {showAgentSelector && (
-          <div className="border-b border-zinc-800 bg-zinc-900/80 px-6 py-4">
-            <p className="mb-3 text-xs text-zinc-500">Selecciona un agente:</p>
+          <div className="border-b border-subtle800 premium-surface/80 px-6 py-4">
+            <p className="mb-3 text-xs text-500">Selecciona un agente:</p>
             <AgentSelector
               agents={agents}
               selected={targetAgentName}
@@ -708,7 +708,7 @@ export function AgentChatSurface({
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-6 py-4">
           {!selectedThread?.messages.length ? (
-            <div className="flex h-full flex-col items-center justify-center text-zinc-500">
+            <div className="flex h-full flex-col items-center justify-center text-500">
               <MessageSquare className="mb-4 h-12 w-12 opacity-30" />
               <p className="text-lg font-medium">Sin conversación aún</p>
               <p className="mt-1 text-sm">
@@ -720,7 +720,7 @@ export function AgentChatSurface({
               {groupedMessages.map((group) => (
                 <div key={group.date}>
                   <div className="mb-3 flex justify-center">
-                    <span className="rounded-full bg-zinc-800 px-3 py-1 text-xs text-zinc-500">
+                    <span className="rounded-full premium-surface-2 px-3 py-1 text-xs text-500">
                       {group.date}
                     </span>
                   </div>
@@ -743,12 +743,12 @@ export function AgentChatSurface({
         </div>
 
         {/* Composer */}
-        <div className="border-t border-zinc-800 bg-zinc-900/50">
+        <div className="border-t border-subtle800 premium-surface/50">
           {/* Context chips */}
           {contextResults.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2 border-b border-zinc-800 px-6 py-2">
-              <Sparkles className="h-4 w-4 text-zinc-500" />
-              <span className="text-xs text-zinc-500">Contexto:</span>
+            <div className="flex flex-wrap items-center gap-2 border-b border-subtle800 px-6 py-2">
+              <Sparkles className="h-4 w-4 text-500" />
+              <span className="text-xs text-500">Contexto:</span>
               {contextResults.slice(0, 4).map((item) => {
                 const active = selectedContext.some((e) => e.id === item.id);
                 return (
@@ -757,8 +757,8 @@ export function AgentChatSurface({
                     onClick={() => toggleContext(item)}
                     className={`flex items-center gap-1 rounded-full border px-2 py-1 text-xs transition ${
                       active
-                        ? 'border-white bg-white text-zinc-900'
-                        : 'border-zinc-700 text-zinc-400 hover:border-zinc-500'
+                        ? 'border-white bg-white text-900'
+                        : 'border-subtle700 text-400 hover:border-subtle500'
                     }`}
                   >
                     {item.title}
@@ -767,7 +767,7 @@ export function AgentChatSurface({
                 );
               })}
               {contextLoading && (
-                <Loader2 className="h-3 w-3 animate-spin text-zinc-500" />
+                <Loader2 className="h-3 w-3 animate-spin text-500" />
               )}
             </div>
           )}
@@ -790,13 +790,13 @@ export function AgentChatSurface({
                 }}
                 rows={4}
                 placeholder="Escribe tu mensaje... (Shift+Enter para nueva línea)"
-                className="min-h-[100px] resize-none rounded-xl bg-zinc-900 border-zinc-700 text-zinc-200 placeholder-zinc-600 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
+                className="min-h-[100px] resize-none rounded-2xl premium-surface border-subtle700 text-200 placeholder-zinc-600 focus:border-subtle500 focus:ring-1 focus:ring-zinc-500"
               />
             </div>
             <Button
               onClick={handleSend}
               disabled={!content.trim() || !selectedThread || loading}
-              className="shrink-0 gap-2 rounded-xl bg-white px-6 text-zinc-900 hover:bg-zinc-200"
+              className="shrink-0 gap-2 rounded-2xl bg-white px-6 text-900 hover:bg-zinc-200"
             >
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -810,36 +810,36 @@ export function AgentChatSurface({
       </div>
 
       {/* Right - Stats */}
-      <div className="w-56 flex-shrink-0 border-l border-zinc-800 bg-zinc-900/30">
-        <div className="border-b border-zinc-800 p-4">
-          <h3 className="text-sm font-medium text-zinc-300">Estadísticas</h3>
+      <div className="w-56 flex-shrink-0 border-l border-subtle800 premium-surface/30">
+        <div className="border-b border-subtle800 p-4">
+          <h3 className="text-sm font-medium text-300">Estadísticas</h3>
         </div>
         <div className="p-4">
           <div className="grid grid-cols-2 gap-2">
-            <div className="rounded-lg bg-zinc-800/50 p-3 text-center">
-              <p className="text-xl font-bold text-zinc-200">{stats.total}</p>
-              <p className="text-[10px] text-zinc-500">Total</p>
+            <div className="rounded-xl premium-surface-2/50 p-3 text-center">
+              <p className="text-xl font-bold text-200">{stats.total}</p>
+              <p className="text-[10px] text-500">Total</p>
             </div>
-            <div className="rounded-lg bg-zinc-800/50 p-3 text-center">
-              <p className="text-xl font-bold text-zinc-200">{stats.human}</p>
-              <p className="text-[10px] text-zinc-500">Tuyos</p>
+            <div className="rounded-xl premium-surface-2/50 p-3 text-center">
+              <p className="text-xl font-bold text-200">{stats.human}</p>
+              <p className="text-[10px] text-500">Tuyos</p>
             </div>
-            <div className="col-span-2 rounded-lg bg-zinc-800/50 p-3 text-center">
+            <div className="col-span-2 rounded-xl premium-surface-2/50 p-3 text-center">
               <p className="text-xl font-bold text-emerald-400">{stats.agent}</p>
-              <p className="text-[10px] text-zinc-500">Del agente</p>
+              <p className="text-[10px] text-500">Del agente</p>
             </div>
           </div>
 
           {selectedMessage && (
             <div className="mt-4">
-              <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+              <p className="text-xs font-medium text-500 uppercase tracking-wider">
                 Mensaje
               </p>
-              <div className="mt-2 rounded-lg bg-zinc-800/30 p-3">
-                <p className="text-xs text-zinc-400">
+              <div className="mt-2 rounded-xl premium-surface-2/30 p-3">
+                <p className="text-xs text-400">
                   {selectedMessage.role === 'human' ? 'Tú' : selectedMessage.actor}
                 </p>
-                <p className="mt-1 text-xs text-zinc-600">
+                <p className="mt-1 text-xs text-600">
                   {formatRelativeTime(selectedMessage.createdAt)}
                 </p>
               </div>
