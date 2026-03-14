@@ -4,6 +4,22 @@ All notable changes to **KanClaw** will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.2.2] - 2026-03-14
+
+### Added
+- Error handling infrastructure:
+  - Global `ErrorBoundary` component for graceful error recovery
+  - `app/error.tsx` - Error page with retry and navigation options
+  - `app/loading.tsx` - Loading state for streaming SSR
+- Skeleton components for future loading states:
+  - `StatCardSkeleton`, `AgentListSkeleton`, `ThreadSkeleton`
+  - `MessageSkeleton`, `KanbanColumnSkeleton`, `FileItemSkeleton`
+  - `OverviewSkeleton`
+
+### Changed
+- Build optimized: maintained at < 355KB first load JS
+- Error messages now include error ID for debugging
+
 ## [0.2.1] - 2026-03-14
 
 ### Added
