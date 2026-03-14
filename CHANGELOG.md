@@ -4,6 +4,20 @@ All notable changes to **KanClaw** will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.2.3] - 2026-03-14
+
+### Added
+- Security middleware with headers:
+  - X-XSS-Protection, X-Frame-Options, X-Content-Type-Options
+  - Content-Security-Policy (CSP)
+  - Referrer-Policy, Permissions-Policy
+  - HSTS for production domains
+- Rate limiting utility (`lib/rate-limit.ts`)
+- Middleware: 26.8 kB (acceptable)
+
+### Changed
+- First load JS: 87.3 kB (well under 350KB target)
+
 ## [0.2.2] - 2026-03-14
 
 ### Added
