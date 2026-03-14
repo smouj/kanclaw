@@ -1,35 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const AUTH_TOKEN = process.env.KANCLAW_AUTH_TOKEN;
-
 export function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname;
-
-  // Allow root and /setup without auth (so users can configure the app)
-  if (path === '/' || path === '/setup' || path.startsWith('/setup')) {
-    return addSecurityHeaders(request);
-  }
-
-  // Require auth if KANCLAW_AUTH_TOKEN is set
-  if (AUTH_TOKEN) {
-    const authHeader = request.headers.get('authorization');
-    const token = authHeader?.replace('Bearer ', '');
-    
-    if (token !== AUTH_TOKEN) {
-      return new NextResponse('Unauthorized', {
-        status: 401,
-        headers: {
-          'WWW-Authenticate': 'Bearer',
-        },
-      });
-    }
-  }
-
-  return addSecurityHeaders(request);
-}
-
-function addSecurityHeaders(request: NextRequest) {
   const response = NextResponse.next();
 
   // Security Headers
