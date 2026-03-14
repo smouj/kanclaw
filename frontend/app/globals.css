@@ -338,3 +338,27 @@ select:focus {
 .theme-light .theme-text-muted {
   color: #4b5563 !important;
 }
+
+/* Premium Black/Silver Theme Variables */
+:root {
+  --premium-bg: #0a0a0b;
+  --premium-surface: #141416;
+  --premium-surface-2: #1c1c1f;
+  --premium-border: rgba(255,255,255,0.08);
+  --premium-border-hover: rgba(255,255,255,0.15);
+  --premium-text: #fafafa;
+  --premium-text-secondary: #a1a1aa;
+  --premium-text-muted: #71717a;
+  --premium-accent: #fff;
+  --premium-accent-muted: rgba(255,255,255,0.6);
+}
+
+/* Premium utility classes */
+.premium-bg { background: var(--premium-bg); }
+.premium-surface { background: var(--premium-surface); }
+.premium-surface-2 { background: var(--premium-surface-2); }
+.premium-border { border-color: var(--premium-border); }
+.premium-border-hover:hover { border-color: var(--premium-border-hover); }
+.premium-text { color: var(--premium-text); }
+.premium-text-secondary { color: var(--premium-text-secondary); }
+.premium-text-muted { color: var(--premium-text-muted); }
