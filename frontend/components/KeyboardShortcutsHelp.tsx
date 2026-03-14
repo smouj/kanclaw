@@ -37,11 +37,11 @@ export function KeyboardShortcutsHelp() {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
           onClick={() => setIsOpen(false)}
         >
           <div
-            className="w-full max-w-md rounded-lg border border-border bg-surface p-6 shadow-xl"
+            className="kanclaw-panel w-full max-w-md p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -53,29 +53,29 @@ export function KeyboardShortcutsHelp() {
               </h2>
               <button
                 onClick={() => setIsOpen(false)}
-                className="rounded p-1 hover:bg-surface2"
+                className="rounded-full p-1 hover:bg-white/10"
                 aria-label="Close"
               >
                 ×
               </button>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               {shortcuts.map((shortcut) => (
                 <div
                   key={shortcut.key}
-                  className="flex items-center justify-between border-b border-border/50 pb-2 last:border-0"
+                  className="flex items-center justify-between rounded-lg px-2 py-2 hover:bg-white/5"
                 >
-                  <span className="text-sm text-text-muted">{shortcut.description}</span>
-                  <kbd className="rounded bg-surface2 px-2 py-1 text-xs font-mono">
+                  <span className="text-sm text-zinc-400">{shortcut.description}</span>
+                  <kbd className="rounded-lg border border-white/10 bg-white/5 px-3 py-1 text-xs font-mono">
                     {shortcut.key}
                   </kbd>
                 </div>
               ))}
             </div>
 
-            <p className="mt-4 text-xs text-text-muted">
-              Press <kbd className="rounded bg-surface2 px-1">Ctrl+K</kbd> anywhere to open command palette
+            <p className="mt-4 text-xs text-zinc-500">
+              Press <kbd className="rounded-lg border border-white/10 bg-white/5 px-2 py-0.5">Ctrl+K</kbd> anywhere to open command palette
             </p>
           </div>
         </div>
