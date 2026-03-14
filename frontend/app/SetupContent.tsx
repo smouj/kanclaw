@@ -36,7 +36,8 @@ export default function SetupContent() {
     setSaved(true);
     
     setTimeout(() => {
-      router.push('/project/demo');
+      // Stay on setup page, just show success
+      window.location.reload();
     }, 1000);
   };
 
@@ -67,7 +68,8 @@ export default function SetupContent() {
     localStorage.removeItem('openclaw_url');
     localStorage.removeItem('openclaw_token');
     localStorage.removeItem('kanclaw_auth_token');
-    router.push('/project/demo');
+    // Just reload - wrapper will detect demo mode and show demo content
+    window.location.reload();
   };
 
   const isConfigured = formData.openclawUrl && formData.openclawToken;
