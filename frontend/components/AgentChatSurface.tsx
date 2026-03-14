@@ -282,13 +282,13 @@ function MessageBubble({
       <div
         className={`max-w-[75%] rounded-2xl px-4 py-3 ${
           isHuman
-            ? 'bg-gradient-to-br from-zinc-100 to-zinc-200 text-900'
+            ? 'theme-dark:bg-white theme-dark:text-zinc-900 theme-light:bg-zinc-900 theme-light:text-white shadow-lg'
             : isSystem
             ? 'bg-amber-500/10 border border-amber-500/20 text-amber-200'
-            : 'bg-gradient-to-br from-zinc-800 to-zinc-850 border border-subtle700/50 text-100'
+            : 'bg-gradient-to-br from-zinc-800 to-zinc-850 border border-subtle text-zinc-100 shadow-lg'
         } ${
           isSelected ? 'ring-2 ring-white/30' : ''
-        } hover:shadow-lg`}
+        }`}
       >
         <div className="mb-1 flex items-center justify-between gap-4 text-[10px] uppercase tracking-wider opacity-60">
           <span className="font-medium">
