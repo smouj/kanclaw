@@ -40,6 +40,7 @@ export function ProjectCreateForm() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [agents, setAgents] = useState('');
+  const [withOfficialTeam, setWithOfficialTeam] = useState(true); // Default to official team
   
   // GitHub
   const [githubToken, setGithubToken] = useState('');
@@ -212,7 +213,8 @@ export function ProjectCreateForm() {
   async function handleSubmit() {
     setLoading(true);
     
-    const agentsList = agents
+    // Only parse custom agents if NOT using official team
+    const agentsList = withOfficialTeam ? [] : agents
       .split(',')
       .map((v) => v.trim())
       .filter(Boolean)
@@ -223,6 +225,7 @@ export function ProjectCreateForm() {
       name,
       description,
       agents: agentsList,
+      withOfficialTeam,
     };
 
     if (selectedRepo) {
@@ -312,7 +315,29 @@ export function ProjectCreateForm() {
               onChange={(e) => setAgents(e.target.value)}
               placeholder="PlannerAgent, BuilderAgent, QAAgent" 
               className="bg-surface border-border"
+              disabled={withOfficialTeam}
             />
+            {withOfficialTeam && (
+              <p className="text-xs text-zinc-500">Los agentes personalizados se deshabilitan cuando usas el equipo oficial.</p>
+            )}
+          </div>
+
+          {/* Official Team Option */}
+          <div className="rounded-xl border border-accent-green/30 bg-accent-green/5 p-4">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={withOfficialTeam}
+                onChange={(e) => setWithOfficialTeam(e.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-border bg-surface accent-accent-green"
+              />
+              <div>
+                <p className="text-sm font-medium text-accent-green">🎯 Crear con equipo oficial de KanClaw</p>
+                <p className="text-xs text-zinc-400 mt-1">
+                  Incluir 6 agentes preconfigurados: Strategist, Builder, Researcher, QA, RepoOps, Memory Keeper
+                </p>
+              </div>
+            </label>
           </div>
 
           <Button 

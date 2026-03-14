@@ -33,6 +33,8 @@ model Agent {
   status        String       @default("idle")
   memorySummary String?
   gatewayAgentId String?     // OpenClaw agent ID for this agent
+  isOfficial    Boolean      @default(false)  // Whether this is an official KanClaw agent
+  officialId    String?      // Reference to official agent template ID
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @default(now()) @updatedAt
   project       Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)

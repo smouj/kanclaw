@@ -391,8 +391,11 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                     className="w-full flex items-center gap-2 px-2 py-1.5 text-xs rounded hover:bg-surface2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50 transition-colors"
                     type="button"
                   >
-                    <Bot className="w-3 h-3" />
+                    <Bot className={`w-3 h-3 ${agent.isOfficial ? 'text-accent-green' : ''}`} />
                     {agent.name}
+                    {agent.isOfficial && (
+                      <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-accent-green/20 text-accent-green">official</span>
+                    )}
                   </button>
                 ))}
                 <div className="pt-2 border-t border-border space-y-2">

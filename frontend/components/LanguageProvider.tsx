@@ -141,6 +141,9 @@ const dictionary: Dict = {
   'sidebar.runsCount': { es: 'Runs', en: 'Runs', fr: 'Exécutions' },
   'sidebar.connectorsCount': { es: 'Connectores', en: 'Connectors', fr: 'Connecteurs' },
   'sidebar.addAgent': { es: 'Añadir agente', en: 'Add agent', fr: 'Ajouter un agent' },
+  'project.officialTeam': { es: 'Equipo oficial', en: 'Official team', fr: 'Équipe officielle' },
+  'project.officialAgent': { es: 'Agente oficial', en: 'Official agent', fr: 'Agent officiel' },
+  'project.customAgent': { es: 'Agente personalizado', en: 'Custom agent', fr: 'Agent personnalisé' },
   'sidebar.newAgentRole': { es: 'Rol del agente...', en: 'Agent role...', fr: 'Rôle de l\'agent...' },
   'sidebar.newAgentName': { es: 'Nombre del agente...', en: 'New agent name...', fr: 'Nom du nouvel agent...' },
 
