@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Bot, Check, Copy, CornerDownLeft, Image, Loader2, MessageSquare, Paperclip, Quote, Search, Send, Sparkles, Type, X, Zap, DollarSign, Gauge, Pencil, Trash2, Repeat, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Bot, Check, Copy, CornerDownLeft, Image, Loader2, MessageSquare, Paperclip, Quote, RefreshCw, Search, Send, Sparkles, Type, X, Zap, DollarSign, Gauge, Pencil, Trash2, Repeat, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Agent } from '@prisma/client';
 import { Button } from '@/components/ui/button';
@@ -64,27 +64,28 @@ function getKindIcon(kind: string | undefined) {
 function mapEventToMessage(event: any): string {
   const eventType = event?.type || '';
   const agentName = event?.agentName || '';
-  const taskId = event?.taskId || '';
   const message = event?.message || event?.content || '';
   
+  // Clean professional messages - no technical jargon
   const messages: Record<string, string> = {
-    'agent_started': `🤖 ${agentName} iniciado`,
-    'agent_thinking': `🧠 ${agentName} analizando...`,
-    'task_started': `✅ Tarea iniciada`,
-    'task_progress': `⚙️ ${message || 'Ejecutando...'}`,
-    'task_progress_detailed': `📝 ${message}`,
-    'task_finished': `✨ Tarea completada`,
-    'task_failed': `❌ Error en tarea`,
-    'log': `📋 ${message}`,
-    'error': `🚨 Error: ${message}`,
-    'delegation': `📤 Delegando tarea...`,
-    'subtask_created': `➕ Subtarea creada`,
-    'knowledge_updated': `💾 Conocimiento actualizado`,
-    'decision_logged': `⚖️ Decisión registrada`,
-    'artifact_created': `📦 Artifact creado`,
+    'agent_started': `🤖 ${agentName} está trabajando`,
+    'agent_thinking': `🧠 Analizando tu petición...`,
+    'task_started': `📋 Preparando respuesta...`,
+    'task_progress': message ? `💭 ${message.slice(0, 80)}` : '⚙️ Procesando...',
+    'task_progress_detailed': message ? `📝 ${message.slice(0, 100)}` : '📝 Obteniendo información...',
+    'task_finished': `✨ Respuesta lista`,
+    'task_failed': `❌ Ha ocurrido un error`,
+    'log': message ? `📋 ${message.slice(0, 60)}` : '📋 Registro de actividad',
+    'error': `⚠️ ${message?.slice(0, 60) || 'Error desconocido'}`,
+    'delegation': `🔄 Coordinando agentes...`,
+    'subtask_created': `➕ Nueva tarea creada`,
+    'knowledge_updated': `💾 Guardando contexto...`,
+    'decision_logged': `✅ Decisión registrada`,
+    'artifact_created': `📦 Preparando resultado...`,
   };
   
-  return messages[eventType] || (message ? `💬 ${message.slice(0, 50)}` : `🔄 ${eventType}`);
+  // Return clean message or generic one
+  return messages[eventType] || (message ? `💬 ${message.slice(0, 50)}` : '⏳ Procesando...');
 }
 
 function formatTime(date: string | Date, locale = 'es-ES') {
@@ -680,6 +681,27 @@ export function AgentChatSurface({
     setTimeout(() => setLiveExecution(null), 3000);
   };
 
+  // Retry sending a message
+  const handleRetry = async (messageContent: string) => {
+    setContent(messageContent);
+    setEditingMessageId(null);
+    // Auto-send after setting content
+    setTimeout(() => handleSend(), 100);
+  };
+
+  // Refresh chat manually
+  const handleRefreshChat = async () => {
+    try {
+      const response = await fetch(`/api/chat?projectSlug=${projectSlug}`);
+      if (!response.ok) return;
+      const refreshed = await response.json();
+      setThreads(refreshed);
+      toast.success('Chat actualizado');
+    } catch {
+      toast.error('Error al actualizar');
+    }
+  };
+
   return (
     <div className="flex h-full min-h-0 bg-surface text-text-primary">
       {/* Left threads */}
@@ -730,36 +752,27 @@ export function AgentChatSurface({
       {/* Main */}
       <section className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between border-b border-border bg-surface/70 px-5 py-3">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="text-base font-semibold truncate">{selectedThread?.title || t('chat.selectThread')}</h3>
-              {selectedThread?.scope === 'TEAM' && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-accent-green/20 text-accent-green">Team Room</span>
-              )}
+          <div className="min-w-0 flex items-center gap-3">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-semibold truncate">{selectedThread?.title || t('chat.selectThread')}</h3>
+                {selectedThread?.scope === 'TEAM' && (
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-accent-green/20 text-accent-green">Team Room</span>
+                )}
+              </div>
+              <p className="text-xs text-text-muted truncate">
+                {selectedThread?.messages.length || 0} mensajes
+              </p>
             </div>
-            <p className="text-xs text-text-muted truncate">
-              {selectedThread?.messages.length || 0} mensajes
-            </p>
-            <div className="mt-2 md:hidden">
-              <select
-                value={selectedThreadId}
-                onChange={(e) => {
-                  const nextId = e.target.value;
-                  setSelectedThreadId(nextId);
-                  const nextThread = threads.find((t) => t.id === nextId);
-                  if (nextThread?.agent?.name) setTargetAgentName(nextThread.agent.name);
-                  onThreadChange?.(nextId);
-                }}
-                className="w-full border border-border bg-surface2 px-2 py-1.5 text-xs text-text-primary"
-                aria-label="Select conversation thread"
-              >
-                {threads.map((thread) => (
-                  <option key={thread.id} value={thread.id}>
-                    {thread.title}
-                  </option>
-                ))}
-              </select>
-            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleRefreshChat}
+              className="p-2 hover:bg-surface2 rounded-lg transition-colors"
+              title="Actualizar chat"
+            >
+              <RefreshCw className="h-4 w-4 text-text-muted" />
+            </button>
           </div>
 
           {selectedThread?.scope === 'TEAM' ? (
@@ -897,7 +910,7 @@ export function AgentChatSurface({
                                   </button>
                                 )}
                                 {isHuman && (
-                                  <button className="p-1.5 hover:bg-surface2 rounded" title="Retry">
+                                  <button onClick={() => handleRetry(message.content)} className="p-1.5 hover:bg-surface2 rounded" title="Retry">
                                     <Repeat className="h-3 w-3" />
                                   </button>
                                 )}
