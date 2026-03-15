@@ -133,9 +133,9 @@ export function HomePageClient({
           )}
 
           {/* Hero + Create */}
-          <section className="kanclaw-panel grid gap-6 p-5 lg:grid-cols-[1.08fr_0.92fr] lg:p-6 items-start">
-            <div className="relative rounded-[2.4rem] border theme-surface-soft p-6 min-h-[400px]">
-              <div className="mb-8 flex items-center gap-4">
+          <section className="kanclaw-panel grid gap-4 p-4 lg:grid-cols-[1.08fr_0.92fr] lg:p-5 items-start">
+            <div className="relative rounded-[2.4rem] border theme-surface-soft p-4 sm:p-6">
+              <div className="mb-6 sm:mb-8 flex items-center gap-4">
                 <div className="relative h-20 w-20 flex items-center justify-center">
                   <Image
                     src="/logo-white.png"
@@ -152,7 +152,7 @@ export function HomePageClient({
                 </div>
               </div>
 
-              <div className="max-w-3xl space-y-5">
+              <div className="max-w-3xl space-y-3 sm:space-y-4">
                 <p className="text-base text-zinc-300 sm:text-lg">
                   Workspace operativo para equipos de agentes IA: chat persistente, memoria, delegación y filesystem local-first.
                 </p>
@@ -179,7 +179,7 @@ export function HomePageClient({
           {/* Main dashboard row */}
           <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
             {/* Projects panel */}
-            <div className="kanclaw-panel p-5 lg:p-6">
+            <div className="kanclaw-panel p-4 lg:p-5">
               <div className="mb-6 flex items-center justify-between gap-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.3em] text-zinc-500">Workspaces</p>
@@ -191,18 +191,18 @@ export function HomePageClient({
               </div>
 
               {projectsList.length === 0 ? (
-                <div className="flex min-h-64 flex-col justify-center rounded-[1.8rem] border border-dashed border-white/10 theme-surface-soft p-6">
+                <div className="flex flex-col justify-center rounded-[1.8rem] border border-dashed border-white/10 theme-surface-soft p-4 sm:p-6">
                   <p className="text-xl font-medium">No projects yet</p>
                   <p className="mt-2 max-w-xl text-sm text-zinc-500">
                     Crea tu primer workspace para activar memoria persistente, agentes y shell local-first.
                   </p>
                 </div>
               ) : (
-                <div className="grid gap-4 lg:grid-cols-2">
+                <div className="grid gap-3 lg:grid-cols-2">
                   {projectsList.map((project) => (
                     <div
                       key={project.id}
-                      className="group relative min-h-52 rounded-[1.9rem] border border-white/8 bg-white/[0.03] p-5 transition duration-300 hover:-translate-y-1 hover:border-white/15 hover:bg-white/[0.06]"
+                      className="group relative rounded-[1.9rem] border border-white/8 bg-white/[0.03] p-4 sm:p-5 transition duration-300 hover:-translate-y-1 hover:border-white/15 hover:bg-white/[0.06]"
                     >
                       {/* Delete button */}
                       <button
@@ -237,13 +237,13 @@ export function HomePageClient({
             </div>
 
             {/* Signals panel */}
-            <div className="kanclaw-panel p-5 lg:p-6">
+            <div className="kanclaw-panel p-4 lg:p-5">
               <div className="mb-4">
                 <p className="text-xs uppercase tracking-[0.3em] text-zinc-500">Signals</p>
                 <h2 className="text-2xl font-semibold">OpenClaw, paths & activity</h2>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
+              <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
                 <div className="rounded-[1.6rem] border border-white/8 bg-white/[0.03] p-4">
                   <p className={`text-sm font-medium ${health.connected ? 'text-emerald-300' : 'text-amber-300'}`}>
                     {health.connected ? 'Gateway disponible' : `Gateway desconectado (${health.status})`}
@@ -288,7 +288,7 @@ export function HomePageClient({
                   <div className="flex items-center gap-2 text-sm text-zinc-200">
                     <MemoryStick className="h-4 w-4" /> Recent runs
                   </div>
-                  <div className="mt-3 space-y-2 max-h-56 overflow-y-auto pr-1">
+                  <div className="mt-2 space-y-2 max-h-36 overflow-y-auto pr-1">
                     {recentRuns.length === 0 ? (
                       <p className="text-xs text-zinc-500">Sin runs recientes.</p>
                     ) : (
@@ -308,7 +308,7 @@ export function HomePageClient({
                   <div className="flex items-center gap-2 text-sm text-zinc-200">
                     <Workflow className="h-4 w-4" /> Recent activity
                   </div>
-                  <div className="mt-3 space-y-2 max-h-56 overflow-y-auto pr-1">
+                  <div className="mt-2 space-y-2 max-h-36 overflow-y-auto pr-1">
                     {recentLogs.length === 0 ? (
                       <p className="text-xs text-zinc-500">Sin actividad reciente.</p>
                     ) : (
