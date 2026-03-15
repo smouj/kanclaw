@@ -481,11 +481,15 @@ export function AgentChatSurface({
 
   const selectedThread = useMemo(() => threads.find((t) => t.id === selectedThreadId) || null, [threads, selectedThreadId]);
 
+  // Only auto-select last message when thread is first loaded, not on refresh
   useEffect(() => {
     if (!selectedThread) return;
-    const last = selectedThread.messages[selectedThread.messages.length - 1];
-    if (last) setSelectedMessageId(last.id);
-  }, [selectedThread]);
+    // Only set if no message is currently selected (first load)
+    if (!selectedMessageId && selectedThread.messages.length > 0) {
+      const last = selectedThread.messages[selectedThread.messages.length - 1];
+      setSelectedMessageId(last.id);
+    }
+  }, [selectedThread, selectedMessageId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
