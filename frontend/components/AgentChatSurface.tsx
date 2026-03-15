@@ -45,6 +45,22 @@ function parseMetadata(value: unknown) {
   return value as Record<string, unknown>;
 }
 
+function getKindIcon(kind: string | undefined) {
+  if (!kind) return null;
+  const icons: Record<string, string> = {
+    memory: '💾',
+    knowledge: '📖',
+    decision: '⚖️',
+    artifact: '📦',
+    task: '✅',
+    run: '⚡',
+    message: '💬',
+    import: '📥',
+    snapshot: '📸',
+  };
+  return <span title={kind}>{icons[kind.toLowerCase()] || '📄'}</span>;
+}
+
 function formatTime(date: string | Date, locale = 'es-ES') {
   return new Date(date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
 }
@@ -554,6 +570,7 @@ export function AgentChatSurface({
           {threads.map((thread) => {
             const active = selectedThreadId === thread.id;
             const lastText = thread.messages[thread.messages.length - 1]?.content || '';
+            const isTeamRoom = thread.scope === 'TEAM';
             return (
               <button
                 key={thread.id}
@@ -567,11 +584,18 @@ export function AgentChatSurface({
                   active ? 'border-border bg-surface' : 'border-transparent hover:border-border hover:bg-surface'
                 }`}
               >
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  {isTeamRoom ? (
+                    <span className="text-accent-green" title="Team Room">👥</span>
+                  ) : thread.agent?.name ? (
+                    <Bot className="h-3.5 w-3.5 text-text-muted" />
+                  ) : (
+                    <MessageSquare className="h-3.5 w-3.5 text-text-muted" />
+                  )}
                   <span className="truncate text-sm font-medium">{thread.title}</span>
-                  <span className="text-[10px] uppercase tracking-wider text-text-muted">{thread.scope}</span>
+                  {isTeamRoom && <span className="text-[9px] px-1.5 py-0.5 rounded bg-accent-green/20 text-accent-green">Team</span>}
                 </div>
-                <p className="mt-1 line-clamp-1 text-xs text-text-muted">{lastText || t('chat.noMessagesShort')}</p>
+                <p className="mt-1.5 line-clamp-1 text-xs text-text-muted">{lastText || t('chat.noMessagesShort')}</p>
               </button>
             );
           })}
@@ -582,9 +606,14 @@ export function AgentChatSurface({
       <section className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between border-b border-border bg-surface/70 px-5 py-3">
           <div className="min-w-0">
-            <h3 className="text-base font-semibold truncate">{selectedThread?.title || t('chat.selectThread')}</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-semibold truncate">{selectedThread?.title || t('chat.selectThread')}</h3>
+              {selectedThread?.scope === 'TEAM' && (
+                <span className="text-[10px] px-2 py-0.5 rounded bg-accent-green/20 text-accent-green">Team Room</span>
+              )}
+            </div>
             <p className="text-xs text-text-muted truncate">
-              {selectedThread?.messages.length || 0} {t('chat.messages')} · {selectedThread?.scope === 'TEAM' ? t('chat.teamRoom') : t('chat.agentRoom')}
+              {selectedThread?.messages.length || 0} mensajes
             </p>
             <div className="mt-2 md:hidden">
               <select
@@ -640,8 +669,11 @@ export function AgentChatSurface({
 
         {showAgentSelector && selectedThread?.scope === 'TEAM' && (
           <div className="border-b border-border bg-surface2/60 px-5 py-3">
-            <p className="mb-2 text-xs text-text-muted">{t('chat.selectAgent')}</p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs text-text-muted">Seleccionar agente activo</p>
+              <p className="text-[10px] text-text-muted">{agents.length} disponibles</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
               {agents.map((agent) => (
                 <button
                   key={agent.id}
@@ -649,15 +681,18 @@ export function AgentChatSurface({
                     setTargetAgentName(agent.name);
                     setShowAgentSelector(false);
                   }}
-                  className={`border px-3 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50 transition-colors ${
+                  className={`border p-3 text-left transition-all ${
                     targetAgentName === agent.name
-                      ? 'border-text-primary bg-text-primary text-background'
-                      : 'border-border bg-surface text-text-secondary hover:text-text-primary'
+                      ? 'border-accent-green bg-accent-green/10'
+                      : 'border-border hover:border-text-muted'
                   }`}
-                  aria-pressed={targetAgentName === agent.name}
-                  type="button"
                 >
-                  {agent.name}
+                  <div className="flex items-center gap-2">
+                    <Bot className={`h-4 w-4 ${(agent as any).isOfficial ? 'text-accent-green' : 'text-text-muted'}`} />
+                    <span className="text-sm font-medium">{agent.name}</span>
+                    {(agent as any).isOfficial && <span className="text-[9px] px-1.5 py-0.5 rounded bg-accent-green/20 text-accent-green">official</span>}
+                  </div>
+                  {agent.role && <p className="text-[10px] text-text-muted mt-1">{agent.role}</p>}
                 </button>
               ))}
             </div>
@@ -786,29 +821,66 @@ export function AgentChatSurface({
           )}
 
           {contextResults.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2">
-              <Sparkles className="h-4 w-4 text-text-muted" />
-              <span className="text-xs text-text-muted">{t('chat.context')}</span>
-              {contextResults.slice(0, 4).map((item) => {
-                const active = selectedContext.some((ctx) => ctx.id === item.id);
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => toggleContext(item)}
-                    className={`flex items-center gap-1 border px-2 py-1 text-xs ${
-                      active
-                        ? 'border-text-primary bg-text-primary text-background'
-                        : 'border-border bg-surface2 text-text-muted hover:text-text-primary'
-                    }`}
-                  >
-                    {item.title}
-                    {active && <X className="h-3 w-3" />}
-                  </button>
-                );
-              })}
-              {contextLoading ? <Loader2 className="h-3 w-3 animate-spin text-text-muted" /> : null}
+            <div className="border-b border-border px-4 py-2">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="h-4 w-4 text-text-muted" />
+                <span className="text-xs text-text-muted font-medium">Contexto detectado</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {contextResults.slice(0, 6).map((item) => {
+                  const active = selectedContext.some((ctx) => ctx.id === item.id);
+                  const kindIcon = getKindIcon(item.kind);
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => toggleContext(item)}
+                      className={`flex items-center gap-1.5 border px-2.5 py-1.5 text-xs transition-all ${
+                        active
+                          ? 'border-text-primary bg-text-primary text-background'
+                          : 'border-border bg-surface2 text-text-muted hover:text-text-primary hover:border-text-muted'
+                      }`}
+                    >
+                      {kindIcon}
+                      <span className="truncate max-w-[120px]">{item.title}</span>
+                      <span className={`text-[9px] px-1 rounded ${active ? 'bg-background/20' : 'bg-surface'}`}>{item.kind}</span>
+                      {active && <X className="h-3 w-3" />}
+                    </button>
+                  );
+                })}
+                {contextLoading && <Loader2 className="h-3 w-3 animate-spin text-text-muted" />}
+              </div>
+              {selectedContext.length > 0 && (
+                <p className="mt-2 text-[10px] text-accent-green">
+                  {selectedContext.length} item(s) seleccionado(s) como contexto
+                </p>
+              )}
             </div>
           )}
+
+          {/* Quick Intents */}
+          <div className="border-b border-border px-4 py-2 flex items-center gap-2 overflow-x-auto">
+            <span className="text-xs text-text-muted whitespace-nowrap">Intento:</span>
+            {[
+              { label: 'Plan', icon: '📋', prefix: 'Plan: ' },
+              { label: 'Build', icon: '🔨', prefix: 'Build: ' },
+              { label: 'Research', icon: '🔍', prefix: 'Research: ' },
+              { label: 'QA', icon: '✅', prefix: 'QA: ' },
+              { label: 'Repo', icon: '📚', prefix: 'Repo: ' },
+              { label: 'Memory', icon: '💾', prefix: 'Memory: ' },
+            ].map((intent) => (
+              <button
+                key={intent.label}
+                onClick={() => {
+                  setContent(prev => prev + intent.prefix);
+                  textareaRef.current?.focus();
+                }}
+                className="flex items-center gap-1 px-2 py-1 text-xs border border-border rounded hover:bg-surface2 hover:border-accent-green/50 transition-colors whitespace-nowrap"
+              >
+                <span>{intent.icon}</span>
+                <span>{intent.label}</span>
+              </button>
+            ))}
+          </div>
 
           <MarkdownToolbar onInsert={insertMarkdown} onFileUpload={handleFileUpload} />
 
@@ -861,15 +933,78 @@ export function AgentChatSurface({
           </div>
 
           {selectedMessage ? (
-            <div className="border border-border bg-surface p-3 text-xs text-text-muted">
-              <p className="text-[11px] font-semibold text-text-primary">{t('chat.selectedMessage')}</p>
-              <p className="mt-1">{selectedMessage.role === 'human' ? t('chat.you') : selectedMessage.actor}</p>
-              <p>{new Date(selectedMessage.createdAt).toLocaleString(locale)}</p>
-              {selectedMessageMetadata && 'runId' in selectedMessageMetadata ? (
-                <p className="mt-2 break-all">Run: {String((selectedMessageMetadata as any).runId)}</p>
-              ) : null}
+            <div className="border border-border bg-surface p-3 text-xs text-text-muted space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-[11px] font-semibold text-text-primary uppercase tracking-wider">Inspector</p>
+                <span className={`text-[10px] px-2 py-0.5 rounded ${selectedMessage.role === 'human' ? 'bg-blue-500/20 text-blue-400' : selectedMessage.role === 'system' ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
+                  {selectedMessage.role}
+                </span>
+              </div>
+              
+              <div className="space-y-1">
+                <p className="text-text-muted">{selectedMessage.role === 'human' ? t('chat.you') : selectedMessage.actor}</p>
+                <p className="text-[10px] text-text-muted">{new Date(selectedMessage.createdAt).toLocaleString(locale)}</p>
+              </div>
+
+              {/* Run Info */}
+              {selectedMessageMetadata && 'runId' in selectedMessageMetadata && (
+                <div className="pt-2 border-t border-border">
+                  <p className="text-[10px] font-semibold text-text-primary mb-1">Run</p>
+                  <p className="font-mono text-[9px] break-all text-accent-green">{String((selectedMessageMetadata as any).runId)}</p>
+                </div>
+              )}
+
+              {/* External Task ID */}
+              {selectedMessageMetadata && 'externalTaskId' in selectedMessageMetadata && (
+                <div className="pt-2 border-t border-border">
+                  <p className="text-[10px] font-semibold text-text-primary mb-1">Task ID</p>
+                  <p className="font-mono text-[9px] break-all">{String((selectedMessageMetadata as any).externalTaskId)}</p>
+                </div>
+              )}
+
+              {/* Executed Actions */}
+              {selectedMessageMetadata && 'executedActions' in selectedMessageMetadata && (
+                <div className="pt-2 border-t border-border">
+                  <p className="text-[10px] font-semibold text-text-primary mb-1">Acciones ejecutadas</p>
+                  <div className="space-y-1">
+                    {(() => {
+                      const actions = (selectedMessageMetadata as any).executedActions;
+                      if (!actions || !Array.isArray(actions) || actions.length === 0) {
+                        return <p className="text-[9px] text-text-muted">Sin acciones</p>;
+                      }
+                      return actions.slice(0, 5).map((action: any, idx: number) => (
+                        <div key={idx} className="text-[9px] bg-surface2 px-2 py-1 rounded truncate">
+                          {action.type || 'action'}: {action.summary || JSON.stringify(action).slice(0, 30)}
+                        </div>
+                      ));
+                    })()}
+                  </div>
+                </div>
+              )}
+
+              {/* Context Used */}
+              {selectedMessageMetadata && 'contextItems' in selectedMessageMetadata && (
+                <div className="pt-2 border-t border-border">
+                  <p className="text-[10px] font-semibold text-text-primary mb-1">Contexto usado</p>
+                  <div className="space-y-1">
+                    {(() => {
+                      const ctx = (selectedMessageMetadata as any).contextItems;
+                      if (!ctx || !Array.isArray(ctx) || ctx.length === 0) {
+                        return <p className="text-[9px] text-text-muted">Sin contexto</p>;
+                      }
+                      return ctx.slice(0, 4).map((item: any, idx: number) => (
+                        <div key={idx} className="flex items-center gap-1 text-[9px]">
+                          <span className="px-1 py-0.5 rounded bg-surface2 text-text-muted">{item.kind || 'item'}</span>
+                          <span className="truncate">{item.title || item.id}</span>
+                        </div>
+                      ));
+                    })()}
+                  </div>
+                </div>
+              )}
+
               {/* Token Usage Display */}
-              <div className="mt-3 pt-3 border-t border-border">
+              <div className="pt-2 border-t border-border">
                 <div className="flex items-center gap-1 mb-2">
                   <Gauge className="h-3 w-3" />
                   <span className="text-[10px] font-semibold text-text-primary">Usage</span>
@@ -895,7 +1030,7 @@ export function AgentChatSurface({
                 {/* Cost Estimate */}
                 <div className="mt-2 flex items-center gap-1 bg-surface2 p-2 rounded">
                   <DollarSign className="h-3 w-3 text-amber-400" />
-                  <span className="text-[10px]">Costo estimado:</span>
+                  <span className="text-[10px]">Costo:</span>
                   <span className="font-semibold text-amber-400">
                     {'$'}
                     {selectedMessageMetadata && 'usage' in selectedMessageMetadata 
@@ -907,7 +1042,24 @@ export function AgentChatSurface({
                 </div>
               </div>
             </div>
-          ) : null}
+          ) : (
+            <div className="border border-border bg-surface p-3 text-xs text-text-muted">
+              <p className="text-[11px] font-semibold text-text-primary uppercase tracking-wider mb-2">Inspector</p>
+              <p className="text-text-muted">Selecciona un mensaje para ver detalles</p>
+              <div className="mt-4 pt-3 border-t border-border">
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="border border-border bg-surface2 p-2 rounded text-center">
+                    <p className="text-lg font-semibold">{stats.total}</p>
+                    <p className="text-[9px]">total</p>
+                  </div>
+                  <div className="border border-border bg-surface2 p-2 rounded text-center">
+                    <p className="text-lg font-semibold text-accent-green">{stats.agent}</p>
+                    <p className="text-[9px]">agente</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </aside>
     </div>
