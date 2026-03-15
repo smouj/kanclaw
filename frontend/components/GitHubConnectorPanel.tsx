@@ -5,29 +5,35 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useI18n } from '@/components/LanguageProvider';
+import { GitHubRepoPicker, GitHubPreview } from '@/components/github';
 
 interface GitHubConnectorPanelProps {
   initialStatus: { connected: boolean; mode: string; username: string | null };
-  projectSlug: string;
+  projectSlug?: string;
 }
 
 interface RepositoryItem {
   id: number;
   fullName: string;
   name: string;
-  owner: string;
-  description?: string;
+  owner: { login: string };
+  description: string | null;
+  private: boolean;
   defaultBranch: string;
   url: string;
+  htmlUrl: string;
+  pushedAt: string;
+  updatedAt: string;
+  language: string | null;
+  stargazersCount: number;
+  forksCount: number;
 }
 
 export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConnectorPanelProps) {
   const { t } = useI18n();
   const [status, setStatus] = useState(initialStatus);
   const [token, setToken] = useState('');
-  const [repositories, setRepositories] = useState<RepositoryItem[]>([]);
   const [selectedRepo, setSelectedRepo] = useState<RepositoryItem | null>(null);
-  const [preview, setPreview] = useState<Record<string, unknown> | null>(null);
   const [localFolderPath, setLocalFolderPath] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -49,37 +55,6 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
     toast.success(t('connectors.connectedOk'));
   }
 
-  async function loadRepositories() {
-    setLoading(true);
-    const response = await fetch('/api/connectors/github/repositories');
-    const data = await response.json();
-    setLoading(false);
-    if (!response.ok) {
-      toast.error(data.error || t('connectors.loadError'));
-      return;
-    }
-    setRepositories(data);
-  }
-
-  async function loadPreview(repo: RepositoryItem) {
-    setSelectedRepo(repo);
-    setPreview(null);
-    setLoading(true);
-    try {
-      const response = await fetch(`/api/connectors/github?owner=${repo.owner}&repo=${repo.name}`);
-      const data = await response.json();
-      setLoading(false);
-      if (!response.ok) {
-        toast.error(data.error || t('connectors.previewError'));
-        return;
-      }
-      setPreview(data);
-    } catch (error) {
-      setLoading(false);
-      toast.error(t('connectors.previewError'));
-    }
-  }
-
   async function importRepository(mode: 'create' | 'attach') {
     if (!selectedRepo) return;
     setLoading(true);
@@ -88,7 +63,7 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         action: 'import',
-        owner: selectedRepo.owner,
+        owner: selectedRepo.owner.login,
         repo: selectedRepo.name,
         mode,
         projectSlug: mode === 'attach' ? projectSlug : undefined,
@@ -137,7 +112,6 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
         <div className="mt-5 space-y-3">
           <Input value={token} onChange={(event) => setToken(event.target.value)} placeholder={t('connectors.patPlaceholder')} data-testid="github-token-input" />
           <Button type="button" onClick={connectGitHub} disabled={!token || loading} data-testid="github-connect-button">{t('connectors.github')}</Button>
-          <Button type="button" variant="outline" onClick={loadRepositories} disabled={!status.connected || loading} data-testid="github-load-repositories-button">{t('connectors.loadRepos')}</Button>
         </div>
 
         <div className="mt-8 border-t border-border pt-6">
@@ -154,51 +128,39 @@ export function GitHubConnectorPanel({ initialStatus, projectSlug }: GitHubConne
 
       <section className="rounded-[1.8rem] border border-border bg-surface p-5">
         <p className="text-xs uppercase tracking-[0.28em] text-text-muted">{t('connectors.repoBrowser')}</p>
-        <div className="mt-4 grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
-          <div className="max-h-[520px] space-y-3 overflow-y-auto pr-1">
-            {repositories.length === 0 ? <p className="rounded-[1.4rem] border border-dashed border-border theme-surface-soft p-4 text-sm text-text-muted">{t('connectors.loadRepos')}...</p> : null}
-            {repositories.map((repo) => (
-              <button key={repo.id} type="button" onClick={() => loadPreview(repo)} className={`w-full rounded-[1.4rem] border p-4 text-left transition ${selectedRepo?.id === repo.id ? 'border-border bg-surface2' : 'border-border theme-surface-soft hover:border-border'}`} data-testid={`github-repo-item-${repo.fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
-                <p className="text-sm font-medium theme-text-strong">{repo.fullName}</p>
-                <p className="mt-2 text-xs leading-5 text-text-muted">{repo.description || t('connectors.noDescription')}</p>
-              </button>
-            ))}
-          </div>
-
-          <div className="rounded-[1.5rem] border border-border theme-surface-soft p-4">
-            {!preview ? <p className="text-sm text-text-muted">{t('connectors.selectRepo')}</p> : null}
-            {preview ? (
-              <div className="space-y-4" data-testid="github-repo-preview-panel">
-                <div>
-                  <h4 className="text-lg font-semibold theme-text-strong">{String(preview.fullName)}</h4>
-                  <p className="mt-2 text-sm text-text-secondary">{String(preview.description || '')}</p>
-                </div>
-                <div className="grid gap-3 md:grid-cols-2">
-                  <InfoCard label={t('connectors.defaultBranch')} value={String(preview.defaultBranch || '')} />
-                  <InfoCard label={t('connectors.visibility')} value={String(preview.visibility || '')} />
-                </div>
-                <div className="rounded-[1.3rem] border border-border bg-surface2 p-4">
-                  <p className="text-xs uppercase tracking-[0.24em] text-text-muted">{t('connectors.readmePreview')}</p>
-                  <pre className="mt-3 whitespace-pre-wrap text-xs leading-6 text-text-secondary">{String(preview.readme || '').slice(0, 1400) || t('connectors.readmeUnavailable')}</pre>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <Button type="button" variant="outline" onClick={() => importRepository('attach')} disabled={loading} data-testid="github-import-attach-button">{t('connectors.attachProject')}</Button>
-                  <Button type="button" onClick={() => importRepository('create')} disabled={loading} data-testid="github-import-create-button">{t('connectors.createProject')}</Button>
-                </div>
+        
+        <div className="mt-4">
+          {!status.connected ? (
+            <div className="text-center py-12 text-text-muted">
+              <p className="text-sm">Conecta tu cuenta de GitHub para ver tus repositorios</p>
+            </div>
+          ) : selectedRepo ? (
+            <div className="grid gap-4 xl:grid-cols-2">
+              {/* Selected repo details */}
+              <div>
+                <button
+                  onClick={() => setSelectedRepo(null)}
+                  className="text-sm text-text-muted hover:text-text-primary mb-3"
+                >
+                  ← Volver a la lista
+                </button>
+                <GitHubPreview
+                  repo={selectedRepo}
+                  onImport={importRepository}
+                  loading={loading}
+                  projectSlug={projectSlug}
+                />
               </div>
-            ) : null}
-          </div>
+            </div>
+          ) : (
+            <GitHubRepoPicker
+              onSelect={setSelectedRepo}
+              selectedRepo={selectedRepo}
+              projectSlug={projectSlug}
+            />
+          )}
         </div>
       </section>
-    </div>
-  );
-}
-
-function InfoCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-[1.2rem] border border-border bg-surface2 p-4">
-      <p className="text-xs uppercase tracking-[0.24em] text-text-muted">{label}</p>
-      <p className="mt-3 text-sm theme-text-strong">{value}</p>
     </div>
   );
 }

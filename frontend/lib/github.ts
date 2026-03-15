@@ -44,33 +44,96 @@ export async function clearGitHubStatus() {
   await clearGitHubConnectorConfig();
 }
 
-export async function listGitHubRepositories() {
+export interface GitHubRepository {
+  id: number;
+  name: string;
+  owner: { login: string };
+  fullName: string;
+  description: string | null;
+  private: boolean;
+  defaultBranch: string;
+  url: string;
+  pushedAt: string;
+  updatedAt: string;
+  htmlUrl: string;
+  language: string | null;
+  stargazersCount: number;
+  forksCount: number;
+}
+
+export interface GitHubReposResponse {
+  repositories: GitHubRepository[];
+  hasMore: boolean;
+  totalCount: number;
+  loadedCount: number;
+}
+
+export async function listGitHubRepositories(options?: {
+  page?: number;
+  perPage?: number;
+  sort?: 'updated' | 'pushed' | 'created' | 'full_name';
+  direction?: 'asc' | 'desc';
+  type?: 'all' | 'owner' | 'member' | 'public' | 'private';
+}): Promise<GitHubReposResponse> {
   const token = await getGitHubToken();
   if (!token) {
     throw new Error('GitHub no está configurado.');
   }
 
-  const response = await fetch(`${GITHUB_API_BASE_URL}/user/repos?sort=updated&per_page=50`, {
-    headers: withAuth(token),
-    cache: 'no-store',
-  });
+  const page = options?.page || 1;
+  const perPage = options?.perPage || 100;
+  const sort = options?.sort || 'updated';
+  const direction = options?.direction || 'desc';
+  const type = options?.type || 'all';
+
+  const response = await fetch(
+    `${GITHUB_API_BASE_URL}/user/repos?sort=${sort}&direction=${direction}&type=${type}&per_page=${perPage}&page=${page}`,
+    {
+      headers: withAuth(token),
+      cache: 'no-store',
+    }
+  );
 
   if (!response.ok) {
+    // Check for rate limiting
+    if (response.status === 403) {
+      const remaining = response.headers.get('X-RateLimit-Remaining');
+      if (remaining === '0') {
+        throw new Error('Rate limit de GitHub alcanzado. Espera un momento.');
+      }
+    }
     throw new Error(`GitHub devolvió ${response.status}.`);
   }
 
   const repositories = await response.json();
-  return repositories.map((repo: Record<string, unknown>) => ({
-    id: repo.id,
-    name: repo.name,
-    owner: { login: (repo.owner as Record<string, unknown>)?.login as string },
-    fullName: repo.full_name,
-    description: repo.description,
-    private: repo.private,
-    defaultBranch: repo.default_branch,
-    url: repo.html_url,
-    pushedAt: repo.pushed_at,
-  }));
+  
+  // Get total count from header
+  const totalCount = parseInt(response.headers.get('X-Total-Count') || '0', 10);
+  
+  // Check if there are more pages
+  const hasMore = repositories.length === perPage;
+
+  return {
+    repositories: repositories.map((repo: Record<string, unknown>) => ({
+      id: repo.id,
+      name: repo.name as string,
+      owner: { login: (repo.owner as Record<string, unknown>)?.login as string },
+      fullName: repo.full_name as string,
+      description: repo.description as string | null,
+      private: repo.private as boolean,
+      defaultBranch: repo.default_branch as string,
+      url: repo.html_url as string,
+      pushedAt: repo.pushed_at as string,
+      updatedAt: repo.updated_at as string,
+      htmlUrl: repo.html_url as string,
+      language: repo.language as string | null,
+      stargazersCount: repo.stargazers_count as number,
+      forksCount: repo.forks_count as number,
+    })),
+    hasMore,
+    totalCount,
+    loadedCount: repositories.length,
+  };
 }
 
 async function fetchRawFile(token: string, owner: string, repo: string, filePath: string, ref?: string) {
