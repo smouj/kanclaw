@@ -3,98 +3,107 @@
     <!-- Pure black background -->
     <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="640" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#000000"/>
-      <stop offset="50%" stop-color="#000000"/>
-      <stop offset="100%" stop-color="#000000"/>
+      <stop offset="100%" stop-color="#050505"/>
     </linearGradient>
     
-    <!-- Subtle silver accent -->
-    <radialGradient id="accent" cx="50%" cy="50%" r="80%" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#1a1a1f" stop-opacity="0.8"/>
+    <!-- Subtle radial glow -->
+    <radialGradient id="glow" cx="50%" cy="40%" r="60%" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1a1a20" stop-opacity="0.5"/>
       <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
     </radialGradient>
     
-    <!-- Card glow -->
-    <filter id="cardGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="8" result="blur"/>
-      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-    </filter>
+    <!-- Card fill -->
+    <linearGradient id="cardFill" x1="0" y1="0" x2="0" y2="1" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0c0c10"/>
+      <stop offset="100%" stop-color="#08080c"/>
+    </linearGradient>
     
-    <!-- Logo glow -->
-    <filter id="logoGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="4" result="blur"/>
-      <feFlood flood-color="#ffffff" flood-opacity="0.15"/>
-      <feComposite in2="blur" operator="in"/>
-      <feMerge>
-        <feMergeNode/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
+    <!-- Logo gradient -->
+    <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#e0e0e0"/>
+      <stop offset="50%" stop-color="#a0a0a0"/>
+      <stop offset="100%" stop-color="#606060"/>
+    </linearGradient>
     
-    <!-- Text gradient -->
-    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#a0a0a0"/>
+    <!-- Badge gradient -->
+    <linearGradient id="badgeGrad" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#141418"/>
+      <stop offset="100%" stop-color="#0a0a0c"/>
     </linearGradient>
   </defs>
 
-  <!-- Pure black background -->
-  <rect width="1280" height="640" fill="#000000"/>
-  <rect width="1280" height="640" fill="url(#accent)"/>
+  <!-- Background -->
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <rect width="1280" height="640" fill="url(#glow)"/>
 
-  <!-- Main card with subtle border -->
-  <g filter="url(#cardGlow)">
-    <rect x="68" y="64" width="1144" height="512" rx="24" fill="#0a0a0c" stroke="#1f1f25" stroke-width="1"/>
-  </g>
+  <!-- Main card -->
+  <rect x="68" y="64" width="1144" height="512" rx="20" fill="url(#cardFill)" stroke="#1f1f25" stroke-width="1"/>
 
-  <!-- Logo block - cleaner design -->
-  <g filter="url(#logoGlow)">
-    <rect x="112" y="110" width="72" height="72" rx="16" fill="#141418" stroke="#2a2a30" stroke-width="1"/>
-    <!-- Inline logo SVG -->
-    <g transform="translate(124, 122)">
-      <path d="M8 0C3.58 0 0 3.58 0 8C0 12.42 3.58 16 8 16C12.42 16 16 12.42 16 8C16 3.58 12.42 0 8 0Z" fill="url(#titleGrad)"/>
-      <path d="M8 20C3.58 20 0 23.58 0 28C0 32.42 3.58 36 8 36C12.42 36 16 32.42 16 28C16 23.58 12.42 20 8 20Z" fill="#404040"/>
-      <path d="M8 40C3.58 40 0 43.58 0 48C0 52.42 3.58 56 8 56C12.42 56 16 52.42 16 48C16 43.58 12.42 40 8 40Z" fill="#606060"/>
-      <circle cx="40" cy="28" r="8" fill="#808080"/>
-      <path d="M32 36H48V44H40V40H44V52H36V48H32V36Z" fill="#a0a0a0"/>
+  <!-- Logo - stylized claw mark -->
+  <g transform="translate(112, 110)">
+    <!-- Logo container -->
+    <rect width="72" height="72" rx="14" fill="#101014" stroke="#2a2a32"/>
+    
+    <!-- Claw logo - simplified geometric -->
+    <g transform="translate(16, 16)">
+      <!-- Claw base -->
+      <path d="M8 36 L8 44 L12 48 L28 48 L32 44 L32 36 L28 32 L12 32 Z" fill="url(#logoGrad)"/>
+      <!-- Claw fingers -->
+      <path d="M10 32 L10 20 L14 20 L14 28" fill="#808080"/>
+      <path d="M18 32 L18 16 L22 16 L22 28" fill="#a0a0a0"/>
+      <path d="M26 32 L26 20 L30 20 L30 28" fill="#808080"/>
+      <!-- K letter for KanClaw -->
+      <text x="34" y="42" fill="#c0c0c0" font-family="Arial, sans-serif" font-size="28" font-weight="bold">K</text>
     </g>
   </g>
 
   <!-- Brand text -->
-  <text x="204" y="135" fill="#606060" font-family="Inter, system-ui, sans-serif" font-size="14" letter-spacing="4">LIVING WORKSPACE OS</text>
-  <text x="204" y="190" fill="url(#titleGrad)" font-family="Inter, system-ui, sans-serif" font-size="64" font-weight="700">KanClaw</text>
+  <text x="204" y="135" fill="#505060" font-family="Inter, system-ui, sans-serif" font-size="14" letter-spacing="4">LIVING WORKSPACE OS</text>
+  <text x="204" y="190" fill="url(#logoGrad)" font-family="Inter, system-ui, sans-serif" font-size="64" font-weight="700">KanClaw</text>
 
-  <!-- Description -->
-  <text x="112" y="280" fill="#909090" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="500">Premium black workspace for AI agent teams</text>
-  <text x="112" y="318" fill="#505050" font-family="Inter, system-ui, sans-serif" font-size="18">Persistent memory · Real-time run tracking · GitHub + OpenClaw</text>
+  <!-- Tagline -->
+  <text x="112" y="275" fill="#707080" font-family="Inter, system-ui, sans-serif" font-size="26" font-weight="500">Premium workspace OS for AI agent teams</text>
+  <text x="112" y="310" fill="#404050" font-family="Inter, system-ui, sans-serif" font-size="16">Persistent memory · Real-time run tracking · GitHub integration</text>
 
-  <!-- Feature badges - cleaner design -->
+  <!-- Features row 1 -->
   <g>
-    <rect x="112" y="370" width="220" height="48" rx="24" fill="#141418" stroke="#2a2a30"/>
-    <text x="148" y="402" fill="#e0e0e0" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="600">AI Agents</text>
+    <rect x="112" y="350" width="200" height="44" rx="22" fill="url(#badgeGrad)" stroke="#252530"/>
+    <text x="142" y="378" fill="#b0b0b8" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">AI Agents</text>
 
-    <rect x="348" y="370" width="220" height="48" rx="24" fill="#141418" stroke="#2a2a30"/>
-    <text x="388" y="402" fill="#e0e0e0" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="600">Local-First</text>
+    <rect x="328" y="350" width="200" height="44" rx="22" fill="url(#badgeGrad)" stroke="#252530"/>
+    <text x="360" y="378" fill="#b0b0b8" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Local-First</text>
 
-    <rect x="584" y="370" width="220" height="48" rx="24" fill="#141418" stroke="#2a2a30"/>
-    <text x="624" y="402" fill="#e0e0e0" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="600">Isolated Runtime</text>
+    <rect x="544" y="350" width="200" height="44" rx="22" fill="url(#badgeGrad)" stroke="#252530"/>
+    <text x="570" y="378" fill="#b0b0b8" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Isolated Runtime</text>
   </g>
 
-  <!-- Second row badges -->
+  <!-- Features row 2 -->
   <g>
-    <rect x="112" y="434" width="220" height="48" rx="24" fill="#141418" stroke="#2a2a30"/>
-    <text x="148" y="466" fill="#c0c0c0" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="600">Project Memory</text>
+    <rect x="112" y="410" width="200" height="44" rx="22" fill="url(#badgeGrad)" stroke="#252530"/>
+    <text x="140" y="438" fill="#909098" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Project Memory</text>
 
-    <rect x="348" y="434" width="220" height="48" rx="24" fill="#141418" stroke="#2a2a30"/>
-    <text x="378" y="466" fill="#c0c0c0" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="600">Board Graph</text>
+    <rect x="328" y="410" width="200" height="44" rx="22" fill="url(#badgeGrad)" stroke="#252530"/>
+    <text x="360" y="438" fill="#909098" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Board Graph</text>
 
-    <rect x="584" y="434" width="220" height="48" rx="24" fill="#141418" stroke="#2a2a30"/>
-    <text x="608" y="466" fill="#c0c0c0" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="600">OpenClaw Native</text>
+    <rect x="544" y="410" width="200" height="44" rx="22" fill="url(#badgeGrad)" stroke="#252530"/>
+    <text x="562" y="438" fill="#909098" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">OpenClaw Native</text>
+  </g>
+
+  <!-- Tech stack -->
+  <g transform="translate(112, 480)">
+    <text x="0" y="16" fill="#303038" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="500">NEXT.JS</text>
+    <text x="90" y="16" fill="#303038" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="500">REACT</text>
+    <text x="160" y="16" fill="#303038" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="500">TYPESCRIPT</text>
+    <text x="270" y="16" fill="#303038" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="500">TAILWIND</text>
+    <text x="370" y="16" fill="#303038" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="500">PRISMA</text>
   </g>
 
   <!-- Footer -->
-  <text x="112" y="540" fill="#404040" font-family="Inter, system-ui, sans-serif" font-size="16">github.com/smouj/kanclaw</text>
+  <text x="112" y="540" fill="#303038" font-family="Inter, system-ui, sans-serif" font-size="14">github.com/smouj/kanclaw</text>
   
-  <!-- Version badge -->
-  <rect x="1000" y="100" width="80" height="28" rx="14" fill="#1a1a1f" stroke="#2a2a30"/>
-  <text x="1040" y="120" fill="#707070" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="500">v0.3.3</text>
+  <!-- GitHub stars placeholder -->
+  <g transform="translate(1050, 100)">
+    <rect width="70" height="24" rx="12" fill="#0c0c10" stroke="#1a1a20"/>
+    <text x="20" y="16" fill="#606068" font-family="Inter, system-ui, sans-serif" font-size="11">★ Star</text>
+  </g>
 </svg>
