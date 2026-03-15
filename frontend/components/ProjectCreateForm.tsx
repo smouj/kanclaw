@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { 
   Loader2, Plus, Github, FolderOpen, FileCode, 
   ChevronRight, ChevronDown, File, Folder,
-  GitBranch, Box, Terminal
+  GitBranch, Box, Terminal, Sparkles
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -39,8 +39,6 @@ export function ProjectCreateForm() {
   // Basic info
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [agents, setAgents] = useState('');
-  const [withOfficialTeam, setWithOfficialTeam] = useState(true); // Default to official team
   
   // GitHub
   const [githubToken, setGithubToken] = useState('');
@@ -213,19 +211,11 @@ export function ProjectCreateForm() {
   async function handleSubmit() {
     setLoading(true);
     
-    // Only parse custom agents if NOT using official team
-    const agentsList = withOfficialTeam ? [] : agents
-      .split(',')
-      .map((v) => v.trim())
-      .filter(Boolean)
-      .map((agentName) => ({ name: agentName, role: '' }));
-
-    // If GitHub repo selected, use that as base
+    // Always use official team (6 pre-configured agents)
     let projectData: any = {
       name,
       description,
-      agents: agentsList,
-      withOfficialTeam,
+      withOfficialTeam: true,
     };
 
     if (selectedRepo) {
@@ -307,37 +297,19 @@ export function ProjectCreateForm() {
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm text-text-secondary">Agentes (separados por coma)</label>
-            <Input 
-              id="project-agents" 
-              value={agents}
-              onChange={(e) => setAgents(e.target.value)}
-              placeholder="PlannerAgent, BuilderAgent, QAAgent" 
-              className="bg-surface border-border"
-              disabled={withOfficialTeam}
-            />
-            {withOfficialTeam && (
-              <p className="text-xs text-zinc-500">Los agentes personalizados se deshabilitan cuando usas el equipo oficial.</p>
-            )}
-          </div>
-
-          {/* Official Team Option */}
+          {/* Official Team - Always enabled */}
           <div className="rounded-xl border border-accent-green/30 bg-accent-green/5 p-4">
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={withOfficialTeam}
-                onChange={(e) => setWithOfficialTeam(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-border bg-surface accent-green"
-              />
+            <div className="flex items-center gap-3">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-accent-green/20">
+                <Sparkles className="h-4 w-4 text-accent-green" />
+              </div>
               <div>
-                <p className="text-sm font-medium text-accent-green">🎯 Crear con equipo oficial de KanClaw</p>
-                <p className="text-xs text-zinc-400 mt-1">
-                  Incluir 6 agentes preconfigurados: Strategist, Builder, Researcher, QA, RepoOps, Memory Keeper
+                <p className="text-sm font-medium text-accent-green">Equipo oficial de KanClaw</p>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  6 agentes preconfigurados: Strategist, Builder, Researcher, QA, RepoOps, Memory Keeper
                 </p>
               </div>
-            </label>
+            </div>
           </div>
 
           <Button 

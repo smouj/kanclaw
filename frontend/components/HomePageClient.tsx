@@ -133,8 +133,8 @@ export function HomePageClient({
           )}
 
           {/* Hero + Create */}
-          <section className="kanclaw-panel grid gap-6 p-5 lg:grid-cols-[1.08fr_0.92fr] lg:p-6">
-            <div className="relative rounded-[2.4rem] border theme-surface-soft p-6">
+          <section className="kanclaw-panel grid gap-6 p-5 lg:grid-cols-[1.08fr_0.92fr] lg:p-6 items-start">
+            <div className="relative rounded-[2.4rem] border theme-surface-soft p-6 min-h-[400px]">
               <div className="mb-8 flex items-center gap-4">
                 <div className="relative h-20 w-20 flex items-center justify-center">
                   <Image
