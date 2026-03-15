@@ -61,6 +61,32 @@ function getKindIcon(kind: string | undefined) {
   return <span title={kind}>{icons[kind.toLowerCase()] || '📄'}</span>;
 }
 
+function mapEventToMessage(event: any): string {
+  const eventType = event?.type || '';
+  const agentName = event?.agentName || '';
+  const taskId = event?.taskId || '';
+  const message = event?.message || event?.content || '';
+  
+  const messages: Record<string, string> = {
+    'agent_started': `🤖 ${agentName} iniciado`,
+    'agent_thinking': `🧠 ${agentName} analizando...`,
+    'task_started': `✅ Tarea iniciada`,
+    'task_progress': `⚙️ ${message || 'Ejecutando...'}`,
+    'task_progress_detailed': `📝 ${message}`,
+    'task_finished': `✨ Tarea completada`,
+    'task_failed': `❌ Error en tarea`,
+    'log': `📋 ${message}`,
+    'error': `🚨 Error: ${message}`,
+    'delegation': `📤 Delegando tarea...`,
+    'subtask_created': `➕ Subtarea creada`,
+    'knowledge_updated': `💾 Conocimiento actualizado`,
+    'decision_logged': `⚖️ Decisión registrada`,
+    'artifact_created': `📦 Artifact creado`,
+  };
+  
+  return messages[eventType] || (message ? `💬 ${message.slice(0, 50)}` : `🔄 ${eventType}`);
+}
+
 function formatTime(date: string | Date, locale = 'es-ES') {
   return new Date(date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
 }
@@ -364,6 +390,18 @@ export function AgentChatSurface({
   );
   const [loading, setLoading] = useState(false);
   const [thinking, setThinking] = useState(false);
+  const [showDetailedMode, setShowDetailedMode] = useState(false);
+  const [liveExecution, setLiveExecution] = useState<{
+    active: boolean;
+    agentName: string;
+    status: string;
+    message: string;
+    startedAt: number;
+    events: { type: string; message: string; timestamp: string }[];
+    runId?: string;
+    taskId?: string;
+    error?: string;
+  } | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState('');
   const [showSearch, setShowSearch] = useState(false);
@@ -378,6 +416,51 @@ export function AgentChatSurface({
 
   useEffect(() => setThreads(initialThreads), [initialThreads]);
   useEffect(() => { if (selectedThreadIdExternal) setSelectedThreadId(selectedThreadIdExternal); }, [selectedThreadIdExternal]);
+
+  // SSE connection for live execution updates
+  useEffect(() => {
+    if (!liveExecution?.active) return;
+
+    const eventSource = new EventSource(`/api/events?projectSlug=${projectSlug}`);
+    
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        
+        // Only process events for the current agent or task
+        if (data.agentName && data.agentName !== liveExecution.agentName) return;
+        
+        const eventMessage = mapEventToMessage(data);
+        if (!eventMessage) return;
+
+        setLiveExecution(prev => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            status: data.type || prev.status,
+            message: eventMessage,
+            events: [...prev.events, { type: data.type, message: eventMessage, timestamp: data.timestamp || new Date().toISOString() }],
+            runId: data.runId || prev.runId,
+            taskId: data.taskId || prev.taskId,
+            error: data.type === 'error' || data.type === 'task_failed' ? data.message : undefined,
+          };
+        });
+
+        // If task finished or error, stop execution after a delay
+        if (data.type === 'task_finished' || data.type === 'error' || data.type === 'task_failed') {
+          setTimeout(() => {
+            setLiveExecution(prev => prev ? { ...prev, active: false } : null);
+          }, 2000);
+        }
+      } catch {}
+    };
+
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
+
+    return () => eventSource.close();
+  }, [liveExecution?.active, projectSlug, liveExecution?.agentName]);
   useEffect(() => { if (preferredTargetAgentExternal) setTargetAgentName(preferredTargetAgentExternal); }, [preferredTargetAgentExternal]);
 
   const selectedThread = useMemo(() => threads.find((t) => t.id === selectedThreadId) || null, [threads, selectedThreadId]);
@@ -527,6 +610,16 @@ export function AgentChatSurface({
   const handleSend = async () => {
     if (!selectedThread || !content.trim()) return;
     setLoading(true);
+    
+    // Start live execution tracking
+    setLiveExecution({
+      active: true,
+      agentName: targetAgentName,
+      status: 'starting',
+      message: `🚀 Enviando a ${targetAgentName}...`,
+      startedAt: Date.now(),
+      events: [],
+    });
     setThinking(true);
 
     const response = await fetch('/api/chat', {
@@ -546,13 +639,25 @@ export function AgentChatSurface({
     setThinking(false);
 
     if (!response.ok) {
+      setLiveExecution(prev => prev ? { ...prev, active: false, error: (data as any).error || 'Error en la ejecución' } : null);
       toast.error((data as any).error || t('chat.sendError'));
       return;
     }
 
+    // Update execution with result
+    setLiveExecution(prev => prev ? { 
+      ...prev, 
+      active: false, 
+      status: 'completed',
+      message: '✨ Ejecución completada'
+    } : null);
+    
     setThreads((prev) => prev.map((t) => (t.id === (data as any).thread.id ? (data as any).thread : t)));
     setContent('');
     setSelectedContext([]);
+    
+    // Clear live execution after delay
+    setTimeout(() => setLiveExecution(null), 3000);
   };
 
   return (
@@ -787,13 +892,68 @@ export function AgentChatSurface({
               ))}
 
               {thinking && (
-                <div className="flex items-center gap-3 border border-border bg-surface2 px-4 py-3 text-text-muted">
-                  <div className="flex gap-1">
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-emerald-400" style={{ animationDelay: '0ms' }} />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-emerald-400" style={{ animationDelay: '150ms' }} />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-emerald-400" style={{ animationDelay: '300ms' }} />
+                <div className="border border-border bg-surface2 rounded-lg overflow-hidden">
+                  {/* Live Execution Header */}
+                  <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-accent-green/10">
+                    <div className="flex items-center gap-2">
+                      <Bot className="h-4 w-4 text-accent-green" />
+                      <span className="text-xs font-medium text-accent-green">{liveExecution?.agentName || targetAgentName}</span>
+                      <span className={`h-2 w-2 rounded-full ${liveExecution?.error ? 'bg-red-500' : 'bg-emerald-400 animate-pulse'}`} />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-text-muted">
+                        {liveExecution ? Math.round((Date.now() - liveExecution.startedAt) / 1000) + 's' : ''}
+                      </span>
+                      <button
+                        onClick={() => setShowDetailedMode(!showDetailedMode)}
+                        className="text-[10px] text-text-muted hover:text-text-primary"
+                      >
+                        {showDetailedMode ? '◀ Simple' : '▶ Detallado'}
+                      </button>
+                    </div>
                   </div>
-                  <span className="text-xs">{t('chat.thinking')}</span>
+                  
+                  {/* Clean Mode - Main Status */}
+                  <div className="px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-1">
+                        <span className="h-2 w-2 animate-bounce rounded-full bg-emerald-400" style={{ animationDelay: '0ms' }} />
+                        <span className="h-2 w-2 animate-bounce rounded-full bg-emerald-400" style={{ animationDelay: '150ms' }} />
+                        <span className="h-2 w-2 animate-bounce rounded-full bg-emerald-400" style={{ animationDelay: '300ms' }} />
+                      </div>
+                      <span className="text-sm text-text-primary">
+                        {liveExecution?.message || t('chat.thinking')}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Detailed Mode - Event Log */}
+                  {showDetailedMode && liveExecution && (
+                    <div className="border-t border-border bg-background px-4 py-2 max-h-40 overflow-auto">
+                      <div className="space-y-1">
+                        {liveExecution.events.slice(-10).map((event, idx) => (
+                          <div key={idx} className="text-[10px] text-text-muted flex items-center gap-2">
+                            <span className="text-[9px] opacity-50">
+                              {new Date(event.timestamp).toLocaleTimeString()}
+                            </span>
+                            <span>{event.message}</span>
+                          </div>
+                        ))}
+                        {liveExecution.events.length === 0 && (
+                          <div className="text-[10px] text-text-muted italic">
+                            Esperando eventos...
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Error State */}
+                  {liveExecution?.error && (
+                    <div className="border-t border-red-500/30 bg-red-500/10 px-4 py-2">
+                      <span className="text-xs text-red-400">❌ {liveExecution.error}</span>
+                    </div>
+                  )}
                 </div>
               )}
 
