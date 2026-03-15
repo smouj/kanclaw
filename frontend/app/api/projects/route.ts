@@ -6,6 +6,7 @@ import { generateUniqueProjectSlug } from '@/lib/slug';
 import { ensureProjectThreads } from '@/lib/project-os';
 import { OFFICIAL_AGENTS, generateAgentFiles, getOfficialAgentIds } from '@/lib/official-agents';
 import { writeProjectFile } from '@/utils/fs';
+import { configureKanClawProject } from '@/lib/openclaw';
 
 const projectSchema = z.object({
   name: z.string().min(2),
@@ -140,6 +141,9 @@ export async function POST(request: Request) {
         }
       }
     }
+
+    // Auto-configure project for OpenClaw (ensure workspaces are ready)
+    await configureKanClawProject(slug, agentNames);
 
     await ensureProjectThreads(project.id);
     await prisma.activityLog.create({

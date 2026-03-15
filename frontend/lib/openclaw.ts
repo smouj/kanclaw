@@ -489,3 +489,64 @@ export async function sendOpenClawTask(payload: { projectSlug: string; agentName
     }
   }
 }
+
+/**
+ * Auto-configure KanClaw project for OpenClaw.
+ * This ensures the workspace is properly set up so OpenClaw can access agent files.
+ * Should be called when a project is created.
+ */
+export async function configureKanClawProject(projectSlug: string, agentNames: string[]) {
+  try {
+    // Resolve the project workspace directory
+    const workspaceDir = await resolveProjectWorkspaceDir(projectSlug);
+    
+    // Verify workspace exists
+    const fs = await import('node:fs/promises');
+    await fs.access(workspaceDir);
+    
+    // Ensure agent directories exist
+    for (const agentName of agentNames) {
+      const agentDir = path.join(workspaceDir, 'agents', agentName);
+      try {
+        await fs.mkdir(agentDir, { recursive: true });
+        
+        // Ensure basic files exist for the agent
+        const soulPath = path.join(agentDir, 'SOUL.md');
+        const toolsPath = path.join(agentDir, 'TOOLS.md');
+        const memoryPath = path.join(agentDir, 'memory.md');
+        
+        // Create placeholder files if they don't exist
+        for (const [filePath, content] of [
+          [soulPath, `# ${agentName}\n\nAgente de KanClaw.`],
+          [toolsPath, '# Tools\n\nAvailable tools for this agent.'],
+          [memoryPath, '# Memory\n\nAgent memory and context.\n']
+        ]) {
+          try {
+            await fs.writeFile(filePath, content, { flag: 'ax' });
+          } catch (e) {
+            // File already exists, that's fine
+          }
+        }
+      } catch (e) {
+        console.error(`Failed to setup agent directory for ${agentName}:`, e);
+      }
+    }
+    
+    return { ok: true, workspaceDir };
+  } catch (error) {
+    console.error('Failed to configure KanClaw project:', error);
+    return { ok: false, error: String(error) };
+  }
+}
+
+/**
+ * Check if OpenClaw is available and healthy
+ */
+export async function checkOpenClawHealth() {
+  try {
+    const result = await callGatewayRpc('health', {}, 10000);
+    return { ok: true, data: result };
+  } catch (error) {
+    return { ok: false, error: String(error) };
+  }
+}
