@@ -12,6 +12,7 @@ import { ExportProject } from '@/components/ExportProject';
 import { FileExplorer } from '@/components/FileExplorer';
 import { GitHubConnectorPanel } from '@/components/GitHubConnectorPanel';
 import { KanbanBoard } from '@/components/KanbanBoard';
+import { ProjectBoard } from '@/components/ProjectBoard';
 import { ProjectMemoryHub } from '@/components/ProjectMemoryHub';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -620,7 +621,20 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
               )}
 
               {activeView === 'board' && (
-                <KanbanBoard projectSlug={project.slug} initialTasks={model.project.tasks} agents={project.agents} />
+                <ProjectBoard
+                  projectSlug={project.slug}
+                  tasks={model.project.tasks}
+                  runs={model.runs}
+                  threads={model.threads}
+                  snapshots={model.snapshots}
+                  imports={model.imports}
+                  agents={project.agents}
+                  delegations={model.delegations}
+                  decisions={model.decisions}
+                  artifacts={model.artifacts}
+                  projectMemory={model.projectMemory}
+                  knowledge={model.knowledge}
+                />
               )}
 
               {activeView === 'memory' && (
