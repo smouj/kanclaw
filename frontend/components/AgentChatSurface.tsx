@@ -643,6 +643,11 @@ export function AgentChatSurface({
       events: [],
     });
     setThinking(true);
+    
+    // Clear input immediately for better UX
+    const messageToSend = content;
+    setContent('');
+    setSelectedContext([]);
 
     const response = await fetch('/api/chat', {
       method: 'POST',
@@ -651,7 +656,7 @@ export function AgentChatSurface({
         projectSlug,
         threadId: selectedThread.id,
         targetAgentName,
-        content,
+        content: messageToSend,
         contextItems: selectedContext,
         model: selectedModel,
       }),
@@ -676,8 +681,6 @@ export function AgentChatSurface({
     } : null);
     
     setThreads((prev) => prev.map((t) => (t.id === (data as any).thread.id ? (data as any).thread : t)));
-    setContent('');
-    setSelectedContext([]);
     
     // Clear live execution after delay
     setTimeout(() => setLiveExecution(null), 3000);
