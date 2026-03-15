@@ -216,22 +216,14 @@ async function getAgentIndex(): Promise<AgentIndex> {
 }
 
 async function resolveGatewayAgentId(agentName: string) {
-  // KanClaw agents are project-specific, use agentName directly
+  // KanClaw agents are project-specific, use 'main' as fallback
+  // The main agent has access to all project workspaces via sessionKey
   // This ensures the agent in OpenClaw uses the project's workspace context
   const normalized = normalizeKeySegment(agentName);
   
-  if (normalized) {
-    return normalized;
-  }
-
-  const index = await getAgentIndex();
-  const byName = normalized ? index.namesToId.get(normalized) : undefined;
-  if (byName) {
-    return byName;
-  }
-
-  // Fallback to main only if no agent specified
-  return index.defaultId || 'main';
+  // Use main agent - it will route to the correct workspace based on sessionKey
+  // This is simpler than creating dynamic agents per project
+  return 'main';
 }
 
 function buildSessionKey(projectSlug: string, agentName: string, gatewayAgentId: string) {
