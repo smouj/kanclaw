@@ -10,6 +10,7 @@ import { AmbientCanvas } from '@/components/AmbientCanvas';
 import { CommandPalette, type CommandItem } from '@/components/CommandPalette';
 import { ExportProject } from '@/components/ExportProject';
 import { FileExplorer } from '@/components/FileExplorer';
+import { ProjectFiles } from '@/components/ProjectFiles';
 import { GitHubConnectorPanel } from '@/components/GitHubConnectorPanel';
 import { KanbanBoard } from '@/components/KanbanBoard';
 import { ProjectBoard } from '@/components/ProjectBoard';
@@ -687,7 +688,17 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
               )}
 
               {activeView === 'files' && (
-                <FileExplorer projectSlug={project.slug} initialTree={files} />
+                <ProjectFiles
+                  projectSlug={project.slug}
+                  initialWorkspaceTree={(files as any).map((f: any) => ({ ...f, source: 'workspace' as const }))}
+                  githubTree={[]}
+                  memoryFiles={model.knowledge}
+                  knowledgeFiles={model.knowledge}
+                  decisionsFiles={model.decisions}
+                  artifactsFiles={model.artifacts}
+                  githubConnected={githubStatus?.connected}
+                  githubRepo={githubStatus?.connected ? { owner: 'user', name: 'repo', branch: 'main' } : undefined}
+                />
               )}
 
               {activeView === 'connectors' && (
