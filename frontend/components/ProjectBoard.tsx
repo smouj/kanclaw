@@ -52,12 +52,14 @@ function GraphNode3D({
   node, 
   selected, 
   onSelect,
-  onHover 
+  onHover,
+  isLive
 }: { 
   node: GraphNode; 
   selected: boolean;
   onSelect: (id: string) => void;
   onHover: (id: string | null) => void;
+  isLive?: boolean;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
@@ -75,20 +77,30 @@ function GraphNode3D({
   
   const color = colors[node.type] || '#6b7280';
   const isSelected = selected || hovered;
+  const isActive = isSelected || isLive;
   
+  // Enhanced pulse for live nodes
   useFrame((state) => {
     if (meshRef.current) {
       meshRef.current.rotation.y += 0.005;
-      const scale = isSelected ? 1.2 + Math.sin(state.clock.elapsedTime * 2) * 0.1 : 1;
-      meshRef.current.scale.setScalar(scale);
+      let targetScale = 1;
+      if (isActive) targetScale = 1.2;
+      if (isLive) targetScale += Math.sin(state.clock.elapsedTime * 3) * 0.1;
+      meshRef.current.scale.setScalar(targetScale);
     }
   });
   
   return (
     <group position={node.position}>
+      {/* Live indicator ring */}
+      {isLive && (
+        <Sphere args={[0.45, 16, 16]}>
+          <meshBasicMaterial color="#22c55e" transparent opacity={0.2} />
+        </Sphere>
+      )}
       <Sphere
         ref={meshRef}
-        args={[isSelected ? 0.35 : 0.25, 16, 16]}
+        args={[isActive ? 0.35 : 0.25, 16, 16]}
         onClick={() => onSelect(node.id)}
         onPointerOver={() => { setHovered(true); onHover(node.id); }}
         onPointerOut={() => { setHovered(false); onHover(null); }}
@@ -96,7 +108,7 @@ function GraphNode3D({
         <meshStandardMaterial 
           color={color} 
           emissive={color}
-          emissiveIntensity={isSelected ? 0.5 : 0.2}
+          emissiveIntensity={isActive ? (isLive ? 0.8 : 0.5) : 0.2}
           roughness={0.3}
           metalness={0.8}
         />
@@ -146,13 +158,15 @@ function Scene({
   edges, 
   selectedNodeId, 
   onSelectNode,
-  onHoverNode 
+  onHoverNode,
+  liveNodes
 }: { 
   nodes: GraphNode[]; 
   edges: GraphEdge[];
   selectedNodeId: string | null;
   onSelectNode: (id: string) => void;
   onHoverNode: (id: string | null) => void;
+  liveNodes: Set<string>;
 }) {
   return (
     <>
@@ -169,6 +183,7 @@ function Scene({
           selected={selectedNodeId === node.id}
           onSelect={onSelectNode}
           onHover={onHoverNode}
+          isLive={liveNodes.has(node.id)}
         />
       ))}
       
@@ -207,61 +222,139 @@ function NodeInspector({
     artifact: 'Artifact',
   };
   
+  const typeColors: Record<EntityType, string> = {
+    task: 'bg-emerald-500/20 text-emerald-400',
+    run: 'bg-amber-500/20 text-amber-400', 
+    thread: 'bg-blue-500/20 text-blue-400',
+    agent: 'bg-purple-500/20 text-purple-400',
+    snapshot: 'bg-pink-500/20 text-pink-400',
+    import: 'bg-teal-500/20 text-teal-400',
+    decision: 'bg-violet-500/20 text-violet-400',
+    artifact: 'bg-orange-500/20 text-orange-400',
+  };
+  
+  // Extract more metadata
+  const nodeId = node.id.replace(/^(task|run|thread|agent|snapshot|import|decision|artifact)-/, '');
+  const metadata = node.data || {};
+  const createdAt = metadata.createdAt || metadata.created_at || metadata.updatedAt || metadata.updated_at;
+  const duration = metadata.durationMs || metadata.duration || metadata.duration_seconds;
+  const model = metadata.model || metadata.modelUsed;
+  const inputTokens = metadata.inputTokens || metadata.input_tokens;
+  const outputTokens = metadata.outputTokens || metadata.output_tokens;
+  
   return (
-    <div className="absolute right-4 top-4 w-72 bg-surface/95 backdrop-blur border border-border rounded-xl p-4 shadow-2xl">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-medium text-text-muted uppercase tracking-wider">{typeLabels[node.type]}</span>
+    <div className="absolute right-4 top-4 w-80 bg-surface/95 backdrop-blur border border-border rounded-xl shadow-2xl overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-surface2/50">
+        <div className="flex items-center gap-2">
+          <span className={`text-[10px] px-2 py-0.5 rounded ${typeColors[node.type]}`}>
+            {typeLabels[node.type]}
+          </span>
+          <span className="text-[10px] font-mono text-text-muted">
+            {nodeId.slice(0, 8)}...
+          </span>
+        </div>
         <button onClick={onClose} className="text-text-muted hover:text-text-primary">
           <X className="h-4 w-4" />
         </button>
       </div>
       
-      <h3 className="text-sm font-semibold mb-2">{node.label}</h3>
-      
-      {node.status && (
-        <div className="flex items-center gap-2 mb-3">
-          <span className={`text-[10px] px-2 py-0.5 rounded ${
-            node.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' :
-            node.status === 'running' ? 'bg-amber-500/20 text-amber-400' :
-            'bg-surface2 text-text-muted'
-          }`}>
-            {node.status}
-          </span>
-        </div>
-      )}
-      
-      <div className="space-y-2 text-xs text-text-muted">
-        {node.data?.agentName && (
+      {/* Content */}
+      <div className="p-4 space-y-3">
+        <h3 className="text-sm font-semibold line-clamp-2">{node.label}</h3>
+        
+        {/* Status Badge */}
+        {node.status && (
           <div className="flex items-center gap-2">
-            <Bot className="h-3 w-3" />
-            <span>{node.data.agentName}</span>
+            <span className={`text-[10px] px-2 py-1 rounded font-medium ${
+              node.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' :
+              node.status === 'running' || node.status === 'active' ? 'bg-amber-500/20 text-amber-400' :
+              node.status === 'failed' || node.status === 'error' ? 'bg-red-500/20 text-red-400' :
+              'bg-surface2 text-text-muted'
+            }`}>
+              {node.status}
+            </span>
           </div>
         )}
         
-        {node.data?.createdAt && (
-          <div className="flex items-center gap-2">
-            <Clock className="h-3 w-3" />
-            <span>{new Date(node.data.createdAt).toLocaleString()}</span>
-          </div>
-        )}
-      </div>
-      
-      <div className="mt-4 pt-3 border-t border-border space-y-2">
-        {node.type === 'task' && (
-          <Button size="sm" variant="outline" className="w-full text-xs" onClick={() => onNavigate('task', node.id)}>
-            Ver tarea
-          </Button>
-        )}
-        {node.type === 'run' && (
-          <Button size="sm" variant="outline" className="w-full text-xs" onClick={() => onNavigate('run', node.id)}>
-            Ver ejecución
-          </Button>
-        )}
-        {node.type === 'thread' && (
-          <Button size="sm" variant="outline" className="w-full text-xs" onClick={() => onNavigate('thread', node.id)}>
-            Abrir chat
-          </Button>
-        )}
+        {/* Metadata Grid */}
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          {metadata.agentName && (
+            <div className="bg-surface2 p-2 rounded">
+              <p className="text-text-muted text-[9px]">AGENTE</p>
+              <p className="font-medium truncate">{metadata.agentName}</p>
+            </div>
+          )}
+          
+          {createdAt && (
+            <div className="bg-surface2 p-2 rounded">
+              <p className="text-text-muted text-[9px]">CREADO</p>
+              <p className="font-medium">{new Date(createdAt).toLocaleDateString()}</p>
+            </div>
+          )}
+          
+          {duration && (
+            <div className="bg-surface2 p-2 rounded">
+              <p className="text-text-muted text-[9px]">DURACIÓN</p>
+              <p className="font-medium">
+                {duration < 1000 ? `${Math.round(duration)}ms` : `${(duration / 1000).toFixed(1)}s`}
+              </p>
+            </div>
+          )}
+          
+          {model && (
+            <div className="bg-surface2 p-2 rounded">
+              <p className="text-text-muted text-[9px]">MODELO</p>
+              <p className="font-medium text-[10px] truncate">{String(model).split('/').pop()}</p>
+            </div>
+          )}
+          
+          {inputTokens && outputTokens && (
+            <div className="bg-surface2 p-2 rounded col-span-2">
+              <p className="text-text-muted text-[9px]">TOKENS</p>
+              <p className="font-medium">
+                ← {Number(inputTokens).toLocaleString()} / → {Number(outputTokens).toLocaleString()} 
+                <span className="text-text-muted ml-1">
+                  ({Number(inputTokens) + Number(outputTokens)} total)
+                </span>
+              </p>
+            </div>
+          )}
+        </div>
+        
+        {/* Quick Actions */}
+        <div className="pt-3 border-t border-border space-y-2">
+          {node.type === 'task' && (
+            <Button size="sm" variant="outline" className="w-full text-xs" onClick={() => onNavigate('task', node.id)}>
+              📋 Ver en Board
+            </Button>
+          )}
+          {node.type === 'run' && (
+            <Button size="sm" variant="outline" className="w-full text-xs" onClick={() => onNavigate('run', node.id)}>
+              ⚡ Ver ejecución
+            </Button>
+          )}
+          {node.type === 'thread' && (
+            <Button size="sm" variant="outline" className="w-full text-xs" onClick={() => onNavigate('thread', node.id)}>
+              💬 Abrir chat
+            </Button>
+          )}
+          {node.type === 'agent' && (
+            <Button size="sm" variant="outline" className="w-full text-xs" onClick={() => onNavigate('agent', node.id)}>
+              🤖 Perfil del agente
+            </Button>
+          )}
+          {node.type === 'decision' && (
+            <Button size="sm" variant="outline" className="w-full text-xs" onClick={() => onNavigate('decision', node.id)}>
+              ⚖️ Ver decisión
+            </Button>
+          )}
+          {node.type === 'snapshot' && (
+            <Button size="sm" variant="outline" className="w-full text-xs" onClick={() => onNavigate('snapshot', node.id)}>
+              📸 Ver snapshot
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -288,6 +381,52 @@ export function ProjectBoard({
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('all');
   const [webglSupported, setWebglSupported] = useState(true);
+  const [realtimeStatus, setRealtimeStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
+  const [liveNodes, setLiveNodes] = useState<Set<string>>(new Set());
+  
+  // Real-time updates from SSE
+  useEffect(() => {
+    if (!projectSlug) return;
+    
+    setRealtimeStatus('connecting');
+    const source = new EventSource(`/api/events?projectSlug=${projectSlug}`);
+    
+    source.onopen = () => setRealtimeStatus('connected');
+    source.onerror = () => setRealtimeStatus('disconnected');
+    
+    source.addEventListener('task_started', (e) => {
+      const data = JSON.parse(e.data);
+      setLiveNodes(prev => new Set([...prev, `task-${data.taskId || data.id}`]));
+    });
+    
+    source.addEventListener('task_finished', (e) => {
+      const data = JSON.parse(e.data);
+      setLiveNodes(prev => {
+        const next = new Set(prev);
+        next.delete(`task-${data.taskId || data.id}`);
+        return next;
+      });
+    });
+    
+    source.addEventListener('run_started', (e) => {
+      const data = JSON.parse(e.data);
+      setLiveNodes(prev => new Set([...prev, `run-${data.runId || data.id}`]));
+    });
+    
+    source.addEventListener('run_finished', (e) => {
+      const data = JSON.parse(e.data);
+      setLiveNodes(prev => {
+        const next = new Set(prev);
+        next.delete(`run-${data.runId || data.id}`);
+        return next;
+      });
+    });
+    
+    return () => {
+      source.close();
+      setRealtimeStatus('disconnected');
+    };
+  }, [projectSlug]);
   
   // Layout constants - premium deterministic positioning
   const LAYOUT = {
@@ -576,6 +715,25 @@ export function ProjectBoard({
             </button>
           </div>
           
+          {/* Real-time Status Indicator */}
+          <div className="flex items-center gap-2 text-xs">
+            <span className={`h-2 w-2 rounded-full ${
+              realtimeStatus === 'connected' ? 'bg-emerald-400 animate-pulse' :
+              realtimeStatus === 'connecting' ? 'bg-amber-400 animate-pulse' :
+              'bg-surface2'
+            }`} />
+            <span className="text-text-muted">
+              {realtimeStatus === 'connected' ? 'En vivo' :
+               realtimeStatus === 'connecting' ? 'Conectando...' :
+               'Offline'}
+            </span>
+            {liveNodes.size > 0 && (
+              <span className="text-emerald-400">
+                {liveNodes.size} activo{liveNodes.size > 1 ? 's' : ''}
+              </span>
+            )}
+          </div>
+          
           {/* Filter */}
           {viewMode === 'graph' && (
             <div className="flex items-center gap-2">
@@ -622,6 +780,7 @@ export function ProjectBoard({
                   selectedNodeId={selectedNodeId}
                   onSelectNode={setSelectedNodeId}
                   onHoverNode={setHoveredNodeId}
+                  liveNodes={liveNodes}
                 />
               </Canvas>
             ) : (
