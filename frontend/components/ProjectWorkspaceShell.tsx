@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, Bot, BrainCircuit, Cable, Camera, CheckCircle2, ChevronDown, ChevronRight, Command as CommandIcon, FolderTree, Gauge, LayoutGrid, Loader2, MessageSquare, MessageSquareText, Play, RefreshCcw, Sparkles, Trash2, XCircle, Zap } from 'lucide-react';
+import { ArrowLeft, Bot, BrainCircuit, Cable, Camera, CheckCircle2, ChevronDown, ChevronRight, Command as CommandIcon, Eye, FolderTree, Gauge, LayoutGrid, Loader2, MessageSquare, MessageSquareText, Play, RefreshCcw, Sparkles, Trash2, XCircle, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import type { Agent, Project, Task } from '@prisma/client';
@@ -22,8 +22,9 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { useI18n } from '@/components/LanguageProvider';
 import { AgentsPanel } from '@/components/agents/AgentsPanel';
+import { ProjectPreview } from '@/components/preview/ProjectPreview';
 
-type ViewKey = 'overview' | 'chat' | 'board' | 'memory' | 'files' | 'agents' | 'connectors';
+type ViewKey = 'overview' | 'chat' | 'board' | 'memory' | 'files' | 'preview' | 'agents' | 'connectors';
 
 interface ProjectWorkspaceShellProps {
   project: Project & { agents: Agent[]; tasks: Task[] };
@@ -62,6 +63,7 @@ const viewMeta: Array<{ key: ViewKey; labelKey: string; icon: typeof LayoutGrid 
   { key: 'board', labelKey: 'nav.board', icon: FolderTree },
   { key: 'memory', labelKey: 'nav.memory', icon: BrainCircuit },
   { key: 'files', labelKey: 'nav.files', icon: FolderTree },
+  { key: 'preview', labelKey: 'nav.preview', icon: Eye },
   { key: 'agents', labelKey: 'nav.agents', icon: Bot },
   { key: 'connectors', labelKey: 'nav.connectors', icon: Cable },
 ];
@@ -732,6 +734,10 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                   }))}
                   projectSlug={project.slug}
                 />
+              )}
+
+              {activeView === 'preview' && (
+                <ProjectPreview projectSlug={project.slug} />
               )}
 
               {activeView === 'connectors' && (

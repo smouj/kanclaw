@@ -12,6 +12,7 @@ const dictionary: Dict = {
   'nav.board': { es: 'Board', en: 'Board', fr: 'Tableau' },
   'nav.memory': { es: 'Memoria', en: 'Memory', fr: 'Mémoire' },
   'nav.files': { es: 'Archivos', en: 'Files', fr: 'Fichiers' },
+  'nav.preview': { es: 'Vista', en: 'Preview', fr: 'Aperçu' },
   'nav.agents': { es: 'Agentes', en: 'Agents', fr: 'Agents' },
   'nav.connectors': { es: 'Connectores', en: 'Connectors', fr: 'Connecteurs' },
   'search.placeholder': { es: 'Buscar proyectos, agentes, tareas...', en: 'Search projects, agents, tasks...', fr: 'Rechercher projets, agents, tâches...' },
