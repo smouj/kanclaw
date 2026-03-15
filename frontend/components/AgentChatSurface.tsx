@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Bot, Check, Copy, CornerDownLeft, Image, Loader2, MessageSquare, Paperclip, Quote, Send, Sparkles, Type, X, Zap, DollarSign, Gauge } from 'lucide-react';
+import { Bot, Check, Copy, CornerDownLeft, Image, Loader2, MessageSquare, Paperclip, Quote, Search, Send, Sparkles, Type, X, Zap, DollarSign, Gauge, Pencil, Trash2, Repeat, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Agent } from '@prisma/client';
 import { Button } from '@/components/ui/button';
@@ -85,6 +85,9 @@ function renderMarkdown(content: string, t: (key: string, fallback?: string) => 
   let inCode = false;
   let codeLang = '';
   let code = '';
+  let inList = false;
+  let listItems: string[] = [];
+  let listType: 'ul' | 'ol' = 'ul';
 
   const flushCode = () => {
     if (!code) return;
@@ -103,8 +106,24 @@ function renderMarkdown(content: string, t: (key: string, fallback?: string) => 
     codeLang = '';
   };
 
+  const flushList = () => {
+    if (listItems.length === 0) return;
+    const listNodes = listItems.map((item, idx) => (
+      <li key={idx} className="ml-4 text-sm text-text-primary">{item}</li>
+    ));
+    if (listType === 'ul') {
+      nodes.push(<ul key={`ul-${nodes.length}`} className="my-2 space-y-1">{listNodes}</ul>);
+    } else {
+      nodes.push(<ol key={`ol-${nodes.length}`} className="my-2 list-decimal list-inside space-y-1">{listNodes}</ol>);
+    }
+    listItems = [];
+    inList = false;
+  };
+
   lines.forEach((line, i) => {
+    // Code blocks
     if (line.startsWith('```')) {
+      if (inList) flushList();
       if (inCode) {
         flushCode();
         inCode = false;
@@ -120,6 +139,87 @@ function renderMarkdown(content: string, t: (key: string, fallback?: string) => 
       return;
     }
 
+    // Horizontal rule
+    if (line.match(/^(-{3,}|\*{3,}|_{3,})$/)) {
+      if (inList) flushList();
+      nodes.push(<hr key={`hr-${i}`} className="my-4 border-border" />);
+      return;
+    }
+
+    // Tables
+    const tableMatch = line.match(/^\|(.+)\|$/);
+    if (tableMatch && lines[i+1]?.match(/^\|[-:| ]+\|$/)) {
+      if (inList) flushList();
+      const headers = tableMatch[1].split('|').map(h => h.trim());
+      const nextLine = lines[i+1];
+      const alignments = nextLine.split('|').slice(1, -1).map(cell => {
+        if (cell.includes(':') && cell.includes(':')) return 'text-center';
+        if (cell.includes(':')) return 'text-right';
+        return 'text-left';
+      });
+      
+      const rows: string[][] = [];
+      for (let j = i + 2; j < lines.length; j++) {
+        const rowMatch = lines[j].match(/^\|(.+)\|$/);
+        if (!rowMatch) break;
+        rows.push(rowMatch[1].split('|').map(cell => cell.trim()));
+      }
+      
+      nodes.push(
+        <div key={`table-${i}`} className="my-3 overflow-x-auto">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-border">
+                {headers.map((h, idx) => (
+                  <th key={idx} className={`px-3 py-2 text-left font-semibold text-text-primary ${alignments[idx] || ''}`}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, rowIdx) => (
+                <tr key={rowIdx} className="border-b border-border">
+                  {row.map((cell, cellIdx) => (
+                    <td key={cellIdx} className={`px-3 py-2 text-text-primary ${alignments[cellIdx] || ''}`}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+      return;
+    }
+
+    // Unordered list
+    const ulMatch = line.match(/^[-*•]\s+(.+)$/);
+    if (ulMatch) {
+      if (!inList || listType !== 'ul') {
+        if (inList) flushList();
+        inList = true;
+        listType = 'ul';
+      }
+      listItems.push(ulMatch[1]);
+      return;
+    }
+
+    // Ordered list
+    const olMatch = line.match(/^(\d+)\.\s+(.+)$/);
+    if (olMatch) {
+      if (!inList || listType !== 'ol') {
+        if (inList) flushList();
+        inList = true;
+        listType = 'ol';
+      }
+      listItems.push(olMatch[2]);
+      return;
+    }
+
+    // Flush list if we hit a non-list line
+    if (inList) {
+      flushList();
+    }
+
+    // Images
     const imageMatch = line.match(/!\[(.*?)\]\((https?:\/\/[^\s)]+)\)/);
     if (imageMatch) {
       nodes.push(
@@ -132,6 +232,7 @@ function renderMarkdown(content: string, t: (key: string, fallback?: string) => 
       return;
     }
 
+    // Headers
     if (line.startsWith('### ')) {
       nodes.push(<h3 key={`h3-${i}`} className="mt-3 mb-1 text-base font-semibold text-text-primary">{line.slice(4)}</h3>);
       return;
@@ -145,17 +246,20 @@ function renderMarkdown(content: string, t: (key: string, fallback?: string) => 
       return;
     }
 
+    // Empty line
     if (line.trim() === '') {
       nodes.push(<div key={`sp-${i}`} className="h-2" />);
       return;
     }
 
+    // Blockquote
     if (line.startsWith('> ')) {
       nodes.push(<blockquote key={`q-${i}`} className="my-2 border-l-2 border-border pl-3 text-sm italic text-text-secondary">{line.slice(2)}</blockquote>);
       return;
     }
 
-    const inline = line.split(/(`[^`]+`|\*\*[^*]+\*\*)/g).map((part, idx) => {
+    // Inline formatting
+    const inline = line.split(/(`[^`]+`|\*\*[^*]+\*\*|~~[^~]+~~|\*[^*]+\*|_[^_]+_)/g).map((part, idx) => {
       if (part.startsWith('`') && part.endsWith('`')) {
         return (
           <code key={idx} className="rounded border border-border bg-surface2 px-1.5 py-0.5 text-xs text-amber-400">
@@ -164,7 +268,16 @@ function renderMarkdown(content: string, t: (key: string, fallback?: string) => 
         );
       }
       if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={idx}>{part.slice(2, -2)}</strong>;
+        return <strong key={idx} className="font-bold">{part.slice(2, -2)}</strong>;
+      }
+      if (part.startsWith('~~') && part.endsWith('~~')) {
+        return <del key={idx} className="line-through">{part.slice(2, -2)}</del>;
+      }
+      if (part.startsWith('*') && part.endsWith('*')) {
+        return <em key={idx}>{part.slice(1, -1)}</em>;
+      }
+      if (part.startsWith('_') && part.endsWith('_')) {
+        return <em key={idx}>{part.slice(1, -1)}</em>;
       }
       return part;
     });
@@ -177,6 +290,7 @@ function renderMarkdown(content: string, t: (key: string, fallback?: string) => 
   });
 
   if (inCode) flushCode();
+  if (inList) flushList();
   return nodes;
 }
 
@@ -234,6 +348,10 @@ export function AgentChatSurface({
   );
   const [loading, setLoading] = useState(false);
   const [thinking, setThinking] = useState(false);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [contextLoading, setContextLoading] = useState(false);
   const [contextResults, setContextResults] = useState<ContextItem[]>([]);
   const [selectedContext, setSelectedContext] = useState<ContextItem[]>([]);
@@ -493,6 +611,14 @@ export function AgentChatSurface({
           {selectedThread?.scope === 'TEAM' ? (
             <div className="flex items-center gap-2">
               <button
+                onClick={() => setShowSearch(!showSearch)}
+                className="flex items-center gap-2 border border-border bg-surface2 px-3 py-2 text-sm text-text-primary hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50"
+                aria-label="Search messages"
+                type="button"
+              >
+                <Search className="h-4 w-4" />
+              </button>
+              <button
                 onClick={() => setShowAgentSelector((prev) => !prev)}
                 className="flex items-center gap-2 border border-border bg-surface2 px-3 py-2 text-sm text-text-primary hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50"
                 aria-label="Toggle team agent selector"
@@ -538,6 +664,28 @@ export function AgentChatSurface({
           </div>
         )}
 
+        {/* Search Messages */}
+        {showSearch && (
+          <div className="border-b border-border bg-surface2/60 px-5 py-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar mensajes..."
+                className="w-full border border-border bg-surface pl-10 pr-4 py-2 text-sm text-text-primary placeholder:text-text-muted"
+                autoFocus
+              />
+            </div>
+            {searchQuery && (
+              <p className="mt-2 text-xs text-text-muted">
+                {selectedThread?.messages.filter(m => m.content.toLowerCase().includes(searchQuery.toLowerCase())).length || 0} resultados
+              </p>
+            )}
+          </div>
+        )}
+
         <div className="flex-1 overflow-y-auto px-5 py-4">
           {!selectedThread?.messages.length ? (
             <div className="flex h-full flex-col items-center justify-center text-text-muted">
@@ -559,23 +707,43 @@ export function AgentChatSurface({
                       const selected = selectedMessageId === message.id;
                       return (
                         <div key={message.id} className={`flex ${isHuman ? 'justify-end' : 'justify-start'}`}>
-                          <button
-                            type="button"
-                            onClick={() => setSelectedMessageId(message.id)}
-                            className={`max-w-[78%] border px-4 py-3 text-left transition-all ${
-                              isSystem
-                                ? 'border-amber-500/40 bg-amber-500/10 text-amber-100'
-                                : isHuman
-                                ? 'border-border bg-surface2 text-text-primary'
-                                : 'border-border bg-surface text-text-primary'
-                            } ${selected ? 'ring-2 ring-text-primary/25' : 'hover:border-border hover:-translate-y-0.5'} `}
-                          >
-                            <div className="mb-1 flex items-center justify-between gap-3 text-[10px] uppercase tracking-wider text-text-muted">
-                              <span>{isHuman ? t('chat.you') : message.actor}</span>
-                              <span>{formatTime(message.createdAt, locale)}</span>
-                            </div>
-                            <div className="space-y-1 text-sm leading-relaxed">{renderMarkdown(message.content, t)}</div>
-                          </button>
+                          <div className={`group relative max-w-[78%] ${selected ? 'ring-2 ring-text-primary/25' : ''}`}>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedMessageId(message.id)}
+                              className={`border px-4 py-3 text-left transition-all ${
+                                isSystem
+                                  ? 'border-amber-500/40 bg-amber-500/10 text-amber-100'
+                                  : isHuman
+                                  ? 'border-border bg-surface2 text-text-primary'
+                                  : 'border-border bg-surface text-text-primary'
+                              } ${selected ? '' : 'hover:-translate-y-0.5'} `}
+                            >
+                              <div className="mb-1 flex items-center justify-between gap-3 text-[10px] uppercase tracking-wider text-text-muted">
+                                <span>{isHuman ? t('chat.you') : message.actor}</span>
+                                <span>{formatTime(message.createdAt, locale)}</span>
+                              </div>
+                              <div className="space-y-1 text-sm leading-relaxed">{renderMarkdown(message.content, t)}</div>
+                            </button>
+                            {/* Message Actions */}
+                            {selected && (
+                              <div className="absolute -top-8 right-0 flex gap-1 bg-surface border border-border rounded p-1 shadow-lg">
+                                <button onClick={() => navigator.clipboard.writeText(message.content)} className="p-1.5 hover:bg-surface2 rounded" title="Copy">
+                                  <Copy className="h-3 w-3" />
+                                </button>
+                                {isHuman && (
+                                  <button onClick={() => { setEditingMessageId(message.id); setEditContent(message.content); }} className="p-1.5 hover:bg-surface2 rounded" title="Edit">
+                                    <Pencil className="h-3 w-3" />
+                                  </button>
+                                )}
+                                {isHuman && (
+                                  <button className="p-1.5 hover:bg-surface2 rounded" title="Retry">
+                                    <Repeat className="h-3 w-3" />
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       );
                     })}
