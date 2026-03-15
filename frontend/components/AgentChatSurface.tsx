@@ -399,6 +399,7 @@ export function AgentChatSurface({
   const [targetAgentName, setTargetAgentName] = useState(
     preferredTargetAgentExternal || initialThreads[0]?.agent?.name || agents[0]?.name || ''
   );
+  const [selectedModel, setSelectedModel] = useState('minimax-m2.5:free');
   const [loading, setLoading] = useState(false);
   const [thinking, setThinking] = useState(false);
   const [showDetailedMode, setShowDetailedMode] = useState(false);
@@ -652,6 +653,7 @@ export function AgentChatSurface({
         targetAgentName,
         content,
         contextItems: selectedContext,
+        model: selectedModel,
       }),
     });
 
@@ -796,6 +798,18 @@ export function AgentChatSurface({
                 {targetAgentName}
                 <Sparkles className="h-3 w-3" />
               </button>
+              <select
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                className="border border-border bg-surface2 px-2 py-2 text-xs text-text-primary focus-visible:outline-none"
+                title="Modelo a usar"
+              >
+                <option value="minimax-m2.5:free">🔥 minimax-m2.5</option>
+                <option value="minimax-m2.1:free">⚡ minimax-m2.1</option>
+                <option value="anthropic/sonnet">💎 sonnet</option>
+                <option value="openai-codex/gpt-5.3-codex">🚀 gpt-5.3</option>
+                <option value="google/gemini-2.5-flash">🌟 gemini</option>
+              </select>
             </div>
           ) : (
             <div className="flex items-center gap-2 border border-border bg-surface2 px-3 py-1.5 text-xs text-text-muted">
@@ -914,6 +928,13 @@ export function AgentChatSurface({
                                     <Repeat className="h-3 w-3" />
                                   </button>
                                 )}
+                              </div>
+                            )}
+                            
+                            {/* Message Stats Bar (like OpenClaw) */}
+                            {!isHuman && !isSystem && (
+                              <div className="mt-1 pt-1 flex items-center gap-3 text-[9px] text-text-muted border-t border-white/5">
+                                <span className="opacity-70">{formatTime(message.createdAt, locale)}</span>
                               </div>
                             )}
                           </div>
