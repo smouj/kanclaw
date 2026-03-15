@@ -289,6 +289,50 @@ export function ProjectBoard({
   const [filter, setFilter] = useState<string>('all');
   const [webglSupported, setWebglSupported] = useState(true);
   
+  // Layout constants - premium deterministic positioning
+  const LAYOUT = {
+    agents: { radius: 6, y: 2 },
+    tasks: { yOffset: -2, spacingX: 2, spacingZ: 1.5 },
+    runs: { yOffset: -1.5, spacingX: 1.5, spacingZ: 1 },
+    threads: { y: 4, spacing: 2.5 },
+    snapshots: { y: -3, spacingX: 2, spacingZ: 2 },
+    decisions: { y: -4, spacingX: 2, spacingZ: 2 },
+    imports: { x: 5, y: 1, spacingZ: 2 },
+  };
+
+  // Deterministic hash for consistent positioning
+  const hashPos = (str: string, seed: number): number => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash = hash & hash;
+    }
+    return Math.abs(hash + seed) % 100 / 100;
+  };
+
+  // Position functions
+  const getAgentPos = (idx: number, total: number): [number, number, number] => {
+    const angle = (idx / total) * Math.PI * 2;
+    return [Math.cos(angle) * LAYOUT.agents.radius, LAYOUT.agents.y + hashPos(`a${idx}`, 0) * 0.5, Math.sin(angle) * LAYOUT.agents.radius];
+  };
+  
+  const getTaskPos = (i: number, agentIdx: number): [number, number, number] => {
+    const base = getAgentPos(agentIdx, agents.length);
+    return [base[0] + (i % 3 - 1) * LAYOUT.tasks.spacingX, LAYOUT.tasks.yOffset - Math.floor(i / 3) * 0.8, base[2] + hashPos(`t${i}`, agentIdx) * LAYOUT.tasks.spacingZ];
+  };
+  
+  const getRunPos = (i: number): [number, number, number] => [
+    hashPos(`r${i}`, 10) * 4 - 2,
+    LAYOUT.runs.yOffset - hashPos(`r${i}`, 20) * 0.5,
+    hashPos(`r${i}`, 30) * 4 - 2,
+  ];
+  
+  const getThreadPos = (i: number): [number, number, number] => [
+    (i % 4 - 1.5) * LAYOUT.threads.spacing,
+    LAYOUT.threads.y,
+    Math.floor(i / 4) * LAYOUT.threads.spacing,
+  ];
+  
   // Check WebGL support
   useEffect(() => {
     try {

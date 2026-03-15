@@ -61,12 +61,40 @@ function getKindIcon(kind: string | undefined) {
   return <span title={kind}>{icons[kind.toLowerCase()] || '📄'}</span>;
 }
 
-function mapEventToMessage(event: any): string {
+function mapEventToMessage(event: any, detailed: boolean = false): string {
   const eventType = event?.type || '';
   const agentName = event?.agentName || '';
   const message = event?.message || event?.content || '';
+  const taskId = event?.taskId;
+  const runId = event?.runId;
   
-  // Clean professional messages - no technical jargon
+  // Detailed mode - show more technical info
+  if (detailed) {
+    const details: string[] = [];
+    if (taskId) details.push(`task:${taskId.slice(-4)}`);
+    if (runId) details.push(`run:${runId.slice(-4)}`);
+    const suffix = details.length > 0 ? ` [${details.join(' ')}]` : '';
+    
+    const detailedMessages: Record<string, string> = {
+      'agent_started': `🤖 ${agentName} iniciado${suffix}`,
+      'agent_thinking': `🧠 ${agentName} analizando${suffix}`,
+      'task_started': `📋 Tarea iniciada${suffix}`,
+      'task_progress': `⚙️ ${message || 'Procesando'}${suffix}`,
+      'task_progress_detailed': `📝 ${message || 'Ejecutando'}${suffix}`,
+      'task_finished': `✅ Completado${suffix}`,
+      'task_failed': `❌ Error${suffix}`,
+      'log': `📋 ${message.slice(0, 80)}${suffix}`,
+      'error': `⚠️ Error: ${message.slice(0, 60)}${suffix}`,
+      'delegation': `🔄 Delegando a ${message || 'otro agente'}${suffix}`,
+      'subtask_created': `➕ Subtarea: ${message.slice(0, 40)}${suffix}`,
+      'knowledge_updated': `💾 Actualizando memoria${suffix}`,
+      'decision_logged': `⚖️ Decisión: ${message.slice(0, 40)}${suffix}`,
+      'artifact_created': `📦 Generando resultado${suffix}`,
+    };
+    return detailedMessages[eventType] || `⏳ ${eventType}: ${message.slice(0, 50)}${suffix}`;
+  }
+  
+  // Simple mode - clean human-readable messages
   const messages: Record<string, string> = {
     'agent_started': `🤖 ${agentName} está trabajando`,
     'agent_thinking': `🧠 Analizando tu petición...`,
@@ -84,7 +112,6 @@ function mapEventToMessage(event: any): string {
     'artifact_created': `📦 Preparando resultado...`,
   };
   
-  // Return clean message or generic one
   return messages[eventType] || (message ? `💬 ${message.slice(0, 50)}` : '⏳ Procesando...');
 }
 
@@ -442,7 +469,7 @@ export function AgentChatSurface({
         // Only process events for the current agent or task
         if (data.agentName && data.agentName !== liveExecution.agentName) return;
         
-        const eventMessage = mapEventToMessage(data);
+        const eventMessage = mapEventToMessage(data, showDetailedMode);
         if (!eventMessage) return;
 
         setLiveExecution(prev => {
@@ -934,10 +961,57 @@ export function AgentChatSurface({
                               </div>
                             )}
                             
-                            {/* Message Stats Bar (like OpenClaw) */}
+                            {/* Message Stats Bar - Premium Telemetry */}
                             {!isHuman && !isSystem && (
-                              <div className="mt-1 pt-1 flex items-center gap-3 text-[9px] text-text-muted border-t border-white/5">
+                              <div className="mt-1 pt-1.5 flex items-center gap-2 text-[10px] text-text-muted border-t border-white/5 flex-wrap">
                                 <span className="opacity-70">{formatTime(message.createdAt, locale)}</span>
+                                {(() => {
+                                  const meta = parseMetadata(message.metadata);
+                                  if (!meta) return null;
+                                  return (
+                                    <>
+                                      {meta.model && (
+                                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-surface2 rounded text-[9px]">
+                                          🤖 {String(meta.model).split('/').pop()}
+                                        </span>
+                                      )}
+                                      {meta.provider && (
+                                        <span className="opacity-50">{String(meta.provider)}</span>
+                                      )}
+                                      {meta.runId && (
+                                        <span className="font-mono text-[9px] opacity-50" title="Run ID">
+                                          ⚡ {String(meta.runId).slice(-6)}
+                                        </span>
+                                      )}
+                                      {meta.taskId && (
+                                        <span className="font-mono text-[9px] opacity-50" title="Task ID">
+                                          📋 {String(meta.taskId).slice(-6)}
+                                        </span>
+                                      )}
+                                      {meta.durationMs && (
+                                        <span className="opacity-70">
+                                          ⏱ {Number(meta.durationMs) < 1000 
+                                            ? `${Math.round(Number(meta.durationMs))}ms` 
+                                            : `${(Number(meta.durationMs) / 1000).toFixed(1)}s`}
+                                        </span>
+                                      )}
+                                      {meta.inputTokens && meta.outputTokens && (
+                                        <span className="opacity-70">
+                                          💬 {Number(meta.inputTokens) + Number(meta.outputTokens)} tokens
+                                        </span>
+                                      )}
+                                      {meta.status && (
+                                        <span className={`px-1.5 py-0.5 rounded text-[8px] ${
+                                          meta.status === 'completed' ? 'bg-green-500/20 text-green-400' :
+                                          meta.status === 'failed' ? 'bg-red-500/20 text-red-400' :
+                                          'bg-yellow-500/20 text-yellow-400'
+                                        }`}>
+                                          {String(meta.status)}
+                                        </span>
+                                      )}
+                                    </>
+                                  );
+                                })()}
                               </div>
                             )}
                           </div>
