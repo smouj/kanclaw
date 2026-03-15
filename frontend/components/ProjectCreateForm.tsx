@@ -3,32 +3,32 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { 
-  Loader2, Plus, Github, FolderOpen, FileCode, 
-  ChevronRight, ChevronDown, File, Folder,
-  GitBranch, Box, Terminal, Sparkles
+  Loader2, Plus, Github, FolderOpen, 
+  Box, Terminal, Sparkles
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { GitHubRepoPicker, GitHubPreview } from '@/components/github';
 
 type Step = 'basic' | 'github' | 'import';
 
-interface RepoFile {
-  name: string;
-  path: string;
-  type: 'file' | 'dir';
-  children?: RepoFile[];
-}
-
 interface Repository {
   id: number;
-  full_name: string;
   name: string;
   owner: { login: string };
+  fullName: string;
   description: string | null;
-  default_branch: string;
-  html_url: string;
+  private: boolean;
+  defaultBranch: string;
+  url: string;
+  htmlUrl: string;
+  pushedAt: string;
+  updatedAt: string;
+  language: string | null;
+  stargazersCount: number;
+  forksCount: number;
 }
 
 export function ProjectCreateForm() {
@@ -43,21 +43,16 @@ export function ProjectCreateForm() {
   // GitHub
   const [githubToken, setGithubToken] = useState('');
   const [githubConnected, setGithubConnected] = useState(false);
-  const [repositories, setRepositories] = useState<Repository[]>([]);
   const [selectedRepo, setSelectedRepo] = useState<Repository | null>(null);
-  const [repoFiles, setRepoFiles] = useState<RepoFile[]>([]);
-  const [expandedDirs, setExpandedDirs] = useState<Set<string>>(new Set());
-  const [loadingRepos, setLoadingRepos] = useState(false);
 
   async function handleConnectGitHub() {
     if (!githubToken.trim()) {
       toast.error('Introduce un token de GitHub');
       return;
     }
-    setLoadingRepos(true);
+    setLoading(true);
     
     try {
-      // Save token and test connection
       const response = await fetch('/api/connectors/github', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,183 +62,87 @@ export function ProjectCreateForm() {
       if (!response.ok) {
         const data = await response.json();
         toast.error(data.error || 'Error al conectar con GitHub');
-        setLoadingRepos(false);
         return;
       }
       
       setGithubConnected(true);
       toast.success('GitHub conectado');
-      
-      // Load repositories
-      await loadRepositories();
     } catch (error) {
       toast.error('Error de conexión');
     }
-    setLoadingRepos(false);
-  }
-
-  async function loadRepositories() {
-    setLoadingRepos(true);
-    const response = await fetch('/api/connectors/github/repositories');
-    const data = await response.json();
-    setLoadingRepos(false);
-    
-    if (response.ok) {
-      setRepositories(data);
-    }
-  }
-
-  async function selectRepository(repo: Repository) {
-    setSelectedRepo(repo);
-    setLoadingRepos(true);
-    
-    // Fetch repo tree
-    try {
-      const response = await fetch(`/api/connectors/github?owner=${repo.owner.login || repo.owner}&repo=${repo.name}`);
-      const data = await response.json();
-      
-      if (data.tree) {
-        // Transform flat tree to nested structure
-        const files = buildFileTree(data.tree);
-        setRepoFiles(files);
-      }
-    } catch (error) {
-      console.error('Error loading repo:', error);
-    }
-    
-    setLoadingRepos(false);
-  }
-
-  function buildFileTree(items: { path: string; type: string }[]): RepoFile[] {
-    const root: RepoFile[] = [];
-    const dirs: Record<string, RepoFile> = {};
-    
-    // Sort by path to ensure parents come before children
-    items.sort((a, b) => a.path.localeCompare(b.path));
-    
-    for (const item of items) {
-      const parts = item.path.split('/');
-      const fileName = parts[parts.length - 1];
-      
-      if (parts.length === 1) {
-        // Root level
-        root.push({
-          name: fileName,
-          path: item.path,
-          type: item.type === 'tree' ? 'dir' : 'file',
-          children: item.type === 'tree' ? [] : undefined,
-        });
-      } else {
-        // Nested - create parent dirs if needed
-        let currentPath = '';
-        let parentChildren = root;
-        
-        for (let i = 0; i < parts.length - 1; i++) {
-          currentPath += (currentPath ? '/' : '') + parts[i];
-          
-          if (!dirs[currentPath]) {
-            const dir: RepoFile = {
-              name: parts[i],
-              path: currentPath,
-              type: 'dir',
-              children: [],
-            };
-            parentChildren.push(dir);
-            dirs[currentPath] = dir;
-          }
-          parentChildren = dirs[currentPath].children!;
-        }
-        
-        parentChildren.push({
-          name: fileName,
-          path: item.path,
-          type: item.type === 'tree' ? 'dir' : 'file',
-          children: item.type === 'tree' ? [] : undefined,
-        });
-      }
-    }
-    
-    return root;
-  }
-
-  function toggleDir(path: string) {
-    const newExpanded = new Set(expandedDirs);
-    if (newExpanded.has(path)) {
-      newExpanded.delete(path);
-    } else {
-      newExpanded.add(path);
-    }
-    setExpandedDirs(newExpanded);
-  }
-
-  function renderFileTree(files: RepoFile[], depth: number = 0) {
-    return files.map((file) => (
-      <div key={file.path}>
-        <div 
-          className="file-tree-item flex items-center gap-2"
-          style={{ paddingLeft: `${depth * 16 + 8}px` }}
-          onClick={() => file.type === 'dir' && toggleDir(file.path)}
-        >
-          {file.type === 'dir' ? (
-            <>
-              {expandedDirs.has(file.path) ? (
-                <ChevronDown className="w-3 h-3 text-text-muted" />
-              ) : (
-                <ChevronRight className="w-3 h-3 text-text-muted" />
-              )}
-              <Folder className="w-4 h-4 text-yellow-500" />
-            </>
-          ) : (
-            <>
-              <span className="w-3" />
-              <FileCode className="w-4 h-4 text-blue-400" />
-            </>
-          )}
-          <span className="text-sm text-text-secondary truncate">{file.name}</span>
-        </div>
-        {file.type === 'dir' && expandedDirs.has(file.path) && file.children && (
-          renderFileTree(file.children, depth + 1)
-        )}
-      </div>
-    ));
+    setLoading(false);
   }
 
   async function handleSubmit() {
     setLoading(true);
     
-    // Always use official team (6 pre-configured agents)
-    let projectData: any = {
+    const projectData: any = {
       name,
       description,
       withOfficialTeam: true,
     };
 
     if (selectedRepo) {
-      projectData = {
-        ...projectData,
-        githubOwner: selectedRepo.owner.login || selectedRepo.owner,
-        githubRepo: selectedRepo.name,
-        githubBranch: selectedRepo.default_branch,
-      };
+      projectData.githubOwner = selectedRepo.owner.login;
+      projectData.githubRepo = selectedRepo.name;
+      projectData.githubBranch = selectedRepo.defaultBranch;
     }
 
-    const response = await fetch('/api/projects', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(projectData),
-    });
+    try {
+      const response = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(projectData),
+      });
 
+      if (!response.ok) {
+        toast.error('No se pudo crear el proyecto.');
+        setLoading(false);
+        return;
+      }
+
+      const project = await response.json();
+      toast.success('Proyecto creado correctamente.');
+      router.push(`/project/${project.slug}`);
+      router.refresh();
+    } catch (error) {
+      toast.error('Error al crear el proyecto');
+    }
     setLoading(false);
+  }
 
-    if (!response.ok) {
-      toast.error('No se pudo crear el proyecto.');
-      return;
+  async function handleImport(mode: 'create' | 'attach') {
+    if (!selectedRepo) return;
+    setLoading(true);
+    
+    try {
+      const response = await fetch('/api/connectors/github', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'import',
+          owner: selectedRepo.owner.login,
+          repo: selectedRepo.name,
+          mode,
+          projectName: mode === 'create' ? name : undefined,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        toast.error(data.error || 'Error al importar');
+        setLoading(false);
+        return;
+      }
+
+      const data = await response.json();
+      toast.success(mode === 'create' ? 'Proyecto creado' : 'Repositorio vinculado');
+      router.push(`/project/${data.project.slug}`);
+      router.refresh();
+    } catch (error) {
+      toast.error('Error al importar');
     }
-
-    const project = await response.json();
-    toast.success('Proyecto creado correctamente.');
-    router.push(`/project/${project.slug}`);
-    router.refresh();
+    setLoading(false);
   }
 
   return (
@@ -322,7 +221,7 @@ export function ProjectCreateForm() {
         </div>
       )}
 
-      {/* Step 2: GitHub */}
+      {/* Step 2: GitHub - Using new Picker */}
       {step === 'github' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -352,110 +251,92 @@ export function ProjectCreateForm() {
               </p>
               <Button 
                 onClick={handleConnectGitHub}
-                disabled={loadingRepos || !githubToken.trim()}
+                disabled={loading || !githubToken.trim()}
                 className="w-full gap-2"
               >
-                {loadingRepos ? <Loader2 className="w-4 h-4 animate-spin" /> : <Github className="w-4 h-4" />}
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Github className="w-4 h-4" />}
                 Conectar GitHub
               </Button>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {repositories.length === 0 ? (
-                <div className="text-center py-4">
-                  <Loader2 className="w-6 h-6 animate-spin mx-auto text-text-muted" />
-                  <p className="mt-2 text-sm text-text-muted">Cargando repositorios...</p>
-                </div>
-              ) : (
-                <>
-                  <div className="max-h-48 overflow-y-auto space-y-1">
-                    {repositories.map((repo) => (
-                      <div
-                        key={repo.id}
-                        onClick={() => selectRepository(repo)}
-                        className={`file-tree-item flex items-center gap-3 ${
-                          selectedRepo?.id === repo.id ? 'active' : ''
-                        }`}
-                      >
-                        <FolderOpen className="w-4 h-4 text-text-muted" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm text-text-primary truncate">{repo.full_name}</p>
-                          {repo.description && (
-                            <p className="text-xs text-text-muted truncate">{repo.description}</p>
-                          )}
-                        </div>
-                        <GitBranch className="w-3 h-3 text-text-muted" />
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="flex gap-2 pt-2">
-                    <Button 
-                      variant="secondary"
-                      onClick={() => setStep('import')}
-                      disabled={!selectedRepo}
-                      className="flex-1"
-                    >
-                      Saltar sin repo
-                    </Button>
-                    <Button 
-                      onClick={() => setStep('import')}
-                      disabled={!selectedRepo}
-                      className="flex-1"
-                    >
-                      Continuar
-                    </Button>
-                  </div>
-                </>
-              )}
+          ) : selectedRepo ? (
+            <div className="grid gap-4 xl:grid-cols-2">
+              <div>
+                <button
+                  onClick={() => setSelectedRepo(null)}
+                  className="text-sm text-text-muted hover:text-text-primary mb-3"
+                >
+                  ← Volver a la lista
+                </button>
+                <GitHubPreview
+                  repo={selectedRepo}
+                  onImport={(mode) => {
+                    if (mode === 'create') {
+                      handleImport('create');
+                    } else {
+                      // For attach, first create project then attach
+                      handleImport('attach');
+                    }
+                  }}
+                  loading={loading}
+                />
+              </div>
             </div>
+          ) : (
+            <GitHubRepoPicker
+              onSelect={setSelectedRepo}
+              selectedRepo={selectedRepo}
+            />
           )}
         </div>
       )}
 
-      {/* Step 3: Import / VSCode-like File Tree */}
+      {/* Step 3: Import */}
       {step === 'import' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-text-muted">Estructura</p>
-              <h2 className="mt-2 text-xl font-semibold">Vista previa VSCode</h2>
+              <p className="text-xs uppercase tracking-[0.3em] text-text-muted">Resumen</p>
+              <h2 className="mt-2 text-xl font-semibold">Crear Proyecto</h2>
             </div>
             <Button variant="ghost" onClick={() => setStep('github')} className="text-text-muted">
               Volver
             </Button>
           </div>
 
-          {selectedRepo && repoFiles.length > 0 ? (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 p-3 bg-surface rounded border border-border">
-                <Github className="w-5 h-5 text-text-primary" />
-                <div>
-                  <p className="text-sm font-medium">{selectedRepo.full_name}</p>
-                  <p className="text-xs text-text-muted">{selectedRepo.default_branch} branch</p>
-                </div>
-              </div>
-              
-              <div className="border border-border bg-surface p-2 max-h-64 overflow-auto scrollbar-thin">
-                {renderFileTree(repoFiles)}
-              </div>
+          <div className="space-y-3">
+            <div className="p-4 bg-surface rounded-xl border border-border">
+              <h3 className="font-medium">{name}</h3>
+              {description && <p className="text-sm text-text-muted mt-1">{description}</p>}
             </div>
-          ) : (
-            <div className="text-center py-8 text-text-muted">
-              <FolderOpen className="w-12 h-12 mx-auto mb-3 opacity-50" />
-              <p>Sin repositorio seleccionado</p>
-              <p className="text-xs mt-1">Se creará un proyecto vacío</p>
-            </div>
-          )}
 
-          <Button 
-            onClick={handleSubmit}
-            disabled={loading || !name.trim()}
-            className="w-full gap-2 mt-4"
-          >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-            Crear proyecto
-          </Button>
+            {selectedRepo && (
+              <div className="p-4 bg-surface rounded-xl border border-border">
+                <div className="flex items-center gap-2">
+                  <Github className="w-4 h-4" />
+                  <span className="text-sm">{selectedRepo.fullName}</span>
+                </div>
+                <p className="text-xs text-text-muted mt-1">Branch: {selectedRepo.defaultBranch}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setStep('github')}
+              className="flex-1"
+            >
+              Cambiar repo
+            </Button>
+            <Button 
+              onClick={handleSubmit}
+              disabled={loading || !name.trim()}
+              className="flex-1 gap-2"
+            >
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+              Crear proyecto
+            </Button>
+          </div>
         </div>
       )}
     </div>
