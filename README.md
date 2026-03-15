@@ -24,56 +24,33 @@
 
 ## Latest Release
 
-- **v0.3.2** — Toast notifications, Offline indicator, Global search, Skeleton loaders, Run timeline
+- **v0.3.2** — Chat telemetry, Board realtime, GitHub picker improvements
 - [Release Notes](./RELEASE_NOTES_v0.3.0.md)
 - [Changelog](./CHANGELOG.md)
 
 ---
 
-## Who is this for?
-
-- **Founders** shipping product features with AI copilots
-- **Indie hackers** who need speed without losing traceability
-- **Small teams** coordinating agent runs with persistent context
-
-> KanClaw helps you move fast with AI while keeping structure, auditability, and delivery quality.
-
----
-
-## Table of Contents
-
-- [Why KanClaw](#why-kanclaw)
-- [Quick Start](#quick-start)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Development](#development)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
-
----
-
-## Why KanClaw
+## What is KanClaw?
 
 KanClaw is a **local-first workspace OS** where **humans + AI agents** collaborate with persistent context, structured memory, and production-ready team workflows.
 
-| Problem | KanClaw Solution |
-|---------|------------------|
-| Context gets lost between sessions | Persistent Memory Hub |
-| AI delegation is opaque | Real run tracking with provenance |
-| Tooling is fragmented | Unified interface |
-| Generic UI fatigue | Premium cinematic UX |
+Unlike generic AI chat tools, KanClaw provides:
+- **Control Plane**: Project governance, context management, and agent coordination
+- **Execution Plane**: Delegates to OpenClaw for actual agent runtime
+- **Persistent Memory**: Project knowledge that survives sessions
+- **Provenance**: Full trace from conversation to execution result
+- **Premium UX**: Black/silver cinematic interface
 
 ---
 
 ## Quick Start
 
-### Try Demo Mode
+### Prerequisites
 
-Visit `/setup` and click **"Enter Demo Mode"** to explore KanClaw without any configuration!
+- Node.js 18+
+- OpenClaw gateway (see below)
 
-### Local Development
+### Setup
 
 ```bash
 # Clone the repository
@@ -83,53 +60,76 @@ cd kanclaw/frontend
 # Install dependencies
 npm install
 
+# Configure OpenClaw (or use defaults)
+# Default: http://127.0.0.1:18789
+
 # Start development server
 npm run dev
 ```
 
-Visit http://localhost:3000
+Visit **http://localhost:3020**
 
-### Configuration
+### OpenClaw Connection
 
-KanClaw requires an [OpenClaw](https://github.com/openclaw) gateway to connect to AI agents.
+KanClaw requires an [OpenClaw](https://github.com/openclaw) gateway to execute AI agents.
 
-1. **OpenClaw Setup** - Start your OpenClaw instance (default: http://localhost:3001)
-2. **Configure** - Visit `/setup` to enter your OpenClaw URL and token
-3. **Or use Demo Mode** - Explore with sample data
-
-#### Environment Variables (Optional)
-
-```bash
-# OpenClaw connection
-OPENCLAW_TOKEN=your_openclaw_token
-OPENCLAW_HTTP=http://localhost:3001
-OPENCLAW_WS=ws://localhost:3001/events
-
-# Authentication (optional)
-KANCLAW_AUTH_TOKEN=your_secure_token
+**Default Configuration** (already set in `.env`):
 ```
+OPENCLAW_HTTP=http://127.0.0.1:18789
+OPENCLAW_WS=ws://127.0.0.1:18789/events
+```
+
+To configure a custom OpenClaw instance, set the environment variables or visit the Settings page in the app.
 
 ---
 
 ## Features
 
-- **Official KanClaw Team** - Pre-configured 6-agent team ready for any project
-  - **Strategist** - Planning, roadmap, task breakdown
-  - **Builder** - Implementation, code, technical delivery
-  - **Researcher** - Analysis, context, documentation
-  - **QA** - Validation, testing, quality assurance
-  - **RepoOps** - Structure, hygiene, releases
-  - **Memory Keeper** - Persistent context, decisions
-- **Multi-Agent Collaboration** - Work with multiple AI agents in team rooms
-- **Real-time Chat** - Interact with agents through a unified interface
-- **Memory Hub** - Persistent knowledge, decisions, and run history
-- **File Management** - Browse and edit project files
-- **Keyboard Shortcuts** - Power user navigation (Ctrl+K, Ctrl+1-5)
-- **Dark/Light Theme** - System preference support
-- **i18n** - English, Spanish, French
-- **PWA Ready** - Install as native app
-- **Security** - Optional authentication, CSP headers, rate limiting
-- **Observability** - Logging, error boundaries, performance tracking
+### Core
+- **Multi-Agent Collaboration**: Official 6-agent team + custom agents
+- **Real-Time Chat**: SSE-powered live execution with telemetry
+- **Kanban Board**: Task management with graph visualization
+- **File Explorer**: Multi-source (workspace, GitHub, memory)
+- **Memory Hub**: Persistent project knowledge base
+
+### Control Plane (Backend Services)
+- **Context Engine**: Curated context packs for AI prompts
+- **Model Configuration**: Per-project/agent model selection
+- **Provenance**: Full execution tracing (message → run → task → result)
+- **Memory Orchestrator**: Handoffs & summaries between agents
+- **Repo Intelligence**: Workspace indexing and file search
+
+### Integrations
+- **GitHub**: Repository import with search, filters, pagination
+- **OpenClaw**: Agent execution runtime
+- **i18n**: English, Spanish, French support
+- **PWA**: Installable web app
+- **Dark/Light Theme**: System preference support
+
+---
+
+## Architecture
+
+```
+┌──────────────────────────────────────┐
+│         KANCLAW UI                   │
+│  Chat │ Board │ Files │ Memory       │
+└──────────────┬───────────────────────┘
+               │
+┌──────────────▼───────────────────────┐
+│      KANCLAW CONTROL PLANE            │
+│  Context │ Models │ Provenance      │
+│  Memory  │ Repo   │ Agent Policy     │
+└──────────────┬───────────────────────┘
+               │
+┌──────────────▼───────────────────────┐
+│         OPENCLAW                      │
+│  Agent Runtime │ Tools │ Models        │
+└──────────────────────────────────────┘
+```
+
+**Control Plane** manages project context, memory, and coordination.  
+**OpenClaw** handles actual agent execution and tool calls.
 
 ---
 
@@ -137,13 +137,12 @@ KANCLAW_AUTH_TOKEN=your_secure_token
 
 | Layer | Technology |
 |-------|------------|
-| Framework | Next.js 14 (App Router) |
-| UI | React 18, TypeScript, Tailwind CSS |
+| Framework | Next.js 14 (App Router, Standalone) |
+| UI | React 18, TypeScript, Tailwind CSS v3 |
+| Database | Prisma + SQLite |
 | State | React Context + Hooks |
 | Styling | Custom design system with CSS variables |
 | PWA | Service Worker, Manifest |
-| Testing | Vitest, Playwright |
-| Deployment | Node.js, Docker, Vercel |
 
 ---
 
@@ -151,18 +150,16 @@ KANCLAW_AUTH_TOKEN=your_secure_token
 
 ```
 kanclaw/
-├── frontend/                 # Next.js application
-│   ├── app/                 # App Router pages
+├── frontend/                 # Next.js application (this repo)
+│   ├── app/                # App Router pages & API routes
 │   ├── components/          # React components
-│   ├── lib/                 # Utilities and hooks
-│   ├── scripts/             # Build scripts
-│   ├── tests/               # Unit and E2E tests
-│   └── public/              # Static assets
-├── docs/                    # Documentation
-├── CONTRIBUTING.md          # Contributing guidelines
-├── LICENSE                  # MIT License
-├── CHANGELOG.md             # Version history
-└── README.md                # This file
+│   ├── lib/                # Core services & utilities
+│   ├── prisma/             # Database schema
+│   ├── tests/              # Unit tests
+│   └── docs/               # Technical documentation
+├── docs/                   # Documentation (root)
+├── CHANGELOG.md            # Version history
+└── README.md               # This file
 ```
 
 ---
@@ -170,10 +167,12 @@ kanclaw/
 ## Development
 
 ```bash
+cd frontend
+
 # Install dependencies
 npm install
 
-# Development server
+# Development server (port 3020)
 npm run dev
 
 # Lint
@@ -183,11 +182,7 @@ npm run lint
 npm run build
 
 # Tests
-npm run test        # Unit tests
-npm run test:e2e    # E2E tests
-
-# Analyze bundle
-npm run analyze
+npm run test
 ```
 
 ---
@@ -196,42 +191,59 @@ npm run analyze
 
 ### Docker (Recommended)
 
-```yaml
-# docker-compose.yml
-services:
-  kanclaw:
-    image: kanclaw/kanclaw:latest
-    ports:
-      - "3000:3000"
-    environment:
-      - OPENCLAW_TOKEN=your_token
-      - OPENCLAW_HTTP=http://host.docker.internal:3001
-```
-
-```bash
-docker-compose up -d
-```
-
-### Vercel
-
 ```bash
 cd frontend
-vercel deploy
+
+# Build standalone image
+npm run build
+
+# Run with Docker
+docker build -t kanclaw .
+docker run -p 3020:3020 kanclaw
 ```
 
-### Node.js (Production)
+### Node.js
 
 ```bash
 cd frontend
 npm run build
-npm start
+PORT=3020 npm start
 ```
+
+---
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DATABASE_URL` | `file:./dev.db` | Prisma database path |
+| `OPENCLAW_HTTP` | `http://127.0.0.1:18789` | OpenClaw HTTP endpoint |
+| `OPENCLAW_WS` | `ws://127.0.0.1:18789/events` | OpenClaw WebSocket |
+| `OPENCLAW_BEARER_TOKEN` | - | Authentication token |
+
+### Feature Flags
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `USE_AGENT_MODEL_OVERRIDES` | `true` | Per-agent model config |
+| `USE_PROVENANCE_V2` | `true` | Enhanced execution tracing |
+| `USE_KANCLAW_CONTEXT_ENGINE` | `false` | New context pack builder |
+| `USE_MEMORY_ORCHESTRATOR` | `false` | Handoffs & summaries |
+| `USE_REPO_INTELLIGENCE` | `false` | Workspace indexing |
+
+---
+
+## Documentation
+
+- [Architecture](./docs/ARCHITECTURE.md) - System design & data models
+- [API Reference](./docs/API_REFERENCE.md) - Endpoint documentation
+- [Control Plane](./docs/CONTROL_PLANE.md) - Backend services guide
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please read our [Contributing Guidelines](./CONTRIBUTING.md) first.
+Contributions welcome! Please read our [Contributing Guidelines](./CONTRIBUTING.md) first.
 
 1. Fork the repository
 2. Create a feature branch
@@ -243,7 +255,7 @@ Contributions are welcome! Please read our [Contributing Guidelines](./CONTRIBUT
 
 ## License
 
-This project is licensed under the [MIT License](./LICENSE).
+MIT License - See [LICENSE](./LICENSE).
 
 ---
 

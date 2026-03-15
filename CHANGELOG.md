@@ -4,6 +4,23 @@ All notable changes to **KanClaw** will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.3.3] - 2026-03-15
+
+### Added
+- **Control Plane Services**: Feature flags, model config, provenance, memory orchestrator, repo intelligence
+- **GitHub Picker**: Search, filters, pagination, premium UI
+- **Chat Telemetry**: Footer with model, provider, runId, taskId, tokens, duration, status
+- **Board Realtime**: SSE integration, live nodes, status bar
+- **Board Layout**: Deterministic hash-based positioning (no more Math.random)
+- **Enhanced Inspector**: More metadata, grid layout, quick actions
+
+### Changed
+- Updated README.md and README.es.md with current ports (3020), OpenClaw config (18789)
+- Unified documentation hierarchy across all docs
+
+### Fixed
+- CSS loading issues after build
+
 ## [0.3.2] - 2026-03-14
 
 ### Added
