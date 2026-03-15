@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, Bot, BrainCircuit, Cable, Camera, CheckCircle2, ChevronDown, ChevronRight, Command as CommandIcon, FolderTree, LayoutGrid, MessageSquare, MessageSquareText, RefreshCcw, Sparkles, Trash2, Zap } from 'lucide-react';
+import { ArrowLeft, Bot, BrainCircuit, Cable, Camera, CheckCircle2, ChevronDown, ChevronRight, Command as CommandIcon, FolderTree, Gauge, LayoutGrid, Loader2, MessageSquare, MessageSquareText, Play, RefreshCcw, Sparkles, Trash2, XCircle, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import type { Agent, Project, Task } from '@prisma/client';
@@ -158,6 +158,15 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
   const [busy, setBusy] = useState(false);
   const [leftSidebarOpen, setLeftSidebarOpen] = useState(true);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
+  const [currentExecution, setCurrentExecution] = useState<{
+    active: boolean;
+    agentName: string;
+    status: string;
+    message: string;
+    startedAt: number;
+    events: { type: string; message: string; timestamp: string }[];
+    error?: string;
+  } | null>(null);
 
   useEffect(() => {
     const key = `kanclaw:layout:${project.slug}`;
@@ -653,6 +662,8 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                   openClawConnected={health.connected}
                   preferredTargetAgentExternal={preferredTargetAgent}
                   selectedThreadIdExternal={selectedThreadId}
+                  onThreadChange={setSelectedThreadId}
+                  onExecutionChange={setCurrentExecution}
                 />
               )}
 
@@ -728,6 +739,66 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
           </div>
           
           <div className="flex-1 overflow-y-auto p-3 space-y-3">
+            {/* Execution Inspector Panel */}
+            {currentExecution && (
+              <div className="rounded-lg border border-accent-green/30 bg-accent-green/5 overflow-hidden">
+                <div className="flex items-center justify-between px-3 py-2 border-b border-accent-green/20 bg-accent-green/10">
+                  <div className="flex items-center gap-2">
+                    <Zap className="h-4 w-4 text-accent-green" />
+                    <span className="text-xs font-medium text-accent-green">
+                      {currentExecution.active ? 'Ejecutando' : 'Completado'}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-text-muted">
+                    {currentExecution.active 
+                      ? Math.round((Date.now() - currentExecution.startedAt) / 1000) + 's'
+                      : '✓ Listo'}
+                  </span>
+                </div>
+                
+                <div className="p-3 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Bot className="h-3.5 w-3.5 text-text-muted" />
+                    <span className="text-xs text-text-primary">{currentExecution.agentName}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    {currentExecution.active ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin text-accent-green" />
+                    ) : (
+                      <CheckCircle2 className="h-3.5 w-3.5 text-accent-green" />
+                    )}
+                    <span className="text-xs text-text-secondary truncate">
+                      {currentExecution.message}
+                    </span>
+                  </div>
+                  
+                  {currentExecution.error && (
+                    <div className="flex items-start gap-2 pt-1">
+                      <XCircle className="h-3.5 w-3.5 text-red-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-xs text-red-400">{currentExecution.error}</span>
+                    </div>
+                  )}
+                  
+                  {currentExecution.events.length > 0 && (
+                    <details className="mt-2">
+                      <summary className="text-[10px] text-text-muted cursor-pointer hover:text-text-primary">
+                        {currentExecution.events.length} evento{currentExecution.events.length !== 1 ? 's' : ''}
+                      </summary>
+                      <div className="mt-2 space-y-1 max-h-24 overflow-auto">
+                        {currentExecution.events.slice(-5).map((evt, idx) => (
+                          <div key={idx} className="text-[9px] text-text-muted flex items-center gap-1">
+                            <span className="opacity-50">{new Date(evt.timestamp).toLocaleTimeString()}</span>
+                            <span>{evt.message}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </details>
+                  )}
+                </div>
+              </div>
+            )}
+
             <CollapsiblePanel title={t('actions.addDecision')} icon={BrainCircuit} defaultOpen={false}>
               <Textarea
                 value={decision}

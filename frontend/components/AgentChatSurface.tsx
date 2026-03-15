@@ -371,6 +371,7 @@ export function AgentChatSurface({
   selectedThreadIdExternal,
   preferredTargetAgentExternal,
   onThreadChange,
+  onExecutionChange,
 }: {
   projectSlug: string;
   agents: Agent[];
@@ -379,6 +380,15 @@ export function AgentChatSurface({
   selectedThreadIdExternal?: string;
   preferredTargetAgentExternal?: string;
   onThreadChange?: (threadId: string) => void;
+  onExecutionChange?: (execution: {
+    active: boolean;
+    agentName: string;
+    status: string;
+    message: string;
+    startedAt: number;
+    events: { type: string; message: string; timestamp: string }[];
+    error?: string;
+  } | null) => void;
 }) {
   const { t, locale } = useI18n();
   const [threads, setThreads] = useState(initialThreads);
@@ -461,6 +471,12 @@ export function AgentChatSurface({
 
     return () => eventSource.close();
   }, [liveExecution?.active, projectSlug, liveExecution?.agentName]);
+
+  // Notify parent of execution changes
+  useEffect(() => {
+    onExecutionChange?.(liveExecution);
+  }, [liveExecution, onExecutionChange]);
+
   useEffect(() => { if (preferredTargetAgentExternal) setTargetAgentName(preferredTargetAgentExternal); }, [preferredTargetAgentExternal]);
 
   const selectedThread = useMemo(() => threads.find((t) => t.id === selectedThreadId) || null, [threads, selectedThreadId]);
