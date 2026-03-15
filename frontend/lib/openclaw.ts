@@ -4,6 +4,17 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { ensureProjectPath } from '@/utils/fs';
+import {
+  getRuntimeRoot,
+  getRuntimeWorkspace,
+  getRuntimeTmp,
+  ensureRuntimeExists,
+  runtimeExists,
+  buildIsolatedSessionKey,
+  buildRuntimeMetadata,
+  buildEnhancedSystemPrompt,
+  RUNTIME_FEATURE_FLAGS,
+} from '@/lib/runtime';
 
 function readFileConfig() {
   try {
@@ -227,6 +238,12 @@ async function resolveGatewayAgentId(agentName: string) {
 }
 
 function buildSessionKey(projectSlug: string, agentName: string, gatewayAgentId: string) {
+  // Use enhanced session key if feature flag is enabled
+  if (RUNTIME_FEATURE_FLAGS.USE_SESSION_ISOLATION_V2) {
+    return buildIsolatedSessionKey(projectSlug, agentName, gatewayAgentId);
+  }
+  
+  // Legacy format for backwards compatibility
   const project = normalizeKeySegment(projectSlug) || 'project';
   const agent = normalizeKeySegment(agentName) || 'agent';
   const safeGatewayAgent = normalizeKeySegment(gatewayAgentId) || 'main';
@@ -234,6 +251,19 @@ function buildSessionKey(projectSlug: string, agentName: string, gatewayAgentId:
 }
 
 async function resolveProjectWorkspaceDir(projectSlug: string) {
+  // Use KanClaw runtime if feature flag is enabled
+  if (RUNTIME_FEATURE_FLAGS.USE_KANCLAW_RUNTIME_ROOT) {
+    const runtimeRoot = getRuntimeRoot(projectSlug);
+    const runtimeWorkspace = getRuntimeWorkspace(projectSlug);
+    
+    // Ensure runtime exists (idempotent)
+    const result = await ensureRuntimeExists(projectSlug);
+    if (result.ok) {
+      return runtimeWorkspace;
+    }
+  }
+  
+  // Fallback to legacy workspace path
   try {
     const { base } = await ensureProjectPath(projectSlug);
     return path.join(base, 'workspace');
@@ -244,6 +274,17 @@ async function resolveProjectWorkspaceDir(projectSlug: string) {
 }
 
 function buildKanClawWorkspaceSystemPrompt(payload: { projectSlug: string; agentName: string; workspaceDir: string }) {
+  // Use enhanced system prompt if feature flag is enabled
+  if (RUNTIME_FEATURE_FLAGS.USE_KANCLAW_RUNTIME_ROOT) {
+    const runtimeMetadata = buildRuntimeMetadata(payload.projectSlug, payload.agentName);
+    return buildEnhancedSystemPrompt({
+      projectSlug: payload.projectSlug,
+      agentName: payload.agentName,
+      runtimeMetadata,
+    });
+  }
+  
+  // Legacy format for backwards compatibility
   return [
     'KANCLAW_WORKSPACE_POLICY',
     `project_slug=${payload.projectSlug}`,
@@ -497,6 +538,14 @@ export async function sendOpenClawTask(payload: { projectSlug: string; agentName
  */
 export async function configureKanClawProject(projectSlug: string, agentNames: string[]) {
   try {
+    // Ensure KanClaw runtime exists (idempotent)
+    if (RUNTIME_FEATURE_FLAGS.USE_KANCLAW_RUNTIME_ROOT) {
+      const runtimeResult = await ensureRuntimeExists(projectSlug);
+      if (!runtimeResult.ok) {
+        console.error('Failed to create runtime:', runtimeResult.error);
+      }
+    }
+    
     // Resolve the project workspace directory
     const workspaceDir = await resolveProjectWorkspaceDir(projectSlug);
     
@@ -532,7 +581,11 @@ export async function configureKanClawProject(projectSlug: string, agentNames: s
       }
     }
     
-    return { ok: true, workspaceDir };
+    return { 
+      ok: true, 
+      workspaceDir,
+      runtimeRoot: RUNTIME_FEATURE_FLAGS.USE_KANCLAW_RUNTIME_ROOT ? getRuntimeRoot(projectSlug) : undefined,
+    };
   } catch (error) {
     console.error('Failed to configure KanClaw project:', error);
     return { ok: false, error: String(error) };
