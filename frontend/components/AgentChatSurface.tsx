@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Bot, Check, Copy, CornerDownLeft, Loader2, MessageSquare, Quote, Send, Sparkles, Type, X, Zap } from 'lucide-react';
+import { Bot, Check, Copy, CornerDownLeft, Image, Loader2, MessageSquare, Paperclip, Quote, Send, Sparkles, Type, X, Zap, DollarSign, Gauge } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Agent } from '@prisma/client';
 import { Button } from '@/components/ui/button';
@@ -180,21 +180,29 @@ function renderMarkdown(content: string, t: (key: string, fallback?: string) => 
   return nodes;
 }
 
-function MarkdownToolbar({ onInsert }: { onInsert: (syntax: string, wrap?: boolean) => void }) {
+function MarkdownToolbar({ onInsert, onFileUpload }: { onInsert: (syntax: string, wrap?: boolean) => void; onFileUpload?: (files: FileList) => void }) {
   return (
-    <div className="flex items-center gap-1 border-b border-border px-3 py-2">
-      <button type="button" className="rounded p-1.5 text-text-muted hover:bg-surface2 hover:text-text-primary" onClick={() => onInsert('**', true)} title="Bold">
-        <span className="text-xs font-bold">B</span>
-      </button>
-      <button type="button" className="rounded p-1.5 text-text-muted hover:bg-surface2 hover:text-text-primary" onClick={() => onInsert('`', true)} title="Code inline">
-        <Type className="h-4 w-4" />
-      </button>
-      <button type="button" className="rounded p-1.5 text-text-muted hover:bg-surface2 hover:text-text-primary" onClick={() => onInsert('```', true)} title="Code block">
-        <CornerDownLeft className="h-4 w-4" />
-      </button>
-      <button type="button" className="rounded p-1.5 text-text-muted hover:bg-surface2 hover:text-text-primary" onClick={() => onInsert('\n> ')} title="Quote">
-        <Quote className="h-4 w-4" />
-      </button>
+    <div className="flex items-center justify-between border-b border-border px-3 py-2">
+      <div className="flex items-center gap-1">
+        <button type="button" className="rounded p-1.5 text-text-muted hover:bg-surface2 hover:text-text-primary" onClick={() => onInsert('**', true)} title="Bold">
+          <span className="text-xs font-bold">B</span>
+        </button>
+        <button type="button" className="rounded p-1.5 text-text-muted hover:bg-surface2 hover:text-text-primary" onClick={() => onInsert('`', true)} title="Code inline">
+          <Type className="h-4 w-4" />
+        </button>
+        <button type="button" className="rounded p-1.5 text-text-muted hover:bg-surface2 hover:text-text-primary" onClick={() => onInsert('```', true)} title="Code block">
+          <CornerDownLeft className="h-4 w-4" />
+        </button>
+        <button type="button" className="rounded p-1.5 text-text-muted hover:bg-surface2 hover:text-text-primary" onClick={() => onInsert('\n> ')} title="Quote">
+          <Quote className="h-4 w-4" />
+        </button>
+        {onFileUpload && (
+          <label className="cursor-pointer rounded p-1.5 text-text-muted hover:bg-surface2 hover:text-text-primary" title="Adjuntar imagen">
+            <Paperclip className="h-4 w-4" />
+            <input type="file" multiple accept="image/*,.txt,.md,.json,.js,.ts,.py" className="hidden" onChange={(e) => e.target.files && onFileUpload(e.target.files)} />
+          </label>
+        )}
+      </div>
     </div>
   );
 }
@@ -230,6 +238,7 @@ export function AgentChatSurface({
   const [contextResults, setContextResults] = useState<ContextItem[]>([]);
   const [selectedContext, setSelectedContext] = useState<ContextItem[]>([]);
   const [showAgentSelector, setShowAgentSelector] = useState(false);
+  const [attachedFiles, setAttachedFiles] = useState<{name: string; type: string; data: string}[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -350,6 +359,35 @@ export function AgentChatSurface({
         ? prev.filter((entry) => entry.id !== item.id)
         : [...prev, item]
     );
+  };
+
+  const handleFileUpload = async (files: FileList) => {
+    const newFiles: {name: string; type: string; data: string}[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        const dataUrl = await new Promise<string>((resolve) => {
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(file);
+        });
+        newFiles.push({ name: file.name, type: 'image', data: dataUrl });
+      } else {
+        const text = await file.text();
+        const isImage = /\.(png|jpg|jpeg|gif|webp|svg)$/i.test(file.name);
+        newFiles.push({ 
+          name: file.name, 
+          type: isImage ? 'image' : 'file', 
+          data: isImage ? `data:${file.type};base64,${Buffer.from(text).toString('base64')}` : text 
+        });
+      }
+    }
+    setAttachedFiles(prev => [...prev, ...newFiles]);
+    toast.success(`${newFiles.length} archivo(s) adjuntado(s)`);
+  };
+
+  const removeAttachedFile = (index: number) => {
+    setAttachedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSend = async () => {
@@ -562,6 +600,23 @@ export function AgentChatSurface({
         </div>
 
         <footer className="border-t border-border bg-surface/70">
+          {/* Attached Files */}
+          {attachedFiles.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2">
+              <Paperclip className="h-4 w-4 text-text-muted" />
+              <span className="text-xs text-text-muted">Adjuntos</span>
+              {attachedFiles.map((file, idx) => (
+                <div key={idx} className="flex items-center gap-1 border border-border bg-surface2 px-2 py-1 text-xs">
+                  {file.type === 'image' ? <Image className="h-3 w-3" /> : <Paperclip className="h-3 w-3" />}
+                  <span className="max-w-[100px] truncate">{file.name}</span>
+                  <button onClick={() => removeAttachedFile(idx)} className="text-text-muted hover:text-red-400">
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
           {contextResults.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2">
               <Sparkles className="h-4 w-4 text-text-muted" />
@@ -587,7 +642,7 @@ export function AgentChatSurface({
             </div>
           )}
 
-          <MarkdownToolbar onInsert={insertMarkdown} />
+          <MarkdownToolbar onInsert={insertMarkdown} onFileUpload={handleFileUpload} />
 
           <div className="flex gap-3 px-4 py-4">
             <Textarea
@@ -645,6 +700,44 @@ export function AgentChatSurface({
               {selectedMessageMetadata && 'runId' in selectedMessageMetadata ? (
                 <p className="mt-2 break-all">Run: {String((selectedMessageMetadata as any).runId)}</p>
               ) : null}
+              {/* Token Usage Display */}
+              <div className="mt-3 pt-3 border-t border-border">
+                <div className="flex items-center gap-1 mb-2">
+                  <Gauge className="h-3 w-3" />
+                  <span className="text-[10px] font-semibold text-text-primary">Usage</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="bg-surface2 p-2 rounded">
+                    <p className="text-lg font-semibold text-accent-green">
+                      {selectedMessageMetadata && 'usage' in selectedMessageMetadata 
+                        ? String((selectedMessageMetadata as any).usage?.input || 0) 
+                        : selectedMessage.content.length > 100 ? Math.round(selectedMessage.content.length / 4) : 0}
+                    </p>
+                    <p className="text-[9px]">input tokens</p>
+                  </div>
+                  <div className="bg-surface2 p-2 rounded">
+                    <p className="text-lg font-semibold text-accent-blue">
+                      {selectedMessageMetadata && 'usage' in selectedMessageMetadata 
+                        ? String((selectedMessageMetadata as any).usage?.output || selectedMessage.content.length) 
+                        : selectedMessage.role === 'human' ? 0 : Math.round(selectedMessage.content.length / 4)}
+                    </p>
+                    <p className="text-[9px]">output tokens</p>
+                  </div>
+                </div>
+                {/* Cost Estimate */}
+                <div className="mt-2 flex items-center gap-1 bg-surface2 p-2 rounded">
+                  <DollarSign className="h-3 w-3 text-amber-400" />
+                  <span className="text-[10px]">Costo estimado:</span>
+                  <span className="font-semibold text-amber-400">
+                    {'$'}
+                    {selectedMessageMetadata && 'usage' in selectedMessageMetadata 
+                      ? String(((Number((selectedMessageMetadata as any).usage?.input || 0) * 0.00001) + (Number((selectedMessageMetadata as any).usage?.output || 0) * 0.00003)).toFixed(6))
+                      : selectedMessage.role === 'human' 
+                        ? '0.000000' 
+                        : String((selectedMessage.content.length / 4 * 0.00003).toFixed(6))}
+                  </span>
+                </div>
+              </div>
             </div>
           ) : null}
         </div>
