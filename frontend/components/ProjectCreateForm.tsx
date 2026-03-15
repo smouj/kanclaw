@@ -329,7 +329,7 @@ export function ProjectCreateForm() {
                 type="checkbox"
                 checked={withOfficialTeam}
                 onChange={(e) => setWithOfficialTeam(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-border bg-surface accent-accent-green"
+                className="mt-1 h-4 w-4 rounded border-border bg-surface accent-green"
               />
               <div>
                 <p className="text-sm font-medium text-accent-green">🎯 Crear con equipo oficial de KanClaw</p>

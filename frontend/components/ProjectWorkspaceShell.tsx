@@ -148,6 +148,8 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
   const [preferredTargetAgent, setPreferredTargetAgent] = useState(model.threads[0]?.agent?.name || project.agents[0]?.name || '');
   const [agentName, setAgentName] = useState('');
   const [agentRole, setAgentRole] = useState('');
+  const [showOfficialAgents, setShowOfficialAgents] = useState(false);
+  const [officialAgents, setOfficialAgents] = useState<{id: string; name: string; role: string; description: string}[]>([]);
   const [decision, setDecision] = useState('');
   const [knowledgePath, setKnowledgePath] = useState('knowledge/notes.md');
   const [knowledgeContent, setKnowledgeContent] = useState('');
@@ -175,6 +177,15 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
       // ignore malformed layout preferences
     }
   }, [project.slug]);
+
+  useEffect(() => {
+    if (showOfficialAgents && officialAgents.length === 0) {
+      fetch('/api/official-agents')
+        .then(res => res.json())
+        .then(data => setOfficialAgents(data))
+        .catch(() => setOfficialAgents([]));
+    }
+  }, [showOfficialAgents, officialAgents.length]);
 
   useEffect(() => {
     const key = `kanclaw:layout:${project.slug}`;
@@ -215,6 +226,24 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
     }
     setAgentName('');
     setAgentRole('');
+    toast.success(t('toast.agentCreated'));
+    router.refresh();
+  }
+
+  async function addOfficialAgent(officialId: string) {
+    setBusy(true);
+    const response = await fetch('/api/projects', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ projectSlug: project.slug, officialId }),
+    });
+    setBusy(false);
+    if (!response.ok) {
+      const err = await response.json();
+      toast.error(err.error || t('toast.agentCreateError'));
+      return;
+    }
+    setShowOfficialAgents(false);
     toast.success(t('toast.agentCreated'));
     router.refresh();
   }
@@ -399,6 +428,37 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                   </button>
                 ))}
                 <div className="pt-2 border-t border-border space-y-2">
+                  {/* Official Agents Dropdown */}
+                  <div className="relative">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => setShowOfficialAgents(!showOfficialAgents)}
+                      className="w-full mt-1 h-8 text-xs border-accent-green/50 text-accent-green hover:bg-accent-green/10"
+                    >
+                      + {t('project.officialTeam')}
+                    </Button>
+                    {showOfficialAgents && officialAgents.length > 0 && (
+                      <div className="absolute z-50 left-0 right-0 mt-1 bg-surface border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                        {officialAgents
+                          .filter(official => !project.agents.some(a => a.officialId === official.id))
+                          .map((official) => (
+                            <button
+                              key={official.id}
+                              onClick={() => addOfficialAgent(official.id)}
+                              className="w-full text-left px-3 py-2 text-xs hover:bg-surface2 border-b border-border last:border-0"
+                            >
+                              <span className="font-medium text-accent-green">{official.name}</span>
+                              <span className="block text-text-muted truncate">{official.role}</span>
+                            </button>
+                          ))}
+                        {officialAgents.filter(official => !project.agents.some(a => a.officialId === official.id)).length === 0 && (
+                          <p className="px-3 py-2 text-xs text-text-muted">Todos los agentes oficiales ya están en el proyecto</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  
                   <Input
                     value={agentName}
                     onChange={(e) => setAgentName(e.target.value)}
