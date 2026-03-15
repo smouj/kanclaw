@@ -1,217 +1,100 @@
 <svg width="1280" height="640" viewBox="0 0 1280 640" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Animated background gradient -->
+    <!-- Pure black background -->
     <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="640" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#020204">
-        <animate attributeName="stop-color" values="#020204;#0a0a12;#020204" dur="8s" repeatCount="indefinite"/>
-      </stop>
-      <stop offset="100%" stop-color="#090910">
-        <animate attributeName="stop-color" values="#090910;#0c0c14;#090910" dur="8s" repeatCount="indefinite"/>
-      </stop>
+      <stop offset="0%" stop-color="#000000"/>
+      <stop offset="50%" stop-color="#000000"/>
+      <stop offset="100%" stop-color="#000000"/>
     </linearGradient>
     
-    <!-- Animated silver gradients -->
-    <radialGradient id="silverA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(200 70) rotate(32) scale(620 320)">
-      <stop stop-color="#D4D7DE" stop-opacity="0.25">
-        <animate attributeName="stop-opacity" values="0.25;0.35;0.25" dur="6s" repeatCount="indefinite"/>
-      </stop>
-      <stop offset="1" stop-color="#D4D7DE" stop-opacity="0"/>
+    <!-- Subtle silver accent -->
+    <radialGradient id="accent" cx="50%" cy="50%" r="80%" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1a1a1f" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
     </radialGradient>
     
-    <radialGradient id="silverB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1080 100) rotate(148) scale(520 280)">
-      <stop stop-color="#B8BFCC" stop-opacity="0.2">
-        <animate attributeName="stop-opacity" values="0.2;0.3;0.2" dur="7s" repeatCount="indefinite"/>
-      </stop>
-      <stop offset="1" stop-color="#B8BFCC" stop-opacity="0"/>
-    </radialGradient>
+    <!-- Card glow -->
+    <filter id="cardGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
     
-    <!-- Animated silver line -->
-    <linearGradient id="silverLine" x1="0" y1="0" x2="1280" y2="0" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0"/>
-      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.12"/>
-      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0">
-        <animate attributeName="stop-opacity" values="0.12;0.2;0.12" dur="4s" repeatCount="indefinite"/>
-      </stop>
-    </linearGradient>
-    
-    <linearGradient id="terrainFill" x1="640" y1="300" x2="640" y2="640" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#101214" stop-opacity="0"/>
-      <stop offset="100%" stop-color="#101214" stop-opacity="0.92"/>
-    </linearGradient>
-    
-    <!-- Glow filter -->
-    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+    <!-- Logo glow -->
+    <filter id="logoGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feFlood flood-color="#ffffff" flood-opacity="0.15"/>
+      <feComposite in2="blur" operator="in"/>
       <feMerge>
-        <feMergeNode in="coloredBlur"/>
+        <feMergeNode/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
     
-    <!-- Pulse filter -->
-    <filter id="pulse">
-      <feAnimate attributeName="opacity" values="1;0.8;1" dur="2s" repeatCount="indefinite"/>
-    </filter>
+    <!-- Text gradient -->
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#a0a0a0"/>
+    </linearGradient>
   </defs>
 
-  <!-- Background -->
-  <rect width="1280" height="640" fill="url(#bg)"/>
-  <rect width="1280" height="640" fill="url(#silverA)"/>
-  <rect width="1280" height="640" fill="url(#silverB)"/>
+  <!-- Pure black background -->
+  <rect width="1280" height="640" fill="#000000"/>
+  <rect width="1280" height="640" fill="url(#accent)"/>
 
-  <!-- Animated scanlines -->
-  <g opacity="0.16">
-    <path d="M0 84H1280" stroke="url(#silverLine)">
-      <animate attributeName="opacity" values="0.16;0.24;0.16" dur="3s" repeatCount="indefinite"/>
-    </path>
-    <path d="M0 156H1280" stroke="url(#silverLine)">
-      <animate attributeName="opacity" values="0.12;0.2;0.12" dur="3.5s" repeatCount="indefinite"/>
-    </path>
-    <path d="M0 228H1280" stroke="url(#silverLine)">
-      <animate attributeName="opacity" values="0.14;0.22;0.14" dur="4s" repeatCount="indefinite"/>
-    </path>
-    <path d="M0 300H1280" stroke="url(#silverLine)">
-      <animate attributeName="opacity" values="0.16;0.26;0.16" dur="3.2s" repeatCount="indefinite"/>
-    </path>
-    <path d="M0 372H1280" stroke="url(#silverLine)">
-      <animate attributeName="opacity" values="0.12;0.2;0.12" dur="3.8s" repeatCount="indefinite"/>
-    </path>
-    <path d="M0 444H1280" stroke="url(#silverLine)">
-      <animate attributeName="opacity" values="0.14;0.22;0.14" dur="4.2s" repeatCount="indefinite"/>
-    </path>
-    <path d="M0 516H1280" stroke="url(#silverLine)">
-      <animate attributeName="opacity" values="0.16;0.24;0.16" dur="3.6s" repeatCount="indefinite"/>
-    </path>
-    <path d="M0 588H1280" stroke="url(#silverLine)">
-      <animate attributeName="opacity" values="0.12;0.2;0.12" dur="4.5s" repeatCount="indefinite"/>
-    </path>
+  <!-- Main card with subtle border -->
+  <g filter="url(#cardGlow)">
+    <rect x="68" y="64" width="1144" height="512" rx="24" fill="#0a0a0c" stroke="#1f1f25" stroke-width="1"/>
   </g>
 
-  <!-- Animated terrain mesh -->
-  <g opacity="0.54">
-    <path d="M0 640 L1280 640 L1280 304 Q960 292 640 302 Q320 312 0 304 Z" fill="url(#terrainFill)">
-      <animate attributeName="opacity" values="0.54;0.62;0.54" dur="10s" repeatCount="indefinite"/>
-    </path>
-    
-    <!-- Animated mesh lines -->
-    <g stroke="#C6CCD8" stroke-opacity="0.2">
-      <path d="M110 640 L410 304">
-        <animate attributeName="stroke-opacity" values="0.2;0.3;0.2" dur="5s" repeatCount="indefinite"/>
-      </path>
-      <path d="M210 640 L490 304">
-        <animate attributeName="stroke-opacity" values="0.15;0.25;0.15" dur="6s" repeatCount="indefinite"/>
-      </path>
-      <path d="M310 640 L560 304">
-        <animate attributeName="stroke-opacity" values="0.2;0.3;0.2" dur="5.5s" repeatCount="indefinite"/>
-      </path>
-      <path d="M410 640 L630 304">
-        <animate attributeName="stroke-opacity" values="0.18;0.28;0.18" dur="4.8s" repeatCount="indefinite"/>
-      </path>
-      <path d="M510 640 L700 304">
-        <animate attributeName="stroke-opacity" values="0.2;0.3;0.2" dur="5.3s" repeatCount="indefinite"/>
-      </path>
-      <path d="M610 640 L770 304">
-        <animate attributeName="stroke-opacity" values="0.15;0.25;0.15" dur="6.2s" repeatCount="indefinite"/>
-      </path>
-      <path d="M710 640 L840 304">
-        <animate attributeName="stroke-opacity" values="0.2;0.3;0.2" dur="5.7s" repeatCount="indefinite"/>
-      </path>
-      <path d="M810 640 L910 304">
-        <animate attributeName="stroke-opacity" values="0.18;0.28;0.18" dur="4.5s" repeatCount="indefinite"/>
-      </path>
-      <path d="M910 640 L980 304">
-        <animate attributeName="stroke-opacity" values="0.2;0.3;0.2" dur="5.9s" repeatCount="indefinite"/>
-      </path>
-      <path d="M1010 640 L1050 304">
-        <animate attributeName="stroke-opacity" values="0.15;0.25;0.15" dur="6.5s" repeatCount="indefinite"/>
-      </path>
-      <path d="M1110 640 L1120 304">
-        <animate attributeName="stroke-opacity" values="0.2;0.3;0.2" dur="5.1s" repeatCount="indefinite"/>
-      </path>
+  <!-- Logo block - cleaner design -->
+  <g filter="url(#logoGlow)">
+    <rect x="112" y="110" width="72" height="72" rx="16" fill="#141418" stroke="#2a2a30" stroke-width="1"/>
+    <!-- Inline logo SVG -->
+    <g transform="translate(124, 122)">
+      <path d="M8 0C3.58 0 0 3.58 0 8C0 12.42 3.58 16 8 16C12.42 16 16 12.42 16 8C16 3.58 12.42 0 8 0Z" fill="url(#titleGrad)"/>
+      <path d="M8 20C3.58 20 0 23.58 0 28C0 32.42 3.58 36 8 36C12.42 36 16 32.42 16 28C16 23.58 12.42 20 8 20Z" fill="#404040"/>
+      <path d="M8 40C3.58 40 0 43.58 0 48C0 52.42 3.58 56 8 56C12.42 56 16 52.42 16 48C16 43.58 12.42 40 8 40Z" fill="#606060"/>
+      <circle cx="40" cy="28" r="8" fill="#808080"/>
+      <path d="M32 36H48V44H40V40H44V52H36V48H32V36Z" fill="#a0a0a0"/>
     </g>
-    
-    <!-- Terrain curves -->
-    <g stroke="#AAB2C3" stroke-opacity="0.2">
-      <path d="M0 610 Q640 548 1280 610">
-        <animate attributeName="stroke-opacity" values="0.2;0.3;0.2" dur="8s" repeatCount="indefinite"/>
-      </path>
-      <path d="M0 572 Q640 510 1280 572">
-        <animate attributeName="stroke-opacity" values="0.18;0.28;0.18" dur="7.5s" repeatCount="indefinite"/>
-      </path>
-      <path d="M0 534 Q640 472 1280 534">
-        <animate attributeName="stroke-opacity" values="0.2;0.3;0.2" dur="8.5s" repeatCount="indefinite"/>
-      </path>
-      <path d="M0 496 Q640 434 1280 496">
-        <animate attributeName="stroke-opacity" values="0.16;0.26;0.16" dur="7s" repeatCount="indefinite"/>
-      </path>
-      <path d="M0 458 Q640 396 1280 458">
-        <animate attributeName="stroke-opacity" values="0.2;0.3;0.2" dur="8.2s" repeatCount="indefinite"/>
-      </path>
-      <path d="M0 420 Q640 358 1280 420">
-        <animate attributeName="stroke-opacity" values="0.18;0.28;0.18" dur="7.8s" repeatCount="indefinite"/>
-      </path>
-      <path d="M0 382 Q640 320 1280 382">
-        <animate attributeName="stroke-opacity" values="0.2;0.3;0.2" dur="8.8s" repeatCount="indefinite"/>
-      </path>
-    </g>
-    
-    <!-- Animated RGB lines -->
-    <g stroke-opacity="0.13">
-      <path d="M0 560 Q640 502 1280 560" stroke="#FF5B5B">
-        <animate attributeName="stroke-opacity" values="0.13;0.25;0.13" dur="4s" repeatCount="indefinite"/>
-      </path>
-      <path d="M0 472 Q640 414 1280 472" stroke="#58FF8A">
-        <animate attributeName="stroke-opacity" values="0.13;0.25;0.13" dur="5s" repeatCount="indefinite"/>
-      </path>
-      <path d="M0 520 Q640 462 1280 520" stroke="#6EA3FF">
-        <animate attributeName="stroke-opacity" values="0.13;0.25;0.13" dur="4.5s" repeatCount="indefinite"/>
-      </path>
-    </g>
-  </g>
-
-  <!-- Main card with border animation -->
-  <g>
-    <rect x="68" y="64" width="1144" height="512" rx="26" fill="rgba(255,255,255,0.012)" stroke="rgba(255,255,255,0.1)">
-      <animate attributeName="stroke-opacity" values="0.1;0.18;0.1" dur="3s" repeatCount="indefinite"/>
-    </rect>
-  </g>
-
-  <!-- Logo block with glow -->
-  <g filter="url(#glow)">
-    <rect x="112" y="110" width="74" height="74" rx="14" fill="rgba(255,255,255,0.045)" stroke="rgba(255,255,255,0.22)">
-      <animate attributeName="fill-opacity" values="0.045;0.08;0.045" dur="4s" repeatCount="indefinite"/>
-    </rect>
-    <image href="https://raw.githubusercontent.com/smouj/kanclaw/main/frontend/public/logo-white.png" x="121" y="119" width="56" height="56">
-      <animate attributeName="opacity" values="1;0.9;1" dur="3s" repeatCount="indefinite"/>
-    </image>
   </g>
 
   <!-- Brand text -->
-  <text x="206" y="146" fill="#AEB5C3" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="17" letter-spacing="3">LIVING WORKSPACE OS</text>
-  <text x="206" y="202" fill="#F4F6FA" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="68" font-weight="700">KanClaw</text>
+  <text x="204" y="135" fill="#606060" font-family="Inter, system-ui, sans-serif" font-size="14" letter-spacing="4">LIVING WORKSPACE OS</text>
+  <text x="204" y="190" fill="url(#titleGrad)" font-family="Inter, system-ui, sans-serif" font-size="64" font-weight="700">KanClaw</text>
 
   <!-- Description -->
-  <text x="112" y="292" fill="#E2E6EF" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="34" font-weight="600">Premium black/silver workspace for AI agent teams</text>
-  <text x="112" y="336" fill="#99A2B4" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="23">Persistent memory · Real run tracking · GitHub + OpenClaw integration</text>
+  <text x="112" y="280" fill="#909090" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="500">Premium black workspace for AI agent teams</text>
+  <text x="112" y="318" fill="#505050" font-family="Inter, system-ui, sans-serif" font-size="18">Persistent memory · Real-time run tracking · GitHub + OpenClaw</text>
 
-  <!-- Feature badges with pulse animation -->
+  <!-- Feature badges - cleaner design -->
   <g>
-    <rect x="112" y="390" width="238" height="52" rx="26" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.28)">
-      <animate attributeName="fill-opacity" values="0.08;0.12;0.08" dur="2s" repeatCount="indefinite"/>
-    </rect>
-    <text x="156" y="423" fill="#F1F4FA" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">AI Agents</text>
+    <rect x="112" y="370" width="220" height="48" rx="24" fill="#141418" stroke="#2a2a30"/>
+    <text x="148" y="402" fill="#e0e0e0" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="600">AI Agents</text>
 
-    <rect x="368" y="390" width="238" height="52" rx="26" fill="rgba(198,206,220,0.14)" stroke="rgba(198,206,220,0.34)">
-      <animate attributeName="fill-opacity" values="0.14;0.2;0.14" dur="2.5s" repeatCount="indefinite"/>
-    </rect>
-    <text x="430" y="423" fill="#EEF2FA" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">Local-First</text>
+    <rect x="348" y="370" width="220" height="48" rx="24" fill="#141418" stroke="#2a2a30"/>
+    <text x="388" y="402" fill="#e0e0e0" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="600">Local-First</text>
 
-    <rect x="624" y="390" width="238" height="52" rx="26" fill="rgba(160,170,186,0.14)" stroke="rgba(160,170,186,0.34)">
-      <animate attributeName="fill-opacity" values="0.14;0.2;0.14" dur="3s" repeatCount="indefinite"/>
-    </rect>
-    <text x="690" y="423" fill="#EAF0FA" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="600">Desktop Ready</text>
+    <rect x="584" y="370" width="220" height="48" rx="24" fill="#141418" stroke="#2a2a30"/>
+    <text x="624" y="402" fill="#e0e0e0" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="600">Isolated Runtime</text>
+  </g>
+
+  <!-- Second row badges -->
+  <g>
+    <rect x="112" y="434" width="220" height="48" rx="24" fill="#141418" stroke="#2a2a30"/>
+    <text x="148" y="466" fill="#c0c0c0" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="600">Project Memory</text>
+
+    <rect x="348" y="434" width="220" height="48" rx="24" fill="#141418" stroke="#2a2a30"/>
+    <text x="378" y="466" fill="#c0c0c0" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="600">Board Graph</text>
+
+    <rect x="584" y="434" width="220" height="48" rx="24" fill="#141418" stroke="#2a2a30"/>
+    <text x="608" y="466" fill="#c0c0c0" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="600">OpenClaw Native</text>
   </g>
 
   <!-- Footer -->
-  <text x="112" y="520" fill="#6F7A8E" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="20">github.com/smouj/kanclaw</text>
+  <text x="112" y="540" fill="#404040" font-family="Inter, system-ui, sans-serif" font-size="16">github.com/smouj/kanclaw</text>
+  
+  <!-- Version badge -->
+  <rect x="1000" y="100" width="80" height="28" rx="14" fill="#1a1a1f" stroke="#2a2a30"/>
+  <text x="1040" y="120" fill="#707070" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="500">v0.3.3</text>
 </svg>
