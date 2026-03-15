@@ -217,15 +217,17 @@ export function HomePageClient({
                           <span className="rounded-full border border-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-zinc-500">
                             {project.slug}
                           </span>
-                          <span className="text-xs text-zinc-500">{project.agents.length} agents</span>
                         </div>
-                        <h3 className="mt-6 text-2xl font-semibold">{project.name}</h3>
-                        <p className="mt-3 text-sm leading-6 text-zinc-400">{project.description || 'No description yet.'}</p>
+                        <div className="mt-4 flex items-center justify-between">
+                          <h3 className="text-2xl font-semibold">{project.name}</h3>
+                          <span className="text-xs text-zinc-500">{project.agents.length} agentes</span>
+                        </div>
+                        <p className="mt-3 text-sm leading-6 text-zinc-400">{project.description || 'Sin descripción.'}</p>
                         <div className="mt-8 flex items-center justify-between border-t border-white/5 pt-4 text-sm text-zinc-500">
                           <span>
-                            {project.tasks.length} tasks · {project.runs.length} runs
+                            {project.tasks.length} tareas · {project.runs.length} ejecuciones
                           </span>
-                          <span className="group-hover:text-zinc-100">Open workspace</span>
+                          <span className="group-hover:text-zinc-100">Abrir workspace</span>
                         </div>
                       </Link>
                     </div>

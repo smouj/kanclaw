@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, Bot, BrainCircuit, Cable, Camera, CheckCircle2, ChevronDown, ChevronRight, Command as CommandIcon, FolderTree, LayoutGrid, MessageSquare, MessageSquareText, RefreshCcw, Sparkles, Zap } from 'lucide-react';
+import { ArrowLeft, Bot, BrainCircuit, Cable, Camera, CheckCircle2, ChevronDown, ChevronRight, Command as CommandIcon, FolderTree, LayoutGrid, MessageSquare, MessageSquareText, RefreshCcw, Sparkles, Trash2, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import type { Agent, Project, Task } from '@prisma/client';
@@ -249,6 +249,31 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
     router.refresh();
   }
 
+  async function deleteAgent(agentId: string, agentName: string, isOfficial: boolean) {
+    if (isOfficial) {
+      toast.error('No se pueden eliminar los agentes oficiales de KanClaw');
+      return;
+    }
+    
+    if (!confirm(`¿Eliminar agente "${agentName}"?`)) {
+      return;
+    }
+    
+    setBusy(true);
+    const response = await fetch(`/api/agents?projectSlug=${project.slug}&agentId=${agentId}`, {
+      method: 'DELETE',
+    });
+    setBusy(false);
+    
+    if (!response.ok) {
+      toast.error('Error al eliminar agente');
+      return;
+    }
+    
+    toast.success('Agente eliminado');
+    router.refresh();
+  }
+
   async function appendToFile(path: string, content: string) {
     const existingResponse = await fetch(`/api/files?projectSlug=${project.slug}&path=${encodeURIComponent(path)}`);
     const existing = existingResponse.ok ? ((await existingResponse.json()).content as string) : '';
@@ -410,23 +435,33 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
             <CollapsiblePanel title={t('sidebar.agents')} icon={Bot} defaultOpen={true}>
               <div className="space-y-2">
                 {project.agents.map((agent) => (
-                  <button
-                    key={agent.id}
-                    onClick={() => {
-                      const thread = model.threads.find((t) => t.agentId === agent.id);
-                      setActiveView('chat');
-                      setSelectedThreadId(thread?.id || teamThreadId);
-                      setPreferredTargetAgent(agent.name);
-                    }}
-                    className="w-full flex items-center gap-2 px-2 py-1.5 text-xs rounded hover:bg-surface2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50 transition-colors"
-                    type="button"
-                  >
-                    <Bot className={`w-3 h-3 ${agent.isOfficial ? 'text-accent-green' : ''}`} />
-                    {agent.name}
-                    {agent.isOfficial && (
-                      <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-accent-green/20 text-accent-green">official</span>
+                  <div key={agent.id} className="flex items-center gap-1 group">
+                    <button
+                      onClick={() => {
+                        const thread = model.threads.find((t) => t.agentId === agent.id);
+                        setActiveView('chat');
+                        setSelectedThreadId(thread?.id || teamThreadId);
+                        setPreferredTargetAgent(agent.name);
+                      }}
+                      className="flex-1 flex items-center gap-2 px-2 py-1.5 text-xs rounded hover:bg-surface2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-text-primary/50 transition-colors"
+                      type="button"
+                    >
+                      <Bot className={`w-3 h-3 ${agent.isOfficial ? 'text-accent-green' : ''}`} />
+                      <span className="truncate">{agent.name}</span>
+                      {agent.isOfficial && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent-green/20 text-accent-green">official</span>
+                      )}
+                    </button>
+                    {!agent.isOfficial && (
+                      <button
+                        onClick={() => deleteAgent(agent.id, agent.name, !!agent.isOfficial)}
+                        className="p-1 text-text-muted hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Eliminar agente"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
                     )}
-                  </button>
+                  </div>
                 ))}
                 <div className="pt-2 border-t border-border space-y-2">
                   {/* Official Agents Dropdown */}
