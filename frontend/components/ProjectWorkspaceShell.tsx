@@ -21,8 +21,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { useI18n } from '@/components/LanguageProvider';
+import { AgentsPanel } from '@/components/agents/AgentsPanel';
 
-type ViewKey = 'overview' | 'chat' | 'board' | 'memory' | 'files' | 'connectors';
+type ViewKey = 'overview' | 'chat' | 'board' | 'memory' | 'files' | 'agents' | 'connectors';
 
 interface ProjectWorkspaceShellProps {
   project: Project & { agents: Agent[]; tasks: Task[] };
@@ -61,6 +62,7 @@ const viewMeta: Array<{ key: ViewKey; labelKey: string; icon: typeof LayoutGrid 
   { key: 'board', labelKey: 'nav.board', icon: FolderTree },
   { key: 'memory', labelKey: 'nav.memory', icon: BrainCircuit },
   { key: 'files', labelKey: 'nav.files', icon: FolderTree },
+  { key: 'agents', labelKey: 'nav.agents', icon: Bot },
   { key: 'connectors', labelKey: 'nav.connectors', icon: Cable },
 ];
 
@@ -709,6 +711,26 @@ export function ProjectWorkspaceShell({ project, health, githubStatus, files, mo
                   artifactsFiles={model.artifacts}
                   githubConnected={githubStatus?.connected}
                   githubRepo={githubStatus?.connected ? { owner: 'user', name: 'repo', branch: 'main' } : undefined}
+                />
+              )}
+
+              {activeView === 'agents' && (
+                <AgentsPanel
+                  agents={project.agents.map(a => ({
+                    id: a.id,
+                    name: a.name,
+                    role: a.role,
+                    status: a.status || 'idle',
+                    soulPath: a.soulPath || undefined,
+                    toolsPath: a.toolsPath || undefined,
+                    memorySummary: a.memorySummary || undefined,
+                    isOfficial: a.isOfficial,
+                    officialId: a.officialId || undefined,
+                    gatewayAgentId: a.gatewayAgentId || undefined,
+                    createdAt: a.createdAt instanceof Date ? a.createdAt.toISOString() : String(a.createdAt),
+                    updatedAt: a.updatedAt instanceof Date ? a.updatedAt.toISOString() : String(a.updatedAt),
+                  }))}
+                  projectSlug={project.slug}
                 />
               )}
 
