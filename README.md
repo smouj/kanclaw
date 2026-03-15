@@ -1,6 +1,6 @@
 <div align="center">
 
-![KanClaw Banner](./assets/social/github-social-preview.png)
+![KanClaw Banner](./assets/social/github-social-preview.svg)
 
 # KanClaw
 
